@@ -43,7 +43,7 @@ Padrão: `SKILL.md` + `assets/`/`references/` + `agents/openai.yaml` (23 de 28 j
 
 **Assets pesados:** `config-package-shared` (113 arquivos), `frontend-next-config` (75), `backend-nest-config` (22) — ok em si (progressive disclosure via cópia de templates), desde que o SKILL.md não mande *ler* tudo.
 
-### 1.5 Changes (`changes-templates /000…010`)
+### 1.5 Changes (`changes-templates/000…010` — nome corrigido na Fase 1; o original tinha espaço final)
 
 Formato OpenSpec rígido: `proposal.md` + `design.md` + `tasks.md` + `specs/spec.md` + `.openspec.yaml` (a 000 é de processo, sem specs). Tasks já têm `Aceite:`, `Pré:` e "Não faça" — melhor que a média do ecossistema. Tamanhos moderados (proposal 51–77, design 47–142, tasks 45–78, spec 64–133 linhas).
 

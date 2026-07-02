@@ -23,5 +23,13 @@ As skills do catálogo (`.claude/skills/`) são a implementação principal — 
 - Atalho de auth completa (só backend): `/spec-backend-auth-basic`
 - Prisma é com o `database-specialist`; se precisar, sinalize ao orquestrador.
 
-## Antes de retornar
-`npx tsc --noEmit` em `apps/backend` e os testes Jest do módulo passando. Retorne resumo curto: tasks concluídas, skills usadas, desvios, resultado de typecheck/testes, decisões pendentes.
+## Retorno obrigatório (formato fixo)
+
+Devolva ao orquestrador **somente** este bloco preenchido (rode as verificações antes):
+
+- **Status:** CONCLUIDO | PARCIAL | BLOQUEADO — +1 frase de contexto
+- **Tasks:** <concluídas>/<total do escopo> (ids n.m)
+- **Skills usadas:** <lista> · desvios: <quais e por quê | nenhum>
+- **Verificações:** `npx tsc --noEmit` em `apps/backend` <ok|falha> · testes Jest do módulo <ok|falha>
+- **Arquivos tocados:** <lista curta ou contagem por pasta>
+- **Pendências/decisões para o humano:** <lista | nenhuma>

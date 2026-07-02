@@ -20,5 +20,13 @@ Padrão OpenSpec: uma pasta por change com `proposal.md` + `design.md` + `tasks.
 - A `000-orquestracao-execucao` é change de **processo** (sem `specs/`); as demais têm `specs/`.
 - A execução é conduzida pelo `orchestrator-fullstack`; você prepara e valida as changes, ele as executa.
 
-## Antes de retornar
-`openspec validate <id> --strict` limpo. Resumo curto: changes criadas/validadas, placeholders pendentes, ordem de dependência.
+## Retorno obrigatório (formato fixo)
+
+Devolva ao orquestrador **somente** este bloco preenchido:
+
+- **Status:** CONCLUIDO | PARCIAL | BLOQUEADO — +1 frase de contexto
+- **Tasks:** <concluídas>/<total do escopo> (ids n.m)
+- **Skills usadas:** <lista> · desvios: <quais e por quê | nenhum>
+- **Verificações:** `openspec validate <id> --strict` <limpo|falhas> · placeholders pendentes <lista|nenhum>
+- **Arquivos tocados:** <lista curta ou contagem por pasta>
+- **Pendências/decisões para o humano:** <lista | nenhuma>

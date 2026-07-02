@@ -35,6 +35,22 @@ orchestrator → /analisar (consistência pré-build) ┐
 Para change densa, o orquestrador quebra em sub-passos (domínio → backend → frontend → verificação),
 um especialista por passo — nunca os 9 de uma vez (isso fragmenta o contexto do orquestrador e queima token).
 
+## Handoff (formato fixo)
+
+O contrato de comunicação é padronizado nos dois sentidos — **campos nomeados, sem prosa livre**:
+
+- **Briefing (orquestrador → especialista):** Change · Sub-passo/escopo · Contexto (via
+  `openspec instructions apply` + CONTRATO DE LEITURA do proposal) · Tasks · Skills ·
+  Restrições · Critério de pronto · Formato do retorno. Template completo no
+  `orchestrator-fullstack.md` (passo 4).
+- **Retorno (especialista → orquestrador):** builders devolvem
+  `Status / Tasks / Skills usadas / Verificações / Arquivos tocados / Pendências`;
+  reviewers (`architecture`, `security`) devolvem
+  `Status / Achados (com arquivo:linha) / Bloqueia merge? / Verificações / Pendências`.
+  O bloco exato está no fim de cada especialista ("Retorno obrigatório").
+
+Retorno fora do formato ou com `Status: BLOQUEADO` interrompe o fluxo até o orquestrador tratar.
+
 ## Quer comunicação peer-to-peer de verdade?
 
 É o **Agent Teams** (experimental, desligado por padrão). Habilite com a env

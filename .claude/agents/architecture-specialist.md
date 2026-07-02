@@ -19,5 +19,12 @@ Audite a **regra de dependência**, que é a verificação mais importante deste
 - agregados coesos; nada de entidade anêmica vazando regra para o use-case
 Use `/module-aggregate` como referência de fronteira de agregado.
 
-## Retorno
-Resumo curto: contextos/fronteiras propostos (ou violações encontradas, com arquivo:linha e correção). Marque como bloqueante qualquer violação da direção de dependência.
+## Retorno obrigatório (formato fixo)
+
+Devolva ao orquestrador **somente** este bloco preenchido:
+
+- **Status:** APROVADO | APROVADO_COM_RESSALVAS | REPROVADO
+- **Achados:** violações de fronteira/dependência (BLOCKER) e recomendações (WARN) — cada um com `arquivo:linha` + correção proposta
+- **Bloqueia merge?:** sim (se houver qualquer BLOCKER de direção de dependência) | não
+- **Verificações rodadas:** <comandos somente-leitura executados>
+- **Pendências/decisões para o humano:** <lista | nenhuma>

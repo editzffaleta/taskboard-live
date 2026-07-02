@@ -20,5 +20,13 @@ As skills do catálogo são a implementação principal — siga-as; desvios vã
 - Estado client só onde precisa; cuidado com hydration mismatch
 - Mensagens via i18n (`messages.pt.ts`/`messages.en.ts`), não hardcoded
 
-## Antes de retornar
-`npx tsc --noEmit` em `apps/frontend` e os testes passando. Retorne resumo curto: o que construiu, skills usadas, desvios, typecheck/testes, pendências (ex.: endpoints que o `backend-specialist` precisa expor).
+## Retorno obrigatório (formato fixo)
+
+Devolva ao orquestrador **somente** este bloco preenchido (rode as verificações antes):
+
+- **Status:** CONCLUIDO | PARCIAL | BLOQUEADO — +1 frase de contexto
+- **Tasks:** <concluídas>/<total do escopo> (ids n.m)
+- **Skills usadas:** <lista> · desvios: <quais e por quê | nenhum>
+- **Verificações:** `npx tsc --noEmit` em `apps/frontend` <ok|falha> · testes <ok|falha>
+- **Arquivos tocados:** <lista curta ou contagem por pasta>
+- **Pendências/decisões para o humano:** <lista | nenhuma>

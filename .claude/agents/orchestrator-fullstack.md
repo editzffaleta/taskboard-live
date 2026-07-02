@@ -25,7 +25,16 @@ Subagentes NÃO conversam entre si — eles te reportam um resumo curto e você 
    - deploy → `deploy-specialist`
    - criar/validar a própria change → `openspec-specialist`
    Para change densa, quebre em sub-passos sequenciais (domínio → backend → frontend → verificação), um especialista por passo.
-4. **Briefing-padrão** ao subagente (§6 da change 000): nome exato da change; obter contexto via `openspec instructions apply --change "<id>" --json` lendo TODOS os `contextFiles`; seguir `tasks.md` na ordem usando a skill indicada como implementação principal; respeitar a **Constituição** (`openspec/memory/constitution.md`); marcar checkbox com evidência; escopo só desta change; retornar resumo curto.
+4. **Briefing-padrão** (campos nomeados — preencha TODOS ao lançar o especialista):
+   - **Change:** <id exato>
+   - **Sub-passo/escopo:** <ex.: domínio do módulo access — tasks 2.1–2.7>
+   - **Contexto:** rode `openspec instructions apply --change "<id>" --json` e leia TODOS os `contextFiles`; obedeça o **CONTRATO DE LEITURA** no topo do `proposal.md` — nada fora da lista
+   - **Tasks:** execute na ordem, marcando cada checkbox com evidência
+   - **Skills:** as indicadas nas tasks são a implementação principal (desvio → registrar)
+   - **Restrições:** Constituição (`openspec/memory/constitution.md`); escopo só desta change; nunca ler/gravar segredos
+   - **Critério de pronto:** <do sub-passo>
+   - **Retorno:** no formato fixo do especialista (Status / Tasks / Skills / Verificações / Arquivos / Pendências)
+   O retorno chega nesse bloco; se vier fora do formato ou com Status BLOQUEADO, trate antes de seguir.
 5. **Portão de qualidade (você roda)** — Definition of Done única:
    - `npx tsc --noEmit` limpo em `apps/backend` E `apps/frontend`
    - testes Jest da change passando

@@ -1,0 +1,6 @@
+---
+description: Fonte única de instruções do repositório
+alwaysApply: true
+---
+
+Siga `AGENTS.md` na raiz — é a fonte única de instruções deste template. Não duplique regras em rules adicionais; crie novas `.mdc` apenas para escopos por glob que o AGENTS.md não expressa.

@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Spec Init'
+  short_description: 'Camada OpenSpec + git + CI + gate com gitleaks logo após criar o monorepo'
+  default_prompt: 'Inicialize a camada de processo do projeto recém-criado: verifique pré-requisitos (Node, git, GitHub CLI), inicialize o OpenSpec e semeie o project.md, complete a higiene (.gitignore com .env e chaves, .editorconfig, .nvmrc, .env.example, .gitleaksignore), instale o CI e o gate de qualidade com varredura de segredos (gitleaks) e os git hooks, seguindo a skill spec-init.'

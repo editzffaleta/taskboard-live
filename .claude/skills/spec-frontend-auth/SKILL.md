@@ -1,6 +1,7 @@
 ---
 name: spec-frontend-auth
-description: Orquestra a base de autenticacao do FRONTEND Next.js, simetrica ao spec-backend-auth-basic — cliente HTTP tipado que anexa o JWT e trata ApiErrorResponse/401, contexto de auth + hook useAuth, armazenamento do token, pagina de login ligada ao endpoint de login do backend, e guarda de rota nos layouts (private) — reaproveitando a estrutura do frontend-next-config sem recriar o que ja existe.
+description: 'Orquestra a base de AUTENTICACAO do frontend Next.js, simetrica ao spec-backend-auth-basic: cliente HTTP tipado que anexa o JWT e trata ApiErrorResponse/401, AuthContext + useAuth, armazenamento do token, pagina de login ligada ao backend e guarda de rota nos layouts (private) — reaproveitando a estrutura do frontend-next-config. Usar quando o backend de auth ja existe e falta o lado do cliente. Nao usar para instalar a base do frontend (frontend-next-config) nem para RBAC/gating por permissao (e a change 006b).'
+compatibility: claude-code, opencode
 ---
 
 # Spec Frontend Auth

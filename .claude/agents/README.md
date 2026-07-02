@@ -14,7 +14,7 @@ Cada arquivo é um system prompt com frontmatter (`name`, `description`, `tools`
 | `frontend-specialist` | builder | sonnet | `frontend-next-config`, `spec-frontend-auth`, `config-new-module` |
 | `e2e-specialist` | builder/gate | sonnet | `spec-flow` (Playwright — sem skill dedicada ainda) |
 | `security-specialist` | reviewer (pré-merge) | opus | `security-review`, `backend-authorization`, `shared-validation-rule` |
-| `deploy-specialist` | entrega | sonnet | `deploy-node-ubuntu-vps`, `spec-init`, `spec-flow` |
+| `deploy-specialist` | entrega | sonnet | `deploy-dokploy`, `spec-init`, `spec-flow` |
 | `openspec-specialist` | processo | sonnet | `spec-init`, `spec-conventions`, `spec-analyze`, `spec-flow` |
 
 ## Como eles se coordenam (leia isto)

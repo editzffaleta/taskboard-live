@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Frontend Next Config'
+  short_description: 'Configurar shared/ e rotas Next.js (public/private com sidebar) num frontend do monorepo'
+  default_prompt: 'Configure o frontend Next.js do monorepo: detecte o namespace, copie a estrutura shared/, gere o arquivo de navegação, crie os grupos de rota (public)/(private) com sidebar, instale as dependências e rode o build de verificação com autocorreção, seguindo a skill frontend-next-config.'

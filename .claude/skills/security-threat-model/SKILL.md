@@ -1,6 +1,7 @@
 ---
 name: security-threat-model
 description: Conduz a modelagem de ameacas (STRIDE) de uma feature ANTES da geracao tatica, a partir do proposal/specs da change. Identifica ativos, atores, fluxos e fronteiras de confianca, levanta ameacas por categoria STRIDE e define mitigacoes mapeadas para as skills do catalogo (backend-authorization, shared-validation-rule, security-review). E uma analise de design defensiva: nao escreve exploit nem faz pentest.
+compatibility: claude-code, opencode
 ---
 
 # Security Threat Model (STRIDE)

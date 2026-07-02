@@ -1,6 +1,7 @@
 ---
 name: module-repository
 description: Cria contratos de repositório padronizados para agregados dos módulos de negócio, reaproveitando interfaces compartilhadas de persistência e gerando também uma implementação em memória para apoiar testes dos casos de uso.
+compatibility: claude-code, opencode
 ---
 
 # Module Repository

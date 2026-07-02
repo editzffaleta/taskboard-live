@@ -1,6 +1,7 @@
 ---
 name: backend-nest-config
 description: Configura a base compartilhada do backend NestJS com tratamento centralizado de erros, autenticacao por JWT, decorators utilitarios e infraestrutura comum para endpoints protegidos da aplicacao.
+compatibility: claude-code, opencode
 ---
 
 # Backend Nest Config

@@ -1,6 +1,7 @@
 ---
 name: backend-authorization
 description: Adiciona autorizacao baseada em papeis e permissoes (RBAC) no backend NestJS, por cima da autenticacao JWT ja existente — decorators @Roles/@Permissions, guard default-deny que le o usuario autenticado, e protecao por rota — sem reimplementar autenticacao e reaproveitando a infraestrutura compartilhada do projeto.
+compatibility: claude-code, opencode
 ---
 
 # Backend Authorization (RBAC)

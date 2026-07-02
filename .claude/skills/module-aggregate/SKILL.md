@@ -1,6 +1,7 @@
 ---
 name: module-aggregate
-description: Cria a estrutura padronizada de um agregado dentro de um módulo de negócio, organizando pastas, arquivos-base e nomenclaturas de model, provider e usecase para acelerar a evolução consistente do projeto.
+description: 'Cria a estrutura padronizada de um AGREGADO dentro de um modulo existente: pastas, arquivos-base e nomenclaturas de model, provider e usecases (mode crud opcional), com barrels. Usar quando o modulo ja existe e nasce um novo agregado (ex.: permission-group no access). Nao usar para criar o modulo em si (config-new-module) nem para escrever a entidade rica com validacoes (module-entity).'
+compatibility: claude-code, opencode
 ---
 
 # Module Aggregate

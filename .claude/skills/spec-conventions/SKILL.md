@@ -1,6 +1,7 @@
 ---
 name: spec-conventions
-description: Semeia e atualiza os extras de OpenSpec do projeto que nao fazem parte do init padrao — a pasta shared/ (como-executar e regras-de-nomenclatura), a pasta templates/ (modelo-base e modelo-crud), a pasta memory/ (produto, contexto-tecnico e estrutura, como esqueleto) e o EXECUTION-LOG.md na raiz do openspec. Roda logo apos o openspec init (ou para refrescar os templates canonicos em um projeto ja iniciado), de forma idempotente.
+description: 'Semeia e atualiza os extras de OpenSpec fora do init padrao: openspec/shared/ (como-executar, regras-de-nomenclatura), templates/ (modelo-base, modelo-crud), memory/ (esqueletos) e o EXECUTION-LOG.md, de forma idempotente. Usar logo apos o openspec init ou para refrescar os canonicos. Nao usar para instalar git/CI/gate (spec-init) nem para conduzir branches/PR (spec-flow).'
+compatibility: claude-code, opencode
 ---
 
 # Spec Conventions

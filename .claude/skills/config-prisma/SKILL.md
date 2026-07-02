@@ -1,6 +1,7 @@
 ---
 name: config-prisma
 description: "Inicializar e padronizar a infraestrutura do Prisma no backend NestJS do Genérico com schema modular por domínio (`apps/backend/prisma/models/*.model.prisma`), entrypoint de seed técnico em `apps/backend/prisma/seed/main.ts` (sem seeds de módulos), configuração de `prisma.config.ts`, Docker Compose do backend compatível com `DATABASE_URL` do `.env` e com nomes derivados da identidade do projeto, e criação/ajuste de `DbModule` + `PrismaService` simples no padrão atual do projeto. Usar quando o pedido envolver setup inicial de Prisma, onboarding de módulos com arquivo Prisma próprio ou rebootstrap da infraestrutura de banco no backend."
+compatibility: claude-code, opencode
 ---
 
 # Config Prisma

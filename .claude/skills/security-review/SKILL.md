@@ -1,6 +1,7 @@
 ---
 name: security-review
 description: Faz revisao defensiva de seguranca de codigo de um modulo ou PR contra o OWASP Top 10 (Web) e o OWASP API Security Top 10, aplicada aos padroes reais do projeto (NestJS, Prisma, Next, validacao compartilhada, ApiErrorResponse), produzindo um relatorio de achados com severidade, evidencia e remediacao apontando para as skills do catalogo. Nao escreve exploit nem faz pentest.
+compatibility: claude-code, opencode
 ---
 
 # Security Review

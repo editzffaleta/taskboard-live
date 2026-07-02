@@ -1,6 +1,7 @@
 ---
 name: config-package-shared
 description: Reconstrói o pacote compartilhado base da aplicação, concentrando contratos reutilizáveis, classes base, erros de domínio, casos de uso e validações consumidas pelo backend, frontend e módulos de negócio.
+compatibility: claude-code, opencode
 ---
 
 # Config Package Shared

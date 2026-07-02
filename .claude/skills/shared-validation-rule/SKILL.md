@@ -1,6 +1,7 @@
 ---
 name: shared-validation-rule
 description: Cria regras de validação reutilizáveis no pacote compartilhado da aplicação, seguindo o padrão existente de contratos, utilitários, códigos de erro, exports e testes unitários completos.
+compatibility: claude-code, opencode
 ---
 
 # Shared Validation Rule

@@ -1,6 +1,7 @@
 ---
 name: ddd-strategic-design
 description: Conduz o design estrategico de DDD antes da geracao tatica — identifica subdominios (core/supporting/generic), define bounded contexts e a linguagem ubiqua, mapeia os relacionamentos entre contextos (context mapping) e recomenda as fronteiras de modulo no monorepo, produzindo um mapa de contexto e um glossario que alimentam os geradores taticos do projeto.
+compatibility: claude-code, opencode
 ---
 
 # DDD Strategic Design

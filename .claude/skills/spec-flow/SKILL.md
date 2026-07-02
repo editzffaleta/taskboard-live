@@ -1,15 +1,7 @@
 ---
 name: spec-flow
-description: >-
-  Fluxo de trabalho padrão para QUALQUER projeto (sistema ou site):
-  cria o repositório no GitHub perguntando público ou privado, organiza o
-  trabalho em uma branch por mudança do OpenSpec, faz commits no padrão
-  Conventional Commits ligados à change, valida com lint/typecheck/test/build,
-  e só sobe pro main via Pull Request com CI verde — nunca quebrando o main.
-  Use esta skill SEMPRE que o usuário for iniciar um projeto novo, criar um
-  repositório no GitHub, começar ou continuar uma change do OpenSpec, fazer
-  commits, abrir um PR, ou subir/mergear algo no main — mesmo que ele não cite
-  explicitamente "OpenSpec", "commit", "deploy" ou "GitHub".
+description: 'Fluxo de trabalho git/GitHub padrao para QUALQUER projeto: cria o repositorio (publico/privado), uma branch por change do OpenSpec, Conventional Commits em portugues ligados a change, gate (lint/typecheck/test/build/segredos) e subida ao main SOMENTE via Pull Request com CI verde. Usar sempre que iniciar/continuar uma change, commitar, abrir PR ou subir para o main. Nao usar para instalar a camada de processo num projeto novo (spec-init) nem para validar artefatos de uma change antes do build (spec-analyze).'
+compatibility: claude-code, opencode
 ---
 
 # Spec Flow
@@ -84,67 +76,12 @@ ls openspec/changes 2>/dev/null                   # há changes do OpenSpec?
 
 ---
 
-## Fluxo A — Projeto novo no GitHub
+## Fluxo A — Projeto novo no GitHub (referência)
 
-> **Substituído.** No setup atual, projeto novo é: `config-project-fullstack`
-> (scaffold do monorepo) → `spec-init` (OpenSpec + CI + git + repo). Use este
-> Fluxo A só como fallback manual quando não estiver usando aquelas skills.
-
-1. **Pergunte e CONFIRME** antes de criar (esta é a parte "ele tem que me
-   perguntar"):
-   - Nome do repositório.
-   - Dono: conta pessoal **ou** uma organização.
-   - Visibilidade: **público** ou **privado**.
-   - Descrição curta.
-   - Já existe código/boilerplate na pasta, ou começa do zero?
-
-   Mostre um resumo (`dono/nome`, visibilidade, descrição) e só prossiga com o
-   "ok".
-
-2. Inicialize o git local (se ainda não for repo), já com `main` como default:
-   ```bash
-   git init -b main
-   ```
-
-3. Garanta a higiene básica (sem sobrescrever o que o usuário já trouxe):
-   - `.gitignore` com pelo menos: `node_modules`, `.env*`, `dist`, `.next`,
-     `build`, `coverage`, `.turbo`.
-   - `README.md` mínimo.
-   - `LICENSE` se for público.
-
-4. Inicialize o OpenSpec (cria `openspec/project.md` + estrutura):
-   ```bash
-   openspec init
-   ```
-
-5. **Adicione os arquivos do gate/CI** (copie os templates desta skill para o
-   repo — caminhos relativos ao diretório da skill, disponível em runtime):
-   ```bash
-   mkdir -p .github/workflows scripts/ci
-   cp "<SKILL_DIR>/assets/ci.yml"   .github/workflows/ci.yml
-   cp "<SKILL_DIR>/assets/gate.sh"  scripts/ci/gate.sh
-   chmod +x scripts/ci/gate.sh
-   ```
-   > `<SKILL_DIR>` é o diretório base desta skill, fornecido automaticamente
-   > quando ela é invocada.
-
-6. Commit inicial e criação do repo remoto + push (CONFIRME antes):
-   ```bash
-   git add -A
-   git commit -m "chore: bootstrap do projeto"
-   gh repo create <dono>/<nome> --<publico|privado> --source=. --remote=origin --push
-   ```
-
-7. **Proteja o `main`** (best-effort; não é fatal se falhar por plano/permissão).
-   Isso é o que torna "não quebrar o main" uma regra da plataforma, não só uma
-   promessa. Comando completo em `references/setup.md`; em resumo: exigir PR e
-   o check `validate` verde para mergear.
-
-8. Confirme a URL do repositório pro usuário.
-
-Depois disso, siga pro Fluxo B para começar a primeira mudança.
-
----
+Criação do repositório (pergunta público/privado), branch `main` protegida, primeiro push e
+vínculo com o OpenSpec — passo a passo completo com comandos `gh` em
+[references/fluxos-a-d.md](references/fluxos-a-d.md). Não prossiga sem identidade git
+configurada e `gh auth status` ok (pré-requisitos desta skill).
 
 ## Fluxo B — Trabalhar numa change (OpenSpec)
 
@@ -198,76 +135,12 @@ Detalhe completo em `references/conventions.md`. O essencial:
 
 ---
 
-## Fluxo D — Gate + subir pro main (o ponto crítico)
+## Fluxo D — Gate + subir pro main (o ponto crítico, referência)
 
-Faça **nesta ordem**. Qualquer vermelho interrompe o fluxo.
-
-1. **Valide a spec da change:**
-   ```bash
-   openspec validate <change-id> --strict
-   ```
-   Falhou → corrija o conteúdo da change e repita.
-
-2. **Rode o gate localmente** (mesmo conjunto de checks que o CI vai rodar —
-   roda só os scripts que existem no `package.json`):
-   ```bash
-   bash scripts/ci/gate.sh
-   ```
-   Vermelho → **pare**, mostre o erro, conserte, e rode de novo. Não avance.
-
-3. **Confira ausência de segredos** no que será enviado:
-   ```bash
-   git diff origin/main...HEAD --name-only
-   ```
-   Veja se não há `.env`, chaves ou credenciais. Se houver, remova e ajuste o
-   `.gitignore` antes de seguir.
-
-4. **Commit final + arquive a change na própria branch** (assim o merge já leva
-   as specs atualizadas pro `main` num PR só — sem push direto no `main`):
-   ```bash
-   git add -A && git commit -m "feat(<escopo>): <resumo>"   # se sobrou trabalho
-   openspec archive-change <change-id> --yes                        # mescla deltas em specs/ e move p/ archive/
-   git add -A && git commit -m "chore(openspec): arquiva change <change-id>"
-   ```
-   > Alternativa (se preferir verificar em produção antes de arquivar): mergeie
-   > primeiro e faça o `openspec archive-change` num PR pequeno depois. Padrão aqui é
-   > arquivar no mesmo PR.
-
-5. **Push da branch:**
-   ```bash
-   git push -u origin change/<change-id>
-   ```
-
-6. **Abra o PR** (CONFIRME antes). Título = resumo do `proposal.md`; corpo =
-   Por quê / O quê / Impacto (do proposal) + checklist das tasks + a linha
-   `Validado local: lint/typecheck/test/build ✅`:
-   ```bash
-   gh pr create --base main --title "<resumo>" --body-file <arquivo-de-corpo>
-   ```
-
-7. **Espere o CI ficar verde** (é o gate de verdade):
-   ```bash
-   gh pr checks --watch
-   ```
-   Vermelho → conserte, commite, dê push de novo, repita. **Nunca** mergeie
-   vermelho.
-
-8. **(Opcional) revisão da Calie**, se combinado para esta change.
-
-9. **Merge** (CONFIRME antes):
-   ```bash
-   gh pr merge --squash --delete-branch
-   ```
-
-10. **Atualize o `main` local:**
-    ```bash
-    git switch main && git pull
-    ```
-
-Pronto: o main só recebeu código validado, as specs estão sincronizadas, e a
-change está arquivada como histórico.
-
----
+Regra inegociável: **nada sobe pro `main` sem `bash scripts/ci/gate.sh` verde local + PR com
+CI verde** — nunca push direto. Sequência completa (gate → push da branch → PR → aguardar CI →
+merge → sync local → archive da change) com todos os comandos e tratamentos de falha em
+[references/fluxos-a-d.md](references/fluxos-a-d.md).
 
 ## Comandos de referência (cola)
 
@@ -294,5 +167,5 @@ git switch main && git pull
 Leia conforme precisar:
 - `references/conventions.md` — padrão de commit, branch e PR.
 - `references/setup.md` — setup único da máquina e proteção do `main`.
-- `assets/ci.yml` — workflow de CI copiado pra cada repo.
-- `assets/gate.sh` — runner do gate (local e CI).
+- CI e gate são **canônicos na skill `spec-init`** (`../spec-init/assets/ci.yml` e `gate.sh`) —
+  esta skill copia de lá; não manter cópia própria (evita drift, como o que já aconteceu).

@@ -73,7 +73,7 @@ a **implementação principal** das tasks das changes. Grupos: Projeto (`config-
 (`config-package-shared`, `config-prisma`, `backend-nest-config`, `frontend-next-config`), Domínio
 (`module-*`), Backend (`backend-*`), Frontend (`frontend-next-config`, `spec-frontend-auth`),
 Segurança (`backend-authorization`, `security-review`, `security-threat-model`), E2E
-(`e2e-playwright`), Deploy (`deploy-node-ubuntu-vps`), Fluxo (`spec-flow`, `spec-analyze`, `spec-conventions`).
+(`e2e-playwright`), Deploy (`deploy-dokploy`), Fluxo (`spec-flow`, `spec-analyze`, `spec-conventions`).
 A referência rápida com a ordem de uso está no `WORKFLOW.md`.
 
 ## Fluxo (resumo)

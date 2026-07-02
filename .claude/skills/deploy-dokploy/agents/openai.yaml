@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Deploy com Dokploy'
+  short_description: 'Publicar backend, frontend e PostgreSQL em VPS via Dokploy (branch producao)'
+  default_prompt: 'Faça o deploy do monorepo no Dokploy: crie o projeto, o PostgreSQL gerenciado, os serviços de backend (porta 4000) e frontend (porta 3000) a partir da branch producao com Dockerfiles, configure domínios com SSL, variáveis de ambiente no painel, migrations, backup agendado e auto-deploy por webhook, seguindo as regras da skill deploy-dokploy.'

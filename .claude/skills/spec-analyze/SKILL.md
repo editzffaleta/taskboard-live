@@ -1,17 +1,7 @@
 ---
 name: spec-analyze
-description: >-
-  Portão de consistência PRE-BUILD de uma change do OpenSpec — roda DEPOIS da
-  proposta (proposal/design/tasks/specs prontos) e ANTES de qualquer
-  implementação. Analisa, de forma somente-leitura, a coerência cruzada entre os
-  artefatos (cobertura requirement↔task, design vs proposal, deltas
-  ADDED/MODIFIED/REMOVED vs a fonte da verdade) e a conformidade com a
-  Constituição do projeto (openspec/memory/constitution.md), além de ambiguidade
-  e terminologia. Emite um relatório PASS/FAIL. Use SEMPRE que for começar a
-  construir uma change, retomar uma change para implementar, ou revisar uma
-  proposta antes de delegar aos especialistas — mesmo sem citar "analisar" ou
-  "consistência". NÃO implementa, NÃO roda o gate de teste e NÃO arquiva (isso é
-  do /portao e do spec-flow).
+description: 'Portao de consistencia PRE-BUILD de uma change do OpenSpec: analise somente-leitura da coerencia cruzada dos artefatos (cobertura requirement-task, design vs proposal, deltas vs openspec/specs/) e da conformidade com a Constituicao (openspec/memory/constitution.md), emitindo relatorio PASS/FAIL. Usar SEMPRE antes de implementar uma change (comando /analisar). Nao usar como portao pos-build de codigo (isso e o /portao com gate.sh) nem para criar/editar artefatos — e leitura pura.'
+compatibility: claude-code, opencode
 ---
 
 # Spec Analyze

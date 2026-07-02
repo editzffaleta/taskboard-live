@@ -1,6 +1,7 @@
 ---
 name: e2e-playwright
 description: Cria e roda testes end-to-end com Playwright sobre o stack do projeto (backend NestJS :4000 + frontend Next.js :3000), cobrindo os fluxos criticos (registro -> login -> acao principal do modulo). Padroniza setup, baseURL, webServer, page objects por data-testid, autenticacao via storageState e a integracao com o gate de qualidade. Use quando o pedido envolver teste e2e, fluxo de ponta a ponta, smoke de UI ou cobertura de jornada do usuario.
+compatibility: claude-code, opencode
 ---
 
 # E2E Playwright

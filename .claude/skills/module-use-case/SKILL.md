@@ -1,6 +1,7 @@
 ---
 name: module-use-case
 description: Cria casos de uso padronizados para agregados dos módulos de negócio, com contratos de entrada e saída consistentes, implementação inicial simples, testes unitários completos e estrutura pronta para evolução pelo time.
+compatibility: claude-code, opencode
 ---
 
 # Module Use Case
@@ -160,31 +161,10 @@ Regras:
 
 ## Regras por tipo de cenario
 
-### `crud`
-
-Para `crud`, siga uma implementacao minima e previsivel, compativel com casos como:
-
-- criar;
-- atualizar;
-- excluir;
-- buscar por id;
-- buscar pagina.
-
-Nesses cenarios:
-
-- prefira dependencias simples, normalmente repositorios;
-- reutilize tipos e contratos ja existentes do agregado;
-- mantenha fluxo direto, sem condicoes extras desnecessarias;
-- so adicione validacao extra quando o pedido trouxer essa necessidade explicitamente ou quando o padrao do modulo ja exigir.
-
-### `custom`
-
-Para `custom`:
-
-- monte o caso de uso com base no que o usuario descreveu;
-- continue com implementacao inicial simples e pouco opinativa;
-- quando houver lacunas, prefira contratos minimos e placeholders uteis em vez de inventar comportamento detalhado;
-- trate dependencias externas como contratos injetados pelo construtor.
+Cada tipo de caso de uso (criacao, atualizacao, exclusao, consulta com regra, comando
+composto) tem regras proprias de validacao, erros de dominio e retorno. Tabela completa em
+[references/regras-cenarios-testes-fakes.md](references/regras-cenarios-testes-fakes.md).
+Na duvida sobre o tipo, classificar pelo efeito colateral principal e registrar na evidencia.
 
 ## Regras para dependencias
 
@@ -194,54 +174,12 @@ Para `custom`:
 - Se o pedido citar dependencias esperadas, respeite isso.
 - Se o caso de uso so orquestra uma chamada simples, nao crie camadas extras.
 
-## Regras dos testes unitarios
+## Regras dos testes unitarios e reuso de fakes
 
-O teste do caso de uso e obrigatorio.
-
-Destino preferencial:
-
-- `modules/<modulo>/test/<aggregate>/usecase/<use-case>.usecase.test.ts`
-
-Cobertura minima obrigatoria do teste:
-
-1. caminho feliz;
-2. falhas de validacao, quando existirem;
-3. dependencias chamadas ou nao chamadas conforme o fluxo;
-4. todos os branches e condicionais existentes;
-5. retorno esperado, quando houver saida;
-6. comportamento quando erro e propagado ou tratado;
-7. ausencia de efeitos colaterais quando o fluxo falhar antes do ponto critico.
-
-Regras de qualidade:
-
-- use implementacoes fake reais e concretas, nao mocks de framework como estrategia principal;
-- priorize fakes existentes do modulo antes de criar novas;
-- se existir fake adequada, reutilize-a e nao duplique;
-- se nao existir fake adequada para uma dependencia essencial, crie uma fake simples e reutilizavel em `modules/<modulo>/test/mock/`;
-- ao criar nova fake, exporte-a tambem em `modules/<modulo>/test/mock/index.ts`;
-- use spies apenas como apoio pontual sobre classes concretas ou prototipos, como no exemplo de `User.prototype.validate`;
-- escreva testes reais e uteis, nao superficiais.
-
-## Reuso de fakes
-
-Antes de criar uma fake nova, procure por:
-
-- `modules/<modulo>/test/mock/fake-<aggregate>.repository.ts`
-- outros `fake-*.ts` em `modules/<modulo>/test/mock/`
-- exports existentes em `modules/<modulo>/test/mock/index.ts`
-
-Se uma fake cobrir a dependencia:
-
-- reutilize a classe existente;
-- adapte o teste ao contrato dela;
-- evite duplicacao com outro nome.
-
-Se uma fake nao existir e for essencial:
-
-- crie uma classe concreta simples;
-- mantenha armazenamento em memoria ou comportamento previsivel;
-- evite `jest.fn()` como estrutura principal da fake;
-- deixe a fake pronta para ser reutilizada por outros testes do modulo.
+Todo caso de uso nasce com testes usando os fakes de `test/mock/` (nunca mockar Prisma
+direto); cenario feliz + cada erro de dominio coberto. Regras completas (nomenclatura,
+cobertura minima, quando criar fake novo vs reusar) em
+[references/regras-cenarios-testes-fakes.md](references/regras-cenarios-testes-fakes.md).
 
 ## Exports e integracao
 

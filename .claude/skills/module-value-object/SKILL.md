@@ -1,6 +1,7 @@
 ---
 name: module-value-object
 description: Cria Value Objects de domínio padronizados para os módulos da aplicação — imutáveis, validados de forma eager na fábrica, com igualdade por valor e testes unitários completos —, seguindo o conceito de DDD e reaproveitando as regras de validação compartilhadas do projeto.
+compatibility: claude-code, opencode
 ---
 
 # Module Value Object

@@ -1,6 +1,7 @@
 ---
 name: backend-prisma-sync-module
-description: 'Sincronizar um módulo de domínio com o Prisma do backend. Usar quando o pedido envolver analisar entidades em `modules/<modulo>/src`, criar ou atualizar `apps/backend/prisma/models/<modulo>.model.prisma`, gerar migration incremental nomeada por módulo, aplicar a migration e manter o schema Prisma alinhado com as entidades que herdam de `Entity`.'
+description: 'Sincronizar a ESTRUTURA de persistencia de um modulo: analisa entidades Entity<State> em modules/<modulo>, gera/atualiza apps/backend/prisma/models/<modulo>.model.prisma e cria/aplica migration incremental nomeada pelo modulo. Usar quando entidades nasceram ou mudaram e precisam virar schema + migration. Nao usar para implementar a classe repositorio Prisma de uma interface (backend-prisma-repository) nem para criar DTOs/controllers/seeds.'
+compatibility: claude-code, opencode
 ---
 
 # Backend Sync Module Prisma

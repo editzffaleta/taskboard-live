@@ -1,6 +1,7 @@
 ---
 name: config-project-fullstack
 description: Deterministically create a new Turbo monorepo from zero in the current directory with an apps/frontend Next.js app on port 3000 and an apps/backend NestJS app on port 4000, including CORS, @nestjs/config, .env.example and .env files, optional workspace package namespace rewriting, and a guard against rerunning inside an already-created workspace.
+compatibility: claude-code, opencode
 ---
 
 # Config Project Fullstack

@@ -1,6 +1,7 @@
 ---
 name: config-new-module
-description: Criar de forma deterministica um novo modulo de negocio dentro de `modules/` neste monorepo a partir de um nome de modulo e de um namespace npm obrigatorio, scaffoldar o modulo NestJS correspondente em `apps/backend/src/modules/<nome-do-modulo>` com controller e registro automatico no AppModule, e criar a estrutura base do modulo no frontend em `apps/frontend/src/app/(private)/<nome-do-modulo>/page.tsx`, `apps/frontend/src/modules/<nome-do-modulo>/pages/<nome-do-modulo>.page.tsx` e `apps/frontend/src/modules/<nome-do-modulo>/components/<nome-do-modulo>.component.tsx`. Use quando Codex precisar scaffoldar um workspace como `modules/auth`, copiar os templates fixos desta skill, registrar a dependencia do modulo em `apps/frontend` e `apps/backend`, garantir `ts-node` e `modules/*` no `package.json` raiz, instalar dependencias, executar o build do projeto e rodar os testes do modulo recem-criado.
+description: 'Criar de forma deterministica um novo modulo de negocio: workspace em modules/<nome> a partir do namespace npm, scaffold NestJS em apps/backend/src/modules/<nome> com controller registrado no AppModule, estrutura base no frontend (page/pages/components), dependencias registradas, build e testes do modulo. Usar para dar vida a um modulo NOVO (ex.: modules/auth). Nao usar para criar agregados/entidades/casos de uso dentro de um modulo existente (module-aggregate, module-entity, module-use-case).'
+compatibility: claude-code, opencode
 ---
 
 # Config New Module

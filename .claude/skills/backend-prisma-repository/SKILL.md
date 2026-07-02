@@ -1,6 +1,7 @@
 ---
 name: backend-prisma-repository
-description: 'Criar a implementacao Prisma de uma interface de repositorio de um modulo de dominio dentro do backend NestJS. Usar quando o pedido envolver informar explicitamente uma interface de repositorio em `modules/<modulo>/src/**`, gerar o arquivo `*.prisma.ts` correspondente direto em `apps/backend/src/modules/<modulo>` por padrao, registrar a classe concreta no modulo Nest com `DbModule` e `PrismaService`, e conectar operacoes basicas de banco como `create`, `update`, `delete`, `findById` e `findPage`.'
+description: 'Implementar a CLASSE Prisma de uma interface de repositorio ja definida no dominio: gera o *.prisma.ts em apps/backend/src/modules/<modulo>, registra no modulo Nest (DbModule/PrismaService) e conecta create/update/delete/findById/findPage. Usar quando a interface existe e falta a implementacao concreta. Nao usar para gerar schema/migrations a partir de entidades (backend-prisma-sync-module) nem para definir o contrato do repositorio no dominio (module-repository).'
+compatibility: claude-code, opencode
 ---
 
 # Backend Prisma Repository

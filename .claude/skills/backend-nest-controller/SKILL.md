@@ -1,6 +1,7 @@
 ---
 name: backend-nest-controller
 description: Cria controllers padronizados no backend NestJS para expor casos de uso dos módulos de negócio, reaproveitando contratos existentes, integrando autenticação quando necessário, respeitando o tratamento centralizado de erros da aplicação e gerando testes de integração HTTP em formato Rest Client.
+compatibility: claude-code, opencode
 ---
 
 # Backend Nest Controller

@@ -1,6 +1,7 @@
 ---
 name: backend-provider-implementation
 description: Implementa no backend NestJS os providers técnicos definidos nos módulos de negócio, criando classes concretas simples, integrando dependências externas quando necessário e registrando essas implementações para uso pelos controllers e casos de uso.
+compatibility: claude-code, opencode
 ---
 
 # Backend Provider Implementation

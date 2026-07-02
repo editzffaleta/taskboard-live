@@ -6,6 +6,15 @@ argument-hint: "[id-da-mudanca opcional, ex.: 003 — para retomar de um ponto]"
 Aja como o agente **orchestrator-fullstack** (`.claude/agents/orchestrator-fullstack.md`) e
 conduza a implementacao seguindo a change **000-orquestracao-execucao** (o maestro).
 
+## Pre-condicoes (verifique antes)
+
+```bash
+command -v openspec >/dev/null || echo "FALTA openspec CLI"
+test -f openspec/changes/000-orquestracao-execucao/tasks.md || echo "FALTA o ledger (change 000) em openspec/changes/"
+test -f openspec/EXECUTION-LOG.md || echo "FALTA EXECUTION-LOG.md — rode a spec-conventions"
+test -f scripts/ci/gate.sh || echo "FALTA gate.sh — rode /inicializar antes"
+```
+
 Regras (do design da 000):
 - Voce e o dono da sequencia, do portao de qualidade e do ledger (a `tasks.md` da 000).
 - Execucao **sequencial, nunca paralela**. A ordem numerica e a ordenacao topologica.

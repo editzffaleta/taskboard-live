@@ -10,6 +10,13 @@ NAO e uma change do OpenSpec — e o passo **pre-OpenSpec** que INSTALA o OpenSp
 
 Execute na ordem, parando para confirmar acoes publicas/irreversiveis:
 
+## 0. Pre-condicao (verifique antes)
+
+```bash
+test -d changes-templates && test -d .claude/skills && echo "template OK" \
+  || echo "rode este comando na RAIZ da copia do template (faltam changes-templates/ ou .claude/skills/)"
+```
+
 ## 1. Monorepo (se ainda nao existir)
 Verifique:
 ```bash

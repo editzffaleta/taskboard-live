@@ -1,6 +1,6 @@
 ---
 name: e2e-specialist
-description: Especialista sênior em testes end-to-end e no portão de qualidade. Use para escrever e rodar fluxos e2e e garantir que o gate (lint, typecheck, testes, build) passa antes do PR.
+description: Especialista sênior em testes end-to-end e no portão de qualidade. Use para escrever e rodar fluxos e2e e garantir que o gate (lint, typecheck, testes, build + gitleaks, npm audit, Semgrep, Trivy) passa antes do PR.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---

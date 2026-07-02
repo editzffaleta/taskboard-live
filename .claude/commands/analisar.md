@@ -8,6 +8,14 @@ Rode a **analise de consistencia pre-build** da skill **`spec-analyze`** para a 
 `$ARGUMENTS`. E o passo **depois da proposta, antes do build** — o complemento do `/portao`
 (que e pos-build). **Somente-leitura:** nao edite, nao rode o gate, nao arquive.
 
+## Pre-condicoes (verifique antes)
+
+```bash
+command -v openspec >/dev/null || echo "FALTA openspec CLI"
+openspec status --change "$ARGUMENTS" --json >/dev/null 2>&1 || echo "mudanca nao encontrada — confira o id"
+test -f openspec/memory/constitution.md || echo "FALTA constitution.md — rode a spec-conventions"
+```
+
 Se nenhum id vier em `$ARGUMENTS`, use a change ativa / a primeira nao concluida do ledger
 (`tasks.md` da `000`).
 

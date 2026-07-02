@@ -1,0 +1,44 @@
+# =============================================================================
+# Frontend Next.js standalone (monorepo npm workspaces) — multi-stage p/ Dokploy
+# Copie para: apps/frontend/Dockerfile  ·  Build context: RAIZ do monorepo
+# Requisito: next.config com `output: 'standalone'`.
+# NEXT_PUBLIC_* é BUILD-TIME: passe como ARG no painel do Dokploy (Build args).
+# =============================================================================
+
+# ---- 1) Build ---------------------------------------------------------------
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY package.json package-lock.json turbo.json ./
+COPY apps/frontend/package.json apps/frontend/
+COPY packages ./packages
+COPY modules ./modules
+RUN npm ci
+
+COPY . .
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+    NEXT_TELEMETRY_DISABLED=1
+RUN npm run build --workspace apps/frontend
+
+# ---- 2) Runner (só o standalone) ---------------------------------------------
+FROM node:20-alpine AS runner
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    HOSTNAME=0.0.0.0 \
+    PORT=3000
+WORKDIR /app
+
+# No monorepo, o standalone replica a árvore: o server.js fica em apps/frontend/
+COPY --from=builder --chown=node:node /app/apps/frontend/.next/standalone ./
+COPY --from=builder --chown=node:node /app/apps/frontend/.next/static ./apps/frontend/.next/static
+COPY --from=builder --chown=node:node /app/apps/frontend/public ./apps/frontend/public
+
+USER node
+EXPOSE 3000
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
+  CMD wget -qO- http://127.0.0.1:3000 || exit 1
+
+CMD ["node", "apps/frontend/server.js"]

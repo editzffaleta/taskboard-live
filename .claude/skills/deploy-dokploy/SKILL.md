@@ -48,8 +48,10 @@ SSL automático, backups e auto-deploy por webhook. Instruções em português d
 ## Passo a passo
 
 1. **Pré-check do repositório** — Dockerfiles presentes e válidos:
-   `ls apps/backend/Dockerfile apps/frontend/Dockerfile` → devem existir (criados na fase de
-   infra do template). Verificação: `docker build -f apps/backend/Dockerfile .` local conclui.
+   `ls apps/backend/Dockerfile apps/frontend/Dockerfile .dockerignore` → devem existir. Se
+   faltarem, copie de `<SKILL_DIR>/assets/` (`Dockerfile.backend`, `Dockerfile.frontend`,
+   `dockerignore` → `.dockerignore` na raiz) e ajuste os TODO do cabeçalho.
+   Verificação: `docker build -f apps/backend/Dockerfile .` local conclui.
 2. **Projeto no Dokploy** — criar *Project* `{{produto}}`; dentro dele os serviços.
 3. **PostgreSQL gerenciado** — *Create Service → Database → PostgreSQL*; anotar host interno
    (nome do serviço), usuário, senha, database. Verificação: status `running` no painel.

@@ -107,7 +107,7 @@ Sequência e critério de pronto:
 | 3 | Higiene: `.editorconfig`, `.nvmrc`, README, `.env` ignorado + `.env.example` versionado, `.gitignore` endurecido (chaves/certificados/uploads), `.gitleaksignore` | arquivos presentes; `git check-ignore .env` responde |
 | 4 | Qualidade e gate: copia `assets/ci.yml` → `.github/workflows/ci.yml`, `assets/gate.sh` → `scripts/ci/gate.sh`, `assets/gitleaks-scan.sh`; scripts npm | `bash scripts/ci/gate.sh` roda (mesmo que amarelo em projeto vazio) |
 | 5 | Git hooks (opcional — **pergunte**): instala `assets/githooks` (pre-commit com gitleaks) via `core.hooksPath` | `git config core.hooksPath` aponta para os hooks |
-| 6 | GitHub (opcional): `assets/pull_request_template.md` e `assets/dependabot.yml` | arquivos em `.github/` |
+| 6 | GitHub (opcional): `assets/pull_request_template.md`, `assets/dependabot.yml` e `assets/SECURITY.md` (raiz, com `{{email-seguranca}}` preenchido) | arquivos em `.github/` + `SECURITY.md` na raiz |
 | 7 | Commit inicial + repositório remoto (delega criação ao fluxo padrão quando existir) | commit feito; remoto configurado se solicitado |
 
 > Fases opcionais (5 e 6) **sempre perguntam** antes; nunca instalar hooks sem consentimento.

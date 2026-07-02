@@ -47,6 +47,11 @@ services:
 
 ## Dockerfile — pontos que quebram no Dokploy
 
+> **Assets prontos**: `assets/Dockerfile.backend`, `assets/Dockerfile.frontend` e
+> `assets/dockerignore` já aplicam tudo abaixo (multi-stage, USER node, HEALTHCHECK,
+> `migrate deploy` no CMD). Copie e ajuste os TODO do cabeçalho.
+
+
 - **Next.js**: `output: 'standalone'` no `next.config`; copiar `.next/standalone` + `.next/static`;
   `ENV HOSTNAME=0.0.0.0`; `EXPOSE 3000`; `CMD ["node","server.js"]`.
 - **NestJS**: build com dev-deps, imagem final só com `dist` + `node_modules` de produção +

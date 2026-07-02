@@ -86,13 +86,17 @@ E adicione ao `package.json` (pra ativar nos clones via `npm install`):
 
 ---
 
-## Fase 6 — GitHub: PR template e Dependabot (opcional)
+## Fase 6 — GitHub: PR template, Dependabot e SECURITY.md (opcional)
 
 ```bash
 mkdir -p .github
 [ -f .github/pull_request_template.md ] || cp "<SKILL_DIR>/assets/pull_request_template.md" .github/pull_request_template.md
 [ -f .github/dependabot.yml ]           || cp "<SKILL_DIR>/assets/dependabot.yml" .github/dependabot.yml
+[ -f SECURITY.md ]                      || cp "<SKILL_DIR>/assets/SECURITY.md" SECURITY.md
 ```
+
+> No `SECURITY.md`, substitua `{{email-seguranca}}` pelo contato real do projeto (pergunte ao
+> humano). Ele habilita o aviso de política de segurança no GitHub (aba *Security*).
 
 ---
 

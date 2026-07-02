@@ -50,6 +50,15 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 - **Skills**: module-entity, module-aggregate, module-repository, module-use-case,
   backend-prisma-sync-module, backend-prisma-repository, backend-nest-controller.
 
+## Mockups (Claude Design) — inclusão condicional por tela
+
+- Tela desta change **com** mockup do Claude Design → o mockup vive **dentro desta change**, em
+  `mockups/<tela>/` (ex.: `mockups/a2-mfa/`). Tela **sem** mockup **não** gera subpasta — siga
+  apenas este design.
+- Execução: **reproduza fielmente o layout do mockup**, substituindo **todo dado fake/placeholder
+  por dado real** vindo do backend — proibido lorem/valor mockado no código final.
+- Os códigos de tela citados referem-se a esses mockups; ajuste-os ao seu projeto.
+
 ## Risks / Trade-offs
 
 - [Tamanho — MFA muda o login] → A mudanca e coesa (seguranca de acesso) mas grande; agrupada por

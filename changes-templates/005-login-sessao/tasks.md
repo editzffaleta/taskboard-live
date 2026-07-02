@@ -40,13 +40,15 @@ Cada task tem **Aceite**. Placeholders: {{produto}}, {{namespace}}. -->
   - **Aceite:** hidratacao na montagem; `login` grava cookie `expires: 7` / `sameSite: 'lax'` / `secure` em producao; `useAuth()` lanca fora do provider.
 - [ ] 3.5 Criar `AuthGuard` (`modules/auth/guard/auth.guard.tsx`): `loading` → placeholder neutro; `unauthenticated` → `router.replace('/join')` + `null`; `authenticated` → `children`.
   - **Aceite:** placeholder neutro com `aria-busy`; redirect via `useEffect`.
-- [ ] 3.6 Envolver `app/(private)/layout.tsx` com `<AuthGuard>` e garantir o `<AuthProvider>` cobrindo `(public)` e `(private)` (provider no `app/layout.tsx` raiz). Substituir os valores hardcoded de usuario no `AdminShell` por `useAuth()`; `onLogout` chama `auth.logout()` + `router.push('/join')`.
-  - **Aceite:** provider no root (dentro do ThemeProvider); guard no layout privado; header consome `name`/`email` do contexto; TODO de guard removido.
-- [ ] 3.7 Integrar o formulario de **login** (onde ele vive — tipicamente `app/(public)/join/page.tsx`): `POST {NEXT_PUBLIC_API_URL}/auth/login` com `{ email, password }`; sucesso (200) → `auth.login(token)` + `router.push` para a rota privada inicial (placeholder); erro → iterar `errors[]` com um `toast.error(getMessage(code))` por item.
+- [ ] 3.6 Registrar o `<AuthProvider>` no `app/layout.tsx` raiz (cobrindo `(public)` e `(private)`, dentro do ThemeProvider) e envolver `app/(private)/layout.tsx` com `<AuthGuard>`.
+  - **Aceite:** provider no root (dentro do ThemeProvider); guard no layout privado; TODO de guard removido.
+- [ ] 3.7 Substituir os valores hardcoded de usuario no `AdminShell` por `useAuth()`; `onLogout` chama `auth.logout()` + `router.push('/join')`.
+  - **Aceite:** header consome `name`/`email` do contexto; logout limpa a sessao e redireciona.
+- [ ] 3.8 Integrar o formulario de **login** (onde ele vive — tipicamente `app/(public)/join/page.tsx`): `POST {NEXT_PUBLIC_API_URL}/auth/login` com `{ email, password }`; sucesso (200) → `auth.login(token)` + `router.push` para a rota privada inicial (placeholder); erro → iterar `errors[]` com um `toast.error(getMessage(code))` por item.
   - **Aceite:** inputs controlados; sucesso grava sessao e redireciona; erro com toasts por item + fallback; botao em estado "Entrando…".
-- [ ] 3.8 Em `/join`, detectar sessao ativa via `useAuth()` e redirecionar para a rota privada inicial quando `authenticated`; enquanto `loading`, nao renderizar formulario.
+- [ ] 3.9 Em `/join`, detectar sessao ativa via `useAuth()` e redirecionar para a rota privada inicial quando `authenticated`; enquanto `loading`, nao renderizar formulario.
   - **Aceite:** `router.replace` quando autenticado; placeholder neutro enquanto carrega (sem flash).
-- [ ] 3.9 Validar manualmente no navegador: login valido (cookie, redirect, nome acentuado no header); senha errada → toaster generico, sem cookie; inativo → toaster `user.inactive`; reload mantem sessao sem flash; rota privada deslogado → `/join`; `/join` logado → rota inicial; logout remove cookie e volta a `/join`.
+- [ ] 3.10 Validar manualmente no navegador: login valido (cookie, redirect, nome acentuado no header); senha errada → toaster generico, sem cookie; inativo → toaster `user.inactive`; reload mantem sessao sem flash; rota privada deslogado → `/join`; `/join` logado → rota inicial; logout remove cookie e volta a `/join`.
   - **Aceite:** evidencia dos cenarios acima.
 
 ## 4. Verificacao

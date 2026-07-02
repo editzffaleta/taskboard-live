@@ -8,6 +8,18 @@ Os papeis (`colaborador|lider|admin_org|super_admin`) sao o default desta famili
 ajuste a lista se o seu projeto usar outros papeis.
 -->
 
+
+> **CONTRATO DE LEITURA (obrigatório) — abra APENAS isto, nesta ordem:**
+> `openspec/project.md` · `AGENTS.md` (raiz) · `openspec/EXECUTION-LOG.md` ·
+> `openspec/shared/` · `openspec/specs/registro-usuario/spec.md` (se existir) · esta change
+> (`proposal.md`, `design.md`, `tasks.md`, `specs/`, `mockups/` se houver) · e, **somente se o
+> `design.md` citar nominalmente**: arquivos de código listados, `openspec/templates/`,
+> `openspec/memory/`.
+> **NÃO ler:** o repositório inteiro, outras changes, `openspec/changes/archive/`. Faltou
+> contexto? O defeito é do `design.md` — pare e corrija o trilho; não abra o contexto.
+> **Ao concluir:** `/portao` verde → commit → `/openspec:archive` → atualizar
+> `openspec/EXECUTION-LOG.md` → **zerar o chat** antes da próxima change.
+
 ## Why
 
 Com a base tecnica (`001`), o design system (`002`) e a fundacao multi-tenant (`003`) prontos, o

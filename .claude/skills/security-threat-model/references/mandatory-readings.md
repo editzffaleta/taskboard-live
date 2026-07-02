@@ -6,7 +6,7 @@ Antes de modelar as ameacas, leia:
 2. O context map / saida do `ddd-strategic-design`, quando houver (contextos e fronteiras).
 3. `references/stride-guide.md` — as 6 categorias e as perguntas por fronteira.
 4. `references/threat-model.template.md` — o formato de saida.
-5. O catalogo de papeis/permissoes da `006-rbac-permissoes` (para as ameacas de E e I).
+5. O catalogo de papeis/permissoes da `006a-rbac-mecanismo` (para as ameacas de E e I).
 
 Skills relacionadas (mitigacao/handoff):
 - `backend-authorization` (RBAC, ownership, escopo de tenant)

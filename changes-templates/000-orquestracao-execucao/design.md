@@ -90,7 +90,11 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 4. **Portao de qualidade (orquestrador)**: Definition of Done (§7). Se falhar, **nao avanca** —
    devolve ao especialista ou pausa para o humano. (Comando `/portao`.)
 5. **Arquivar/sincronizar**: `/openspec:archive <mudanca>` (e/ou `/openspec:sync`).
-6. **Registrar**: `commit` do diff, marca o checkbox no ledger com evidencia, segue.
+6. **Registrar**: `commit` do diff, marca o checkbox no ledger com evidencia e **atualiza
+   `openspec/EXECUTION-LOG.md`** (data, mudanca, commit, observacoes) — e a unica memoria que
+   sobrevive entre sessoes.
+7. **Zerar o contexto**: encerrar a sessao/chat antes da proxima mudanca. A proxima comeca do zero
+   lendo o `EXECUTION-LOG.md` + o contrato de leitura da propria change.
 
 > **Dois portoes, momentos diferentes**: `/analisar` (passo 2) e **pre-build** — valida os
 > *artefatos* da change antes de implementar; `/portao` (passo 4) e **pos-build** — valida o

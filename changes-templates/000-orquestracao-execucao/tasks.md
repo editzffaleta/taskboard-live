@@ -55,14 +55,17 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 1.4 `004-registro-usuario` — modulo `auth`, agregado `user`, `crypto.provider`,
   `register-user`, `/auth/register`. **Pre:** `003`.
 - [ ] 1.5 `005-login-sessao` — `login-user`, JWT (`role`+`organizationId`), `AuthContext`/`AuthGuard`. **Pre:** `003`, `004`.
-- [ ] 1.6 `006-rbac-permissoes` — catalogo de permissoes, modulo `access`, guards de papel/permissao, bootstrap do admin. **Pre:** `004`, `005`. *(densa)*
+- [ ] 1.6 `006a-rbac-mecanismo` — catalogo de permissoes, modulo `access`, guards de papel/permissao, `GET /me/permissions`, bootstrap do Super Admin. **Pre:** `004`, `005`.
+- [ ] 1.7 `006b-rbac-gating-ui` — efetivas no client, gating de sidebar/rotas, telas D7/D8/D9. **Pre:** `006a`, `002`.
 
 ## 2. Pessoas
 
-- [ ] 2.1 `007-estrutura-organizacional` — agregados de estrutura, CRUD admin. **Pre:** `003`, `006`.
-- [ ] 2.2 `008-cadastro-colaboradores` — usuario com estrutura, aprovacao, convites. **Pre:** `006`, `007`, `004`. *(densa)*
-- [ ] 2.3 `009-mfa-recuperacao-primeiro-acesso` — MFA TOTP, login em duas etapas, reset/1º acesso. **Pre:** `005`, `004`.
-- [ ] 2.4 `010-perfil-usuario` — autosservico `/me` (perfil, troca de senha). **Pre:** `005`, `004`.
+- [ ] 2.1 `007-estrutura-organizacional` — agregados de estrutura, CRUD admin. **Pre:** `003`, `006a`.
+- [ ] 2.2 `008a-colaboradores-crud` — user com estrutura, CRUD revisado, telas D2/D3. **Pre:** `004`, `006a`, `006b`, `007`.
+- [ ] 2.3 `008b-colaboradores-aprovacao` — approve/reject com transicao validada, fila D29. **Pre:** `008a`.
+- [ ] 2.4 `008c-colaboradores-convites` — agregado `invitation`, aceite publico A6, gestao de convites. **Pre:** `008a`, `008b`.
+- [ ] 2.5 `009-mfa-recuperacao-primeiro-acesso` — MFA TOTP, login em duas etapas, reset/1º acesso. **Pre:** `005`, `004`.
+- [ ] 2.6 `010-perfil-usuario` — autosservico `/me` (perfil, troca de senha). **Pre:** `005`, `004`.
 
 <!-- ## 3. <proxima fase do seu produto> ... -->
 

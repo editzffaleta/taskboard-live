@@ -43,6 +43,15 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 - **Skills**: config-new-module, module-aggregate, module-entity, module-repository, module-use-case,
   backend-prisma-sync-module, backend-prisma-repository, backend-nest-controller.
 
+## Mockups (Claude Design) — inclusão condicional por tela
+
+- Tela desta change **com** mockup do Claude Design → o mockup vive **dentro desta change**, em
+  `mockups/<tela>/` (ex.: `mockups/d4-estrutura/`). Tela **sem** mockup **não** gera subpasta — siga
+  apenas este design.
+- Execução: **reproduza fielmente o layout do mockup**, substituindo **todo dado fake/placeholder
+  por dado real** vindo do backend — proibido lorem/valor mockado no código final.
+- Os códigos de tela citados referem-se a esses mockups; ajuste-os ao seu projeto.
+
 ## Risks / Trade-offs
 
 - [Tres CRUDs quase identicos podem inflar a mudanca] → A simetria e intencional; as tasks tratam os

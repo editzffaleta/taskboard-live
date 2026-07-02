@@ -1,10 +1,10 @@
 # Templates de Change (núcleo universal de plataforma)
 
 Templates reaproveitáveis das mudanças fundacionais, no **formato OpenSpec** (pasta por mudança com
-`proposal.md` + `design.md` + `tasks.md` + `specs/spec.md` + `.openspec.yaml`). São mais **detalhados
-e robustos** que os originais do AlphaBet — cada task tem **`Aceite:`** explícito, **`Pré:`** e
-guardrails inline ("não faça") — justamente para reduzir erro quando a execução roda em modelos mais
-baratos.
+`proposal.md` + `design.md` + `tasks.md` + `specs/spec.md` + `.openspec.yaml` + `mockups/`
+**condicional**). São mais **detalhados e robustos** que os originais do AlphaBet — cada task tem
+**`Aceite:`** explícito, **`Pré:`** e guardrails inline ("não faça") — justamente para reduzir erro
+quando a execução roda em modelos mais baratos.
 
 > **Escopo: núcleo universal `000–010`** — reaproveitável em **qualquer** projeto multi-tenant
 > (orquestração, fundação, design system, multi-tenancy, registro, login, RBAC, estrutura
@@ -26,19 +26,37 @@ baratos.
 
 - Comandos: `/openspec:*` (apply/archive/sync).
 - A `000-orquestracao-execucao` é mudança de **processo** (sem `specs/`); as demais são features com `specs/`.
+- **Contrato de leitura**: todo `proposal.md` abre com o bloco de contrato — a lista fechada do que
+  o executor pode abrir. É a defesa contra estouro de contexto (~250k tokens/change) e alucinação:
+  faltou contexto = defeito do `design.md`; conserta-se o trilho, não se abre o repositório.
 - Cada feature referencia as skills do catálogo (`config-*`, `module-*`, `backend-*`, `frontend-*`)
   como implementação principal das tasks.
+
+## Mockups (Claude Design) — condicional por tela
+
+- Tela **com** mockup → o mockup vive **dentro da própria change**, em `mockups/<tela>/`
+  (ex.: `006b-rbac-gating-ui/mockups/d7-grupos/`). Tela **sem** mockup → **não** crie subpasta;
+  o `design.md` basta.
+- Regra de execução: **reproduzir fielmente o layout** do mockup e **substituir todo dado
+  fake/placeholder por dado real** do backend — proibido lorem/valor mockado no código final.
+- Os códigos de tela (D2, D7, A2, B9…) referem-se aos seus mockups; ajuste-os por projeto.
 
 ## Mapa (000–010)
 
 `000` orquestração · `001` base do projeto · `002` design system/shell · `003` multi-tenancy ·
-`004` registro de usuário · `005` login/sessão · `006` RBAC · `007` estrutura organizacional ·
-`008` cadastro de colaboradores · `009` MFA/recuperação/1º acesso · `010` perfil.
+`004` registro de usuário · `005` login/sessão · `006a` RBAC (mecanismo backend) ·
+`006b` RBAC (gating de UI + telas D7/D8/D9) · `007` estrutura organizacional ·
+`008a` colaboradores (CRUD + D2/D3) · `008b` colaboradores (aprovação + D29) ·
+`008c` colaboradores (convites + A6) · `009` MFA/recuperação/1º acesso · `010` perfil.
+
+> As antigas `006` e `008` (densas) foram **divididas por sufixo** para caber com folga no
+> orçamento de contexto por change; a ordem topológica está no ledger da `000`.
 
 ## Pontos de ajuste por projeto
 
 - **Papéis** (`colaborador|lider|admin_org|super_admin`) e **chaves de permissão** são o default desta
   família de produtos — troque pelos do seu domínio.
 - **`003` multi-tenancy** assume que o produto é multi-tenant; se não for, remova/adapte.
-- **`006`** inclui um `specs/spec.md` (o AlphaBet original não tinha) — apague se quiser espelhar o original.
+- **`006a`/`006b`** incluem `specs/spec.md` (o AlphaBet original não tinha) — apague-os se quiser
+  espelhar o original.
 - **Códigos de tela** (D4, D7, A2, B9…) referem-se aos seus mockups; ajuste-os.

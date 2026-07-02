@@ -6,6 +6,18 @@ Codigos de tela (D4/D5/D6) referem-se aos seus mockups; ajuste-os ao seu projeto
 Se o seu dominio nao precisar de setor/cargo/unidade, adapte os tres agregados a sua estrutura.
 -->
 
+
+> **CONTRATO DE LEITURA (obrigatório) — abra APENAS isto, nesta ordem:**
+> `openspec/project.md` · `AGENTS.md` (raiz) · `openspec/EXECUTION-LOG.md` ·
+> `openspec/shared/` · `openspec/specs/estrutura-organizacional/spec.md` (se existir) · esta change
+> (`proposal.md`, `design.md`, `tasks.md`, `specs/`, `mockups/` se houver) · e, **somente se o
+> `design.md` citar nominalmente**: arquivos de código listados, `openspec/templates/`,
+> `openspec/memory/`.
+> **NÃO ler:** o repositório inteiro, outras changes, `openspec/changes/archive/`. Faltou
+> contexto? O defeito é do `design.md` — pare e corrija o trilho; não abra o contexto.
+> **Ao concluir:** `/portao` verde → commit → `/openspec:archive` → atualizar
+> `openspec/EXECUTION-LOG.md` → **zerar o chat** antes da próxima change.
+
 ## Why
 
 O cadastro de colaboradores (`008`) precisa posicionar cada pessoa na estrutura da empresa: a que

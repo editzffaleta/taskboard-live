@@ -1,10 +1,5 @@
-<!--
-TEMPLATE — delta de capability da 006 (rbac-permissoes). Placeholders: {{produto}}.
-NOTA DE DIVERGENCIA: no AlphaBet original esta mudanca NAO tinha specs/spec.md. Como ela declara uma
-capability nova (`rbac-permissoes`) e o objetivo aqui e ser mais robusto/verificavel, este delta foi
-ADICIONADO. Se preferir espelhar o original exatamente, remova este arquivo (a 006 vira so
-proposal/design/tasks, e o `openspec validate` pode sinalizar a ausencia de spec).
--->
+<!-- TEMPLATE — delta da capability rbac-permissoes (parte MECANISMO; o gating/telas entram pela 006b).
+Placeholders: {{produto}}. -->
 
 ## ADDED Requirements
 
@@ -94,35 +89,13 @@ credenciais lidas de variaveis de ambiente.
 - **THEN** um usuario `super_admin` e criado na organizacao default, com senha cifrada
 - **AND** executar o seed novamente nao duplica o usuario
 
-### Requirement: Gating de UI por papel e permissao
+### Requirement: i18n de erros e build sem falhas
 
-O frontend SHALL aplicar o gating por papel/permissao na sidebar e nas rotas privadas, consumindo as
-permissoes efetivas do usuario, e SHALL prover as telas de grupos (D7/D8/D9).
+Os erros novos do mecanismo SHALL estar mapeados no i18n (pt/en) e o projeto SHALL permanecer sem
+erros de TypeScript/build.
 
-#### Scenario: Sidebar filtra por papel e permissao
+#### Scenario: Chaves de erro e verificacao
 
-- **WHEN** a sidebar e renderizada para um usuario
-- **THEN** apenas os itens cujos `roles`/`permissions` o usuario satisfaz sao exibidos
-- **AND** a estrutura por secoes da `002` e reutilizada sem reescrita
-
-#### Scenario: Telas de grupos disponiveis
-
-- **WHEN** um Admin da Organizacao acessa a area de grupos de permissao
-- **THEN** D7 lista os grupos, D8 edita um grupo com as permissoes agrupadas por modulo e D9 atribui grupos a um colaborador
-
-#### Scenario: Gating de UI nao substitui a autorizacao real
-
-- **WHEN** um colaborador sem permissao tenta acessar um recurso administrativo
-- **THEN** o item nao aparece no menu e a rota nega o acesso
-- **AND** a autorizacao efetiva e garantida pelo backend (403), independentemente do gating de UI
-
-### Requirement: i18n e build sem erros
-
-Os erros e rotulos novos SHALL estar mapeados no i18n (pt/en) e o projeto SHALL permanecer sem erros
-de TypeScript/build.
-
-#### Scenario: Chaves i18n e verificacao
-
-- **WHEN** o typecheck/build e executado em `apps/backend` e `apps/frontend`
-- **THEN** nao ha erros de TypeScript nem de build
-- **AND** existem as chaves i18n dos erros (`permission-group.not_found`, `permission-group.system_locked`, acesso negado) e dos rotulos de permissoes/modulos em pt e en
+- **WHEN** o typecheck e executado em `apps/backend` e `apps/frontend`
+- **THEN** nao ha erros de TypeScript
+- **AND** existem as chaves i18n `permission-group.not_found`, `permission-group.system_locked` e de acesso negado em pt e en

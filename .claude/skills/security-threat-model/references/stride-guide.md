@@ -44,5 +44,5 @@ Marque a propriedade de seguranca violada e a pergunta-chave.
 
 ## Checklist multi-tenant (sempre)
 - Todo recurso e lido/escrito **filtrando por `organizationId`** do token?
-- Papeis e permissoes conferem com o catalogo da `006-rbac-permissoes`?
+- Papeis e permissoes conferem com o catalogo da `006a-rbac-mecanismo`?
 - Nenhum campo de escopo (`organizationId`, `role`) e aceito do cliente?

@@ -50,6 +50,15 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
   estatica nesta mudanca; o gating por papel e aplicado na `006`, quando os papeis existirem.
   Alternativa (condicionar por papel agora) descartada por depender de RBAC inexistente.
 
+## Mockups (Claude Design) — inclusão condicional por tela
+
+- Tela desta change **com** mockup do Claude Design → o mockup vive **dentro desta change**, em
+  `mockups/<tela>/` (ex.: `mockups/shell-privado/`). Tela **sem** mockup **não** gera subpasta — siga
+  apenas este design.
+- Execução: **reproduza fielmente o layout do mockup**, substituindo **todo dado fake/placeholder
+  por dado real** vindo do backend — proibido lorem/valor mockado no código final.
+- Os códigos de tela citados referem-se a esses mockups; ajuste-os ao seu projeto.
+
 ## Risks / Trade-offs
 
 - [Re-skin via variaveis nao cobre algum componente com cor fixa] → Ajustar pontualmente o

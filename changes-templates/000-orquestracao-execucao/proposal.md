@@ -8,6 +8,15 @@ Convenção de comandos: este projeto usa /openspec:* (apply/archive/sync).
 Time de agentes: ver `.claude/agents/` (orquestrador + especialistas).
 -->
 
+
+> **CONTRATO DE LEITURA DO MAESTRO (orquestrador) — abra APENAS isto:**
+> `openspec/project.md` · `AGENTS.md` (raiz) · `openspec/EXECUTION-LOG.md` ·
+> `openspec/shared/` · esta 000 (`proposal.md`, `design.md`, `tasks.md` = o ledger).
+> **NÃO ler** as changes de feature inteiras — o maestro conhece cada uma só pela linha do
+> ledger; quem abre a change é o especialista do sub-passo, seguindo o contrato de leitura
+> dela. **Ao concluir cada change do ledger:** `/portao` verde → `/openspec:archive` →
+> commit → atualizar `openspec/EXECUTION-LOG.md` → **zerar o contexto** antes da próxima.
+
 ## Why
 
 O {{produto}} tem mudancas especificadas (`001-...` … `{{N}}-...`), mas ainda nao ha codigo

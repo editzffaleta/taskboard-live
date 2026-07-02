@@ -1,0 +1,4 @@
+interface:
+  display_name: "Module Value Object"
+  short_description: "Criar Value Object de dominio imutavel, com validacao eager, equals e testes"
+  default_prompt: "Use $module-value-object para criar ou completar um Value Object de dominio dentro de um modulo existente em modules, imutavel e validado de forma eager na fabrica, com igualdade por valor e testes unitarios com meta de 100% de cobertura, reaproveitando as regras de validacao compartilhadas do projeto."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "E2E Playwright"
+  short_description: "Testes end-to-end com Playwright sobre backend :4000 + frontend :3000, ligados ao gate"
+  default_prompt: "Use $e2e-playwright para criar e rodar testes end-to-end com Playwright cobrindo os fluxos criticos (registro -> login -> acao principal do modulo) sobre o backend NestJS (:4000) e o frontend Next.js (:3000). Padroniza setup (baseURL, webServer), page objects por data-testid, autenticacao via storageState, isolamento de dados e a integracao com o gate de qualidade."

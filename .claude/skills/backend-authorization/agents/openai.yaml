@@ -1,0 +1,4 @@
+interface:
+  display_name: "Backend Authorization (RBAC)"
+  short_description: "Autorizacao por papeis/permissoes no NestJS, default-deny, sobre a auth JWT existente"
+  default_prompt: "Use $backend-authorization para adicionar autorizacao baseada em papeis e permissoes (RBAC) no backend NestJS, por cima da autenticacao JWT ja existente, criando decorators @Roles/@Permissions e um guard default-deny que le o usuario autenticado, protegendo rotas sem reimplementar a autenticacao."

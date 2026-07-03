@@ -1,0 +1,72 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fábrica Fullstack — template spec-driven">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="0.55" stop-color="#141a33"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="titulo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e2e8f0"/>
+      <stop offset="1" stop-color="#a5b4fc"/>
+    </linearGradient>
+    <pattern id="grade" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#334155" opacity="0.35"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="300" rx="14" fill="url(#bg)"/>
+  <rect width="1200" height="300" rx="14" fill="url(#grade)"/>
+  <rect x="1" y="1" width="1198" height="298" rx="13" fill="none" stroke="#3b4a6b" stroke-width="1" opacity="0.6"/>
+
+  <!-- selo da fábrica -->
+  <g transform="translate(64,64)">
+    <rect x="0" y="0" width="64" height="64" rx="14" fill="#111a2e" stroke="#4c5b82" stroke-width="1.5"/>
+    <path d="M14 44 V26 l10 7 v-7 l10 7 v-7 l12 8 v10 z" fill="#22d3ee"/>
+    <rect x="17" y="16" width="5" height="9" rx="1" fill="#a78bfa"/>
+    <circle cx="50" cy="15" r="2.6" fill="#f472b6"/>
+  </g>
+
+  <!-- título e subtítulo -->
+  <text x="152" y="96" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="46" font-weight="800" letter-spacing="1" fill="url(#titulo)">FÁBRICA FULLSTACK</text>
+  <text x="153" y="128" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" fill="#94a3b8">Template spec-driven · Turborepo · NestJS · Next.js · Prisma · OpenSpec · Dokploy</text>
+  <text x="153" y="152" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#64748b">Modelos executam em trilhos: contrato de leitura por change · dois portões de qualidade · scanners bloqueantes</text>
+
+  <!-- pills -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600">
+    <rect x="912" y="52" width="88" height="26" rx="13" fill="#1d283f" stroke="#38bdf8" stroke-opacity="0.5"/>
+    <text x="956" y="69" text-anchor="middle" fill="#7dd3fc">v1.2.0</text>
+    <rect x="1008" y="52" width="106" height="26" rx="13" fill="#1d283f" stroke="#a78bfa" stroke-opacity="0.5"/>
+    <text x="1061" y="69" text-anchor="middle" fill="#c4b5fd">26 changes</text>
+    <rect x="912" y="86" width="88" height="26" rx="13" fill="#1d283f" stroke="#34d399" stroke-opacity="0.5"/>
+    <text x="956" y="103" text-anchor="middle" fill="#6ee7b7">28 skills</text>
+    <rect x="1008" y="86" width="106" height="26" rx="13" fill="#1d283f" stroke="#f472b6" stroke-opacity="0.5"/>
+    <text x="1061" y="103" text-anchor="middle" fill="#f9a8d4">PT-BR</text>
+  </g>
+
+  <!-- trilhos -->
+  <g>
+    <rect x="40" y="243" width="1120" height="3" rx="1.5" fill="#475569"/>
+    <rect x="40" y="257" width="1120" height="3" rx="1.5" fill="#475569"/>
+    <g fill="#334155">
+      <rect x="60"  y="240" width="6" height="23" rx="1"/><rect x="140" y="240" width="6" height="23" rx="1"/>
+      <rect x="220" y="240" width="6" height="23" rx="1"/><rect x="300" y="240" width="6" height="23" rx="1"/>
+      <rect x="380" y="240" width="6" height="23" rx="1"/><rect x="460" y="240" width="6" height="23" rx="1"/>
+      <rect x="540" y="240" width="6" height="23" rx="1"/><rect x="620" y="240" width="6" height="23" rx="1"/>
+      <rect x="700" y="240" width="6" height="23" rx="1"/><rect x="780" y="240" width="6" height="23" rx="1"/>
+      <rect x="860" y="240" width="6" height="23" rx="1"/><rect x="940" y="240" width="6" height="23" rx="1"/>
+      <rect x="1020" y="240" width="6" height="23" rx="1"/><rect x="1100" y="240" width="6" height="23" rx="1"/>
+    </g>
+  </g>
+
+  <!-- trem de changes -->
+  <g font-family="ui-monospace, 'SF Mono', Menlo, Consolas, monospace" font-size="14" font-weight="700">
+    <rect x="84" y="196" width="120" height="42" rx="9" fill="#0e7490" stroke="#22d3ee"/>
+    <text x="144" y="222" text-anchor="middle" fill="#cffafe">000 maestro</text>
+    <rect x="216" y="196" width="230" height="42" rx="9" fill="#3730a3" stroke="#a78bfa"/>
+    <text x="331" y="222" text-anchor="middle" fill="#e0e7ff">001–010 · núcleo + splits</text>
+    <rect x="458" y="196" width="250" height="42" rx="9" fill="#065f46" stroke="#34d399"/>
+    <text x="583" y="222" text-anchor="middle" fill="#d1fae5">011–020 · extensões</text>
+    <path d="M720 217 h34 m0 0 l-9 -7 m9 7 l-9 7" stroke="#f472b6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="770" y="222" font-size="13" font-weight="600" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif">/analisar → build → /portao → archive → zerar contexto</text>
+  </g>
+</svg>

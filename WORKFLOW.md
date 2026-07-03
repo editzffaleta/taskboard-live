@@ -13,7 +13,7 @@ e segue daqui. A fonte única para agentes é o **`AGENTS.md`**.
 
 ```bash
 gh auth login                              # GitHub CLI
-node -v                                    # Node ≥ 20.19
+node -v                                    # Node ≥ 22.11 (LTS)
 openspec --version || npm i -g @fission-ai/openspec@latest
 
 # opcional (o CI cobre, mas o gate local fica completo):

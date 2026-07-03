@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/capa.svg" alt="Fábrica Fullstack — template spec-driven (Turborepo · NestJS · Next.js · Prisma · OpenSpec)" width="100%"/>
+</p>
+
 # Template — Fábrica Fullstack ({{produto}})
 
 Template de desenvolvimento "fábrica fullstack": **NestJS + Next.js + Prisma + Turborepo**

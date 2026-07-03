@@ -11,3 +11,26 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validar integridade estrutural do template
         run: bash scripts/validar-template.sh
+
+      - name: Smoke mecanico (bootstrap deterministico dos assets)
+        run: bash scripts/smoke-template.sh
+
+  # ── Smoke COMPLETO com agente (desligado; ligar quando o template virar produto) ──
+  # Gera um projeto real rodando o /inicializar via Claude Code headless e valida o build.
+  # Custo: minutos de agente + npm install pesado por execucao. Requisitos: secret
+  # ANTHROPIC_API_KEY e runner com Node 22. Esqueleto:
+  #
+  # smoke-full:
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'workflow_dispatch'   # manual, nunca em todo push
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with: { node-version: 22 }
+  #     - run: npm i -g @anthropic-ai/claude-code @fission-ai/openspec
+  #     - run: |
+  #         mkdir /tmp/projeto && cp -r . /tmp/projeto/template && cd /tmp/projeto
+  #         claude -p "Siga /inicializar do template em ./template criando o projeto aqui; \
+  #           use 'produto-smoke' como {{produto}} e nao crie repositorio remoto." \
+  #           --dangerously-skip-permissions --max-turns 80
+  #     - run: cd /tmp/projeto && npm run build && bash scripts/ci/gate.sh

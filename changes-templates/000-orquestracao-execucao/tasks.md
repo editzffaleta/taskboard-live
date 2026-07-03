@@ -69,6 +69,15 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 2.7 `009c-recuperacao-e-primeiro-acesso` — reset por token de uso unico (A4) e primeiro acesso (A5). **Pre:** `004`, `005`, `008a`.
 - [ ] 2.8 `010-perfil-usuario` — autosservico `/me` (perfil, troca de senha). **Pre:** `005`, `004`, `009a`.
 
+## 3. Extensoes transversais (opcionais, recomendadas para producao)
+
+> Aplicaveis apos o nucleo, em qualquer ordem que respeite os **Pre:**; integracoes entre elas e
+> com o nucleo sao **condicionais a presenca** da change citada.
+
+- [ ] 3.1 `011-email-provider` — e-mail transacional (port + console/SMTP); liga envios de `008c`/`009c` se aplicadas. **Pre:** `004`.
+- [ ] 3.2 `012-hardening-http` — helmet, CORS explicito, rate limit global + estrito nas rotas de auth presentes. **Pre:** `001`, `005`.
+- [ ] 3.3 `013-observabilidade` — log estruturado com request-id, Sentry/GlitchTip opcional, /health com banco. **Pre:** `001`.
+
 <!-- ## 3. <proxima fase do seu produto> ... -->
 
 ## N. Fechamento (orquestrador)

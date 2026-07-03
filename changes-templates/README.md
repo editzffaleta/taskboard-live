@@ -6,11 +6,14 @@ Templates reaproveitáveis das mudanças fundacionais, no **formato OpenSpec** (
 **`Aceite:`** explícito, **`Pré:`** e guardrails inline ("não faça") — justamente para reduzir erro
 quando a execução roda em modelos mais baratos.
 
-> **Escopo: núcleo universal `000–010`** — reaproveitável em **qualquer** projeto multi-tenant
-> (orquestração, fundação, design system, multi-tenancy, registro, login, RBAC, estrutura
-> organizacional, cadastro de colaboradores, MFA/recuperação/1º acesso e perfil). As mudanças
-> **de domínio do produto** (cursos, cofre, relatórios etc.) NÃO entram aqui — elas variam por
-> projeto e são criadas com o mesmo padrão, fora deste pacote universal.
+> **Escopo: núcleo universal `000–010` + extensões transversais `011+`** — o núcleo é
+> reaproveitável em **qualquer** projeto multi-tenant (orquestração, fundação, design system,
+> multi-tenancy, registro, login, RBAC, estrutura organizacional, cadastro de colaboradores,
+> MFA/recuperação/1º acesso e perfil); as extensões (e-mail, hardening, observabilidade, seeds,
+> e2e, auditoria, sessão rotativa) são **opcionais e recomendadas para produção**, com
+> integrações condicionais à presença das changes que tocam. As mudanças **de domínio do
+> produto** (cursos, cofre, relatórios etc.) NÃO entram aqui — elas variam por projeto e são
+> criadas com o mesmo padrão, fora deste pacote universal.
 
 ## Como usar (por projeto novo)
 
@@ -43,7 +46,7 @@ quando a execução roda em modelos mais baratos.
 - **Exemplo demonstrativo** da estrutura: `006b-rbac-gating-ui/mockups/d7-grupos/` (README +
   HTML com dados `data-fake` — substitua pelos mockups reais ou delete se a tela não tiver).
 
-## Mapa (000–010)
+## Mapa (000–010 + extensões)
 
 `000` orquestração · `001` base do projeto · `002` design system/shell · `003` multi-tenancy ·
 `004` registro de usuário · `005` login/sessão · `006a` RBAC (mecanismo backend) ·
@@ -51,6 +54,9 @@ quando a execução roda em modelos mais baratos.
 `008a` colaboradores (CRUD + D2/D3) · `008b` colaboradores (aprovação + D29) ·
 `008c` colaboradores (convites + A6) · `009a` MFA TOTP (mecanismo + A3) ·
 `009b` login em duas etapas (A2) · `009c` recuperação de senha + 1º acesso (A4/A5) · `010` perfil.
+
+**Extensões (opcionais):** `011` e-mail transacional · `012` hardening HTTP ·
+`013` observabilidade.
 
 > As antigas `006`, `008` e `009` (densas) foram **divididas por sufixo** para caber com folga
 > no orçamento de contexto por change; a ordem topológica está no ledger da `000`.

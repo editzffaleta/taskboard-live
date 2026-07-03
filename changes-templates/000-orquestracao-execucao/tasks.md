@@ -79,6 +79,8 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 3.3 `013-observabilidade` — log estruturado com request-id, Sentry/GlitchTip opcional, /health com banco. **Pre:** `001`.
 - [ ] 3.4 `014-seeds-desenvolvimento` — massa demo idempotente (org, papeis, estrutura) com guard de producao. **Pre:** `004`, `006a`.
 - [ ] 3.5 `015-fundacao-e2e` — Playwright + helpers de sessao + smoke do login (`test:e2e` do portao). **Pre:** `005`, `014`.
+- [ ] 3.6 `016-audit-log` — trilha imutavel de acoes sensiveis + consulta admin escopada. **Pre:** `004`, `006a`.
+- [ ] 3.7 `017-refresh-token` — sessao rotativa (access 15min + refresh httpOnly com deteccao de reuso). **Pre:** `005`, `004`.
 
 <!-- ## 3. <proxima fase do seu produto> ... -->
 

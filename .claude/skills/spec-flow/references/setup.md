@@ -28,7 +28,7 @@ estrutura:
 # GitHub CLI autenticado
 gh auth status        # se não estiver: gh auth login
 
-# Node ≥ 20.19 (o npm vem junto)
+# Node ≥ 22.11 (LTS) (o npm vem junto)
 node -v
 
 # OpenSpec (você já usa; só confirme)

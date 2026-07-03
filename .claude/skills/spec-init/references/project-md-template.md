@@ -17,7 +17,7 @@ arquivo `VERSION` (ou a versão mais recente do `CHANGELOG.md`) da cópia do tem
 
 ### Tech Stack
 - **Linguagem:** TypeScript
-- **Runtime:** Node.js ≥ 20.19
+- **Runtime:** Node.js ≥ 22.11 (LTS)
 - **Package manager:** npm (workspaces); monorepo com Turborepo
 - **Frontend:** Next.js (App Router) — `apps/frontend` (porta 3000)
 - **Backend:** NestJS — `apps/backend` (porta 4000), `ConfigModule.forRoot({ isGlobal: true })` + `app.enableCors()`

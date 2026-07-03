@@ -22,7 +22,7 @@ SSL automático, backups e auto-deploy por webhook. Instruções em português d
 ## Entradas / Saídas
 
 - **Entradas:** URL do repositório + branch `producao`; Dockerfiles de `apps/backend` e
-  `apps/frontend` (multi-stage, `node:20-alpine`); domínios apontados por DNS; lista de variáveis
+  `apps/frontend` (multi-stage, `node:22-alpine`); domínios apontados por DNS; lista de variáveis
   de `.env.example`.
 - **Saídas:** projeto no Dokploy com 3 serviços (backend, frontend, PostgreSQL), domínios com SSL,
   env de produção no painel, backup agendado e webhook de auto-deploy ativo.

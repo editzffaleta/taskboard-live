@@ -27,7 +27,7 @@ Se faltar, use a skill **`config-project-fullstack`** (Turbo, Next :3000 + NestJ
 
 ## 2. Bootstrap (git + OpenSpec + CI)
 Use a skill **`spec-init`**, que faz:
-- pre-requisitos (Node >= 20.19, identidade do git, `gh auth status`, e **instala o OpenSpec CLI** se faltar)
+- pre-requisitos (Node >= 22.11 (LTS), identidade do git, `gh auth status`, e **instala o OpenSpec CLI** se faltar)
 - `git init -b main` e **`openspec init`** (selecionar Claude Code)
 - semente do `openspec/project.md`, higiene (.editorconfig/.nvmrc/.gitignore), CI + `scripts/ci/gate.sh`
   (no `project.md`, preencha `{{versao-do-template}}` com o conteúdo do `VERSION` da cópia do template)

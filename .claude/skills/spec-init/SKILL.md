@@ -55,7 +55,7 @@ Se não existir, rode o `config-project-fullstack` primeiro e volte aqui.
 Verifique cada um; instale/oriente só se faltar.
 
 ```bash
-# Node ≥ 20.19 (exigência do OpenSpec)
+# Node ≥ 22.11 (LTS) (exigência do OpenSpec)
 node -v
 
 # git instalado E com identidade configurada (senão o commit sai anônimo)

@@ -54,7 +54,7 @@ Confira rapidamente; se faltar algo, veja `references/setup.md`.
 ```bash
 gh auth status          # GitHub CLI autenticado?
 openspec --version      # OpenSpec instalado?
-node -v                 # Node ≥ 20.19
+node -v                 # Node ≥ 22.11 (LTS)
 ```
 
 ---

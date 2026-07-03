@@ -40,6 +40,8 @@ quando a execução roda em modelos mais baratos.
 - Regra de execução: **reproduzir fielmente o layout** do mockup e **substituir todo dado
   fake/placeholder por dado real** do backend — proibido lorem/valor mockado no código final.
 - Os códigos de tela (D2, D7, A2, B9…) referem-se aos seus mockups; ajuste-os por projeto.
+- **Exemplo demonstrativo** da estrutura: `006b-rbac-gating-ui/mockups/d7-grupos/` (README +
+  HTML com dados `data-fake` — substitua pelos mockups reais ou delete se a tela não tiver).
 
 ## Mapa (000–010)
 

@@ -40,8 +40,11 @@ jobs:
             | sudo sh -s -- -b /usr/local/bin
           trivy --version
 
+      - name: Instalar OpenSpec CLI (validacao das changes)
+        run: npm i -g @fission-ai/openspec
+
       - name: Instalar dependências
         run: npm ci
 
-      - name: Rodar gate (segredos, audit, lint, typecheck, test, build, SAST, vulnerabilidades)
+      - name: Rodar gate (segredos, audit, lint, typecheck, test, build, SAST, vulnerabilidades, openspec)
         run: bash scripts/ci/gate.sh

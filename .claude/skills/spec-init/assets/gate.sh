@@ -71,4 +71,12 @@ else
   echo "⏭  trivy ausente — pulando scan de vulnerabilidades (o CI cobre)"
 fi
 
+# 7) Validacao das changes OpenSpec — bloqueante quando aplicavel; o CI instala o CLI.
+if command -v openspec >/dev/null 2>&1 && [ -d openspec ]; then
+  echo "▶ openspec validate --all --strict"
+  openspec validate --all --strict
+else
+  echo "⏭  openspec CLI/pasta ausente — pulando validacao de changes (o CI cobre)"
+fi
+
 echo "✅ Gate verde — seguro para subir."

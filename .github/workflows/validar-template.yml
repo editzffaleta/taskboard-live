@@ -1,0 +1,13 @@
+# CI do PROPRIO template (nao confundir com o ci.yml asset que os projetos gerados recebem).
+name: validar-template
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar integridade estrutural do template
+        run: bash scripts/validar-template.sh

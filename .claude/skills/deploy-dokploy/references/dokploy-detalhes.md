@@ -81,4 +81,5 @@ Preferência: entrypoint do backend roda `npx prisma migrate deploy` antes de su
 2. Login completo pela URL pública (cookie `secure` funcionando sob HTTPS).
 3. Backup do PostgreSQL executado 1x com sucesso.
 4. Push de teste na `producao` disparou redeploy via webhook.
-5. `EXECUTION-LOG.md` atualizado com domínios, serviços e commit do deploy.
+5. **Restore testado**: backup mais recente restaurado num banco temporário e validado.
+6. `EXECUTION-LOG.md` atualizado com domínios, serviços e commit do deploy.

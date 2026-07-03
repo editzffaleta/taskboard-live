@@ -66,7 +66,8 @@ SSL automático, backups e auto-deploy por webhook. Instruções em português d
    Command/Console* ou como passo do Dockerfile/entrypoint). Verificação: tabela `_prisma_migrations`
    com a última migration.
 7. **Backup do banco** — no serviço PostgreSQL, agendar backup (destino + retenção).
-   Verificação: primeiro backup listado com sucesso.
+   Verificação: primeiro backup listado com sucesso **e um restore validado** em banco
+   temporário (runbook §6 — backup não testado não é backup).
 8. **Auto-deploy** — ativar o webhook do provedor Git no serviço; push na `producao` dispara
    redeploy. Verificação: commit vazio de teste → deployment novo no painel.
 9. **Registrar** — atualizar `openspec/EXECUTION-LOG.md` (data, serviços, domínios, commit).

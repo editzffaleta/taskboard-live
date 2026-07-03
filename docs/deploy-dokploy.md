@@ -59,7 +59,21 @@ gerenciado pelo painel.
 - Rollback: aba *Deployments* → redeploy de um build anterior (imagem preservada).
 - Registre cada publicação no `openspec/EXECUTION-LOG.md` (data, commit, domínios).
 
-## 6. Problemas comuns
+## 6. Backup e RESTORE (backup não testado não é backup)
+
+- **Backup**: agendado na criação do serviço PostgreSQL (seção 3); confira o primeiro backup
+  listado com sucesso e a retenção configurada.
+- **Restore**: no serviço PostgreSQL → aba *Backups* → *Restore* no snapshot desejado. Para
+  restaurar **sem** derrubar produção, crie um serviço PostgreSQL temporário no mesmo projeto e
+  restaure nele; valide com `psql` (contagem de tabelas/linhas críticas) antes de qualquer
+  restore sobre o banco real.
+- **Teste trimestral (obrigatório)**: a cada trimestre, restaure o backup mais recente num banco
+  temporário, rode a validação e registre o resultado no `openspec/EXECUTION-LOG.md`
+  (data, snapshot, resultado). Falhou → tratar como incidente: o produto está sem backup real.
+- **Rollback de app ≠ restore de banco**: redeploy de build anterior não desfaz migration; se a
+  migration foi destrutiva, o caminho é o restore + correção da change.
+
+## 7. Problemas comuns
 
 Tabela completa de troubleshooting (502/404/SSL/env/upload sumindo):
 `.claude/skills/deploy-dokploy/references/dokploy-detalhes.md`. Regra de ouro: 90% dos

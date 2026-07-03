@@ -12,6 +12,9 @@ aplicar ao projeto específico.
 
 Preencha com o propósito do projeto em 1–2 frases.
 
+**Origem:** template fabrica-fullstack v{{versao-do-template}} — preencha com o conteúdo do
+arquivo `VERSION` (ou a versão mais recente do `CHANGELOG.md`) da cópia do template usada.
+
 ### Tech Stack
 - **Linguagem:** TypeScript
 - **Runtime:** Node.js ≥ 20.19

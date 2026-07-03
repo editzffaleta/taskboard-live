@@ -83,6 +83,14 @@ Rode **`/orquestrar`**. O orquestrador lê o ledger da `000` e, **por mudança**
 
 ---
 
+## 2c. Extensões transversais (opcionais, recomendadas para produção)
+
+Depois do núcleo (ou junto, respeitando os **Pré:** do ledger), aplique as changes `011–017` —
+e-mail transacional, hardening HTTP, observabilidade, seeds, fundação e2e, auditoria e sessão
+rotativa. São condicionais entre si: cada integração só existe se a change citada estiver aplicada.
+
+---
+
 ## 3. Entrega (produção)
 
 Quando um marco estiver pronto no `main`: PR de `main` → **`producao`** (a branch que o

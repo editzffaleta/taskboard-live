@@ -93,13 +93,16 @@ Frontend (`frontend-next-config`, `spec-frontend-auth`), Segurança (`backend-au
 `security-review`, `security-threat-model`), E2E (`e2e-playwright`), Deploy (**`deploy-dokploy`**),
 Fluxo (`spec-flow`, `spec-analyze`, `spec-conventions`). Legadas em `_arquivadas/`.
 
-## Changes (`changes-templates/`, 000–010)
+## Changes (`changes-templates/`, 000–010 + extensões 011–017)
 
 Núcleo universal multi-tenant em formato OpenSpec, **com trilhos para modelos fracos**: cada
 `proposal.md` abre com o **contrato de leitura** (lista fechada do que abrir e do que NÃO abrir);
 mockups condicionais em `mockups/<tela>/` (layout fiel + dado real); densas divididas por sufixo
-(`006a`/`006b`, `008a`/`008b`/`008c`); ritual de fechamento com `EXECUTION-LOG.md` + **zerar o
-contexto** entre changes. Mapa e regras no `changes-templates/README.md`.
+(`006a`/`006b`, `008a`/`008b`/`008c`, `009a`/`009b`/`009c`); ritual de fechamento com
+`EXECUTION-LOG.md` + **zerar o contexto** entre changes. As **extensões `011–017`** (e-mail,
+hardening HTTP, observabilidade, seeds, e2e, auditoria, sessão rotativa) são opcionais e
+recomendadas para produção. Mapa e regras no `changes-templates/README.md`. Versão do template
+em `VERSION`/`CHANGELOG.md`.
 
 ## Fluxo (resumo)
 

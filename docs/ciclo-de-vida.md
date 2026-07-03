@@ -14,7 +14,7 @@ artefato marcado, ela não terminou.
 | 6 | **Portão (pós-build)** | `/portao`: typecheck ×2, testes, `openspec validate --strict`, `gate.sh` (lint/build + gitleaks/audit/semgrep/trivy) | tudo verde local **e** CI verde no PR |
 | 7 | **Integração** | branch `change/<id>` → PR → `main` (squash), `openspec archive`, checkbox no ledger da `000`, linha no `EXECUTION-LOG.md`, **contexto zerado** | main atualizado; log com data+commit; sessão encerrada |
 | 8 | **Entrega** | PR `main → producao`; Dokploy publica (Dockerfiles dos assets, env no painel, migrations no boot) | `/health` 200 público; login pela URL; backup agendado; webhook testado |
-| 9 | **Operação** | runbook `docs/deploy-dokploy.md`; backups do PostgreSQL; triagem semanal do Dependabot; rotação de credencial em incidente | rotina registrada no `EXECUTION-LOG.md` |
+| 9 | **Operação** | runbook `docs/deploy-dokploy.md`; backups do PostgreSQL (+ restore trimestral); logs/erros via `013-observabilidade` (request-id, GlitchTip); triagem semanal do Dependabot; rotação de credencial em incidente | rotina registrada no `EXECUTION-LOG.md` |
 | 10 | **Evolução** | novas changes (mesmo padrão, contrato de leitura, `/analisar` → build → `/portao`); constituição só muda com decisão humana explícita | ciclo 3→8 repetido por change |
 | 11 | **Manutenção do template** | melhorias voltam PARA CÁ (skills/agents/commands/changes) — não ficam presas num projeto | commit no template + `docs/auditoria.md` atualizado se estrutural |
 

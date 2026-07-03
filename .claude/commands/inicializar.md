@@ -30,6 +30,7 @@ Use a skill **`spec-init`**, que faz:
 - pre-requisitos (Node >= 20.19, identidade do git, `gh auth status`, e **instala o OpenSpec CLI** se faltar)
 - `git init -b main` e **`openspec init`** (selecionar Claude Code)
 - semente do `openspec/project.md`, higiene (.editorconfig/.nvmrc/.gitignore), CI + `scripts/ci/gate.sh`
+  (no `project.md`, preencha `{{versao-do-template}}` com o conteúdo do `VERSION` da cópia do template)
 - git hooks (opcional, perguntar), commit inicial e (opcional, **confirmar**) criar o repo no GitHub com `main` protegido
 
 ## 2.5. Convencoes do OpenSpec (shared + templates + memory)

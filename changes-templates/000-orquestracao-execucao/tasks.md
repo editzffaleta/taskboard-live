@@ -81,6 +81,9 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 3.5 `015-fundacao-e2e` — Playwright + helpers de sessao + smoke do login (`test:e2e` do portao). **Pre:** `005`, `014`.
 - [ ] 3.6 `016-audit-log` — trilha imutavel de acoes sensiveis + consulta admin escopada. **Pre:** `004`, `006a`.
 - [ ] 3.7 `017-refresh-token` — sessao rotativa (access 15min + refresh httpOnly com deteccao de reuso). **Pre:** `005`, `004`.
+- [ ] 3.8 `018-upload-arquivos` — storage local/S3 com validacao (magic bytes, allowlist) e acesso escopado. **Pre:** `001`, `004`.
+- [ ] 3.9 `019-ui-auditoria` — tela D30 de consulta da trilha (filtros, metadata, rotulos i18n). **Pre:** `016`, `006b`, `002`.
+- [ ] 3.10 `020-meus-dispositivos` — tela B10: sessoes ativas por familia com revogacao seletiva/em massa. **Pre:** `017`, `010`.
 
 <!-- ## 3. <proxima fase do seu produto> ... -->
 

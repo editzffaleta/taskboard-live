@@ -57,7 +57,8 @@ quando a execução roda em modelos mais baratos.
 
 **Extensões (opcionais):** `011` e-mail transacional · `012` hardening HTTP ·
 `013` observabilidade · `014` seeds de desenvolvimento · `015` fundação e2e ·
-`016` auditoria de ações · `017` sessão rotativa (refresh token).
+`016` auditoria de ações · `017` sessão rotativa (refresh token) · `018` upload de arquivos ·
+`019` UI de auditoria (D30) · `020` meus dispositivos (B10).
 
 > As antigas `006`, `008` e `009` (densas) foram **divididas por sufixo** para caber com folga
 > no orçamento de contexto por change; a ordem topológica está no ledger da `000`.

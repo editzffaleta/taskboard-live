@@ -77,6 +77,8 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 3.1 `011-email-provider` — e-mail transacional (port + console/SMTP); liga envios de `008c`/`009c` se aplicadas. **Pre:** `004`.
 - [ ] 3.2 `012-hardening-http` — helmet, CORS explicito, rate limit global + estrito nas rotas de auth presentes. **Pre:** `001`, `005`.
 - [ ] 3.3 `013-observabilidade` — log estruturado com request-id, Sentry/GlitchTip opcional, /health com banco. **Pre:** `001`.
+- [ ] 3.4 `014-seeds-desenvolvimento` — massa demo idempotente (org, papeis, estrutura) com guard de producao. **Pre:** `004`, `006a`.
+- [ ] 3.5 `015-fundacao-e2e` — Playwright + helpers de sessao + smoke do login (`test:e2e` do portao). **Pre:** `005`, `014`.
 
 <!-- ## 3. <proxima fase do seu produto> ... -->
 

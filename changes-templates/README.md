@@ -56,7 +56,7 @@ quando a execução roda em modelos mais baratos.
 `009b` login em duas etapas (A2) · `009c` recuperação de senha + 1º acesso (A4/A5) · `010` perfil.
 
 **Extensões (opcionais):** `011` e-mail transacional · `012` hardening HTTP ·
-`013` observabilidade.
+`013` observabilidade · `014` seeds de desenvolvimento · `015` fundação e2e.
 
 > As antigas `006`, `008` e `009` (densas) foram **divididas por sufixo** para caber com folga
 > no orçamento de contexto por change; a ordem topológica está no ledger da `000`.

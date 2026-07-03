@@ -47,10 +47,11 @@ quando a execução roda em modelos mais baratos.
 `004` registro de usuário · `005` login/sessão · `006a` RBAC (mecanismo backend) ·
 `006b` RBAC (gating de UI + telas D7/D8/D9) · `007` estrutura organizacional ·
 `008a` colaboradores (CRUD + D2/D3) · `008b` colaboradores (aprovação + D29) ·
-`008c` colaboradores (convites + A6) · `009` MFA/recuperação/1º acesso · `010` perfil.
+`008c` colaboradores (convites + A6) · `009a` MFA TOTP (mecanismo + A3) ·
+`009b` login em duas etapas (A2) · `009c` recuperação de senha + 1º acesso (A4/A5) · `010` perfil.
 
-> As antigas `006` e `008` (densas) foram **divididas por sufixo** para caber com folga no
-> orçamento de contexto por change; a ordem topológica está no ledger da `000`.
+> As antigas `006`, `008` e `009` (densas) foram **divididas por sufixo** para caber com folga
+> no orçamento de contexto por change; a ordem topológica está no ledger da `000`.
 
 ## Pontos de ajuste por projeto
 

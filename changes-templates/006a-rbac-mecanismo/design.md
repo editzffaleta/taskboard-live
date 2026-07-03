@@ -27,7 +27,7 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 - Gating de sidebar/rotas e telas D7/D8/D9 — sao a `006b`.
 - Catalogo editavel em runtime — e registro estatico versionado no codigo.
 - Implementar os modulos de dominio que essas permissoes protegem — vem depois, fora do nucleo.
-- Refresh de sessao / rotacao de token — fora do escopo (a `009` reforca com MFA).
+- Refresh de sessao / rotacao de token — fora do escopo (as `009a`/`009b` reforcam com MFA).
 
 ## Decisions
 

@@ -6,7 +6,7 @@ Marque a propriedade de seguranca violada e a pergunta-chave.
 ## S — Spoofing (autenticidade)
 - Pergunta: alguem consegue se passar por outro usuario/servico?
 - Olhar: login/sessao, emissao e validacao de JWT, expiracao, refresh, MFA quando exigido.
-- Mitigacao tipica: autenticacao forte, segredo do JWT protegido, MFA (`009`), rate limit no login.
+- Mitigacao tipica: autenticacao forte, segredo do JWT protegido, MFA (`009a`/`009b`), rate limit no login.
 
 ## T — Tampering (integridade)
 - Pergunta: alguem altera dados em transito ou no payload?

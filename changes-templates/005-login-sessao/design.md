@@ -51,7 +51,7 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 - **Decode UTF-8 do JWT no frontend**: base64url → `Uint8Array` → `TextDecoder('utf-8')`, preservando
   acentuacao; `decodeJwtPayload` tambem le `role` e `organizationId`.
 - **Cookie `auth_token`**: `sameSite: 'lax'`, `secure` em producao, sem `httpOnly` (o client
-  reidrata o contexto). Expiracao do token e do cookie **alinhadas em 7 dias**. A `009` (MFA) reforca
+  reidrata o contexto). Expiracao do token e do cookie **alinhadas em 7 dias**. A `009b` (MFA) reforca
   a autenticacao; refresh/sessoes curtas podem ser revisitados la.
 - **Destino pos-login placeholder**: a rota privada inicial do app. O destino por papel e definido
   quando os dashboards existirem.

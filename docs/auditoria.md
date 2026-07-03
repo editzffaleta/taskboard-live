@@ -169,3 +169,17 @@ Nenhuma dependência de runtime. Ferramentas de CI adicionadas: **Semgrep**, **T
 4. Manter npm (recomendado; ver §1.6) ou abrir change de migração p/ pnpm depois?
 
 Nada nas fases 1–8 apaga trabalho: renomes e arquivamentos preservam conteúdo; qualquer operação Git além de `add/commit` em branch local será confirmada antes.
+
+---
+
+## Adendo — 2026-07-02: split da change 009
+
+A `009-mfa-recuperacao-primeiro-acesso` (4 capabilities num pacote só, marcada como candidata a
+split no risco nº 7 desta auditoria) foi dividida em três, no mesmo padrão dos splits de `006` e
+`008`: **`009a-mfa-totp`** (mecanismo MFA + A3; Pré `004`,`005`), **`009b-login-duas-etapas`**
+(desafio + segunda etapa + A2; modifica a capability `login-sessao` da `005`; Pré `009a`,`005`) e
+**`009c-recuperacao-e-primeiro-acesso`** (token de uso único em dois modos + A4/A5; Pré
+`004`,`005`,`008a`; MFA no 1º acesso opcional e condicionado à `009a`). Conteúdo 100%
+redistribuído; ledger da `000`, README das changes e referências vizinhas (`005`, `006a`, `010`,
+skill `security-threat-model`) atualizados. As menções a "009" no corpo histórico desta auditoria
+(seções 1–2) descrevem o estado auditado na Fase 0 e foram preservadas.

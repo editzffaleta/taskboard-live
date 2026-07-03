@@ -64,8 +64,10 @@ Exemplos do nucleo de plataforma (ajuste/remova conforme o seu projeto):
 - [ ] 2.2 `008a-colaboradores-crud` — user com estrutura, CRUD revisado, telas D2/D3. **Pre:** `004`, `006a`, `006b`, `007`.
 - [ ] 2.3 `008b-colaboradores-aprovacao` — approve/reject com transicao validada, fila D29. **Pre:** `008a`.
 - [ ] 2.4 `008c-colaboradores-convites` — agregado `invitation`, aceite publico A6, gestao de convites. **Pre:** `008a`, `008b`.
-- [ ] 2.5 `009-mfa-recuperacao-primeiro-acesso` — MFA TOTP, login em duas etapas, reset/1º acesso. **Pre:** `005`, `004`.
-- [ ] 2.6 `010-perfil-usuario` — autosservico `/me` (perfil, troca de senha). **Pre:** `005`, `004`.
+- [ ] 2.5 `009a-mfa-totp` — mecanismo MFA por TOTP (setup/confirm/verify/disable, recovery codes, A3). **Pre:** `004`, `005`.
+- [ ] 2.6 `009b-login-duas-etapas` — login exige o segundo fator quando `mfaEnabled` (desafio + A2). **Pre:** `009a`, `005`.
+- [ ] 2.7 `009c-recuperacao-e-primeiro-acesso` — reset por token de uso unico (A4) e primeiro acesso (A5). **Pre:** `004`, `005`, `008a`.
+- [ ] 2.8 `010-perfil-usuario` — autosservico `/me` (perfil, troca de senha). **Pre:** `005`, `004`, `009a`.
 
 <!-- ## 3. <proxima fase do seu produto> ... -->
 

@@ -35,7 +35,7 @@ organizacao ou estrutura.
   `crypto.provider`, re-hasheia a nova), com testes unitarios.
 - Expor endpoints de autosservico escopados ao usuario autenticado: `GET /me` (perfil completo, com
   trabalho em modo leitura e flags de MFA), `PATCH /me` (dados e preferencias) e `POST /me/password`
-  (troca de senha). A gestao de MFA reaproveita os endpoints da `009`.
+  (troca de senha). A gestao de MFA reaproveita os endpoints da `009a`.
 - Persistencia: migration estendendo `user` com os campos de perfil; repositorio.
 - Frontend: tela B9 com as secoes Conta, Dados pessoais, Trabalho (leitura), Notificacoes e Seguranca;
   acesso pelo dropdown/avatar do shell. Chaves i18n novas.
@@ -45,7 +45,7 @@ organizacao ou estrutura.
 ### New Capabilities
 - `perfil-usuario`: Perfil de autosservico do usuario no {{produto}} — visualizacao e edicao dos
   proprios dados e preferencias, troca de senha com verificacao da senha atual e gestao de MFA (via
-  `009`), com a tela B9 e endpoints `/me` que impedem escalonamento de papel/status/organizacao/estrutura.
+  `009a`), com a tela B9 e endpoints `/me` que impedem escalonamento de papel/status/organizacao/estrutura.
 
 ### Modified Capabilities
 - `registro-usuario` (`004`): a entidade `user` e estendida com `phone`, `avatarUrl`, `locale` e `notificationPreferences`.
@@ -57,7 +57,7 @@ organizacao ou estrutura.
 - **Backend**: migration de `user` (campos de perfil); repositorio; endpoints `GET /me`, `PATCH /me`,
   `POST /me/password` (autenticados, escopados ao proprio usuario); testes de integracao HTTP.
 - **Frontend**: tela B9 (Conta/Dados pessoais/Trabalho/Notificacoes/Seguranca) no modulo `auth`;
-  integracao com `/me` e com o MFA da `009`; chaves i18n novas.
-- **Dependencias**: `user`/login (`004`/`005`), estrutura para o bloco Trabalho (`007`), MFA (`009`).
+  integracao com `/me` e com o MFA da `009a`; chaves i18n novas.
+- **Dependencias**: `user`/login (`004`/`005`), estrutura para o bloco Trabalho (`007`), MFA (`009a`).
 - **Decisao**: o e-mail e exibido em modo leitura no perfil (troca via admin), por afetar identidade
   de login e unicidade — flag de troca com verificacao fica para depois, se desejado.

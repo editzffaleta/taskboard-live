@@ -2,7 +2,7 @@
 Cada task tem **Aceite**. Placeholders: {{produto}}, {{namespace}}. -->
 
 > **Antes de comecar:** leia `openspec/shared/como-executar.md` e `regras-de-nomenclatura.md`.
-> **Pre-requisitos:** `005` (sessao/`current-user`), `007` (estrutura, para o bloco Trabalho), `009`
+> **Pre-requisitos:** `005` (sessao/`current-user`), `007` (estrutura, para o bloco Trabalho), `009a`
 > (MFA). **Nao faca:** permitir que o usuario altere o proprio `role`/`status`/`organizationId`/
 > estrutura (exclusivo do admin, `008`); troca de e-mail no autosservico (fica em leitura); entrega
 > real de notificacoes (so armazenar as preferencias; disparo e com os comunicados, `022`).
@@ -31,9 +31,9 @@ Cada task tem **Aceite**. Placeholders: {{produto}}, {{namespace}}. -->
 
 ## 3. Front-end (tela B9)
 
-- [ ] 3.1 Criar a pagina de perfil com as secoes: **Conta** (`name` editavel, `email` em leitura), **Dados pessoais** (`phone`, `avatarUrl`, `locale`), **Trabalho** (setor/cargo/unidade/papel em leitura), **Notificacoes** (toggles de `notificationPreferences`) e **Seguranca** (trocar senha + gerenciar MFA via `009`).
+- [ ] 3.1 Criar a pagina de perfil com as secoes: **Conta** (`name` editavel, `email` em leitura), **Dados pessoais** (`phone`, `avatarUrl`, `locale`), **Trabalho** (setor/cargo/unidade/papel em leitura), **Notificacoes** (toggles de `notificationPreferences`) e **Seguranca** (trocar senha + gerenciar MFA via `009a`).
   - **Aceite:** cinco secoes presentes; e-mail e Trabalho em leitura.
-- [ ] 3.2 Integrar com `GET /me`, `PATCH /me`, `POST /me/password` e os endpoints de MFA da `009`, com toasters de sucesso/erro.
+- [ ] 3.2 Integrar com `GET /me`, `PATCH /me`, `POST /me/password` e os endpoints de MFA da `009a`, com toasters de sucesso/erro.
   - **Aceite:** integracao funcionando com toasts.
 - [ ] 3.3 Disponibilizar o acesso ao perfil pelo dropdown/avatar do `AdminShell`.
   - **Aceite:** link de perfil no menu do shell.

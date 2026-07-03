@@ -58,7 +58,7 @@ O frontend SHALL prover a tela de perfil com as secoes Conta, Dados pessoais, Tr
 #### Scenario: Gestao da propria conta
 
 - **WHEN** o usuario acessa o perfil pelo shell
-- **THEN** edita dados pessoais e preferencias, troca a senha e gerencia o MFA (via `009`)
+- **THEN** edita dados pessoais e preferencias, troca a senha e gerencia o MFA (via `009a`)
 - **AND** ve o e-mail e o trabalho em modo leitura
 
 ### Requirement: Build, testes e i18n

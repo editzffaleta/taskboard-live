@@ -9,6 +9,7 @@ model User {
 
   ownedBoards      Board[]       @relation("BoardOwner")
   boardMemberships BoardMember[]
+  activities       Activity[]
 
   @@map("users")
 }

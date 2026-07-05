@@ -19,6 +19,7 @@ import { PrismaCardRepository } from './card.prisma';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { ActivityRecorderImpl } from './activity-recorder.provider';
 
 type CardResponse = {
   id: string;
@@ -36,6 +37,7 @@ export class CardController {
     private readonly listRepository: PrismaListRepository,
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
+    private readonly activityRecorder: ActivityRecorderImpl,
   ) {}
 
   @Post()
@@ -60,6 +62,12 @@ export class CardController {
 
     this.realtimeEmitter.emitToBoard(boardId, 'card.created', {
       card: this.toResponse(card),
+    });
+
+    await this.activityRecorder.record(boardId, requesterId, 'card.created', {
+      cardId: card.id,
+      listId: card.listId,
+      title: card.title,
     });
 
     return this.toResponse(card);
@@ -90,6 +98,12 @@ export class CardController {
       card: this.toResponse(card),
     });
 
+    await this.activityRecorder.record(boardId, requesterId, 'card.updated', {
+      cardId: card.id,
+      listId: card.listId,
+      title: card.title,
+    });
+
     return this.toResponse(card);
   }
 
@@ -113,6 +127,11 @@ export class CardController {
     });
 
     this.realtimeEmitter.emitToBoard(boardId, 'card.deleted', {
+      cardId: deletedCardId,
+      listId,
+    });
+
+    await this.activityRecorder.record(boardId, requesterId, 'card.deleted', {
       cardId: deletedCardId,
       listId,
     });
@@ -152,6 +171,13 @@ export class CardController {
     };
 
     this.realtimeEmitter.emitToBoard(boardId, 'card.moved', payload);
+
+    await this.activityRecorder.record(
+      boardId,
+      requesterId,
+      'card.moved',
+      payload,
+    );
 
     return payload;
   }

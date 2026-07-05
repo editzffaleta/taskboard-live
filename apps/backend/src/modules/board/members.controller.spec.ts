@@ -8,6 +8,7 @@ import { MembersController } from './members.controller';
 import { PrismaMembershipRepository } from './membership.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { ActivityRecorderImpl } from './activity-recorder.provider';
 
 /**
  * Middleware de teste que simula o JwtAuthGuard: le o header
@@ -39,6 +40,7 @@ describe('MembersController (integração HTTP)', () => {
   let app: INestApplication<App>;
   let memberships: FakeMembership[];
   let emitToBoard: jest.Mock;
+  let recordActivity: jest.Mock;
 
   function membershipRepositoryMock() {
     return {
@@ -107,6 +109,7 @@ describe('MembersController (integração HTTP)', () => {
       { boardId: BOARD_ID, userId: MEMBER_ID, role: 'member' },
     ];
     emitToBoard = jest.fn();
+    recordActivity = jest.fn().mockResolvedValue(undefined);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [MembersController],
@@ -117,6 +120,7 @@ describe('MembersController (integração HTTP)', () => {
         },
         { provide: MemberDirectoryAdapter, useValue: memberDirectoryMock() },
         { provide: RealtimeEmitterImpl, useValue: { emitToBoard } },
+        { provide: ActivityRecorderImpl, useValue: { record: recordActivity } },
       ],
     }).compile();
 
@@ -166,6 +170,12 @@ describe('MembersController (integração HTTP)', () => {
         },
         role: 'member',
       }),
+    );
+    expect(recordActivity).toHaveBeenCalledWith(
+      BOARD_ID,
+      OWNER_ID,
+      'member.added',
+      { memberId: NEW_USER_ID, name: 'Novo Usuario' },
     );
   });
 

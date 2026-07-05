@@ -62,6 +62,15 @@ export type MemberAddedPayload = {
   role: 'owner' | 'member';
 };
 
+export type ActivityCreatedPayload = {
+  id: string;
+  boardId: string;
+  actorId: string;
+  type: string;
+  data: Record<string, unknown>;
+  createdAt: string;
+};
+
 export type BoardSocketHandlers = {
   onCardCreated?: (payload: CardEventPayload) => void;
   onCardUpdated?: (payload: CardEventPayload) => void;
@@ -73,7 +82,7 @@ export type BoardSocketHandlers = {
   onListDeleted?: (payload: ListDeletedPayload) => void;
   onMemberAdded?: (payload: MemberAddedPayload) => void;
   onPresenceUpdate?: (payload: PresencePayload) => void;
-  onActivityAppended?: (payload: unknown) => void; // gancho reservado para 011
+  onActivityAppended?: (payload: ActivityCreatedPayload) => void;
 };
 
 export type UseBoardSocketResult = {
@@ -154,7 +163,7 @@ export function useBoardSocket(
     socket.on('presence.update', (payload: PresencePayload) => {
       handlersRef.current.onPresenceUpdate?.(payload);
     });
-    socket.on('activity.created', (payload: unknown) => {
+    socket.on('activity.created', (payload: ActivityCreatedPayload) => {
       handlersRef.current.onActivityAppended?.(payload);
     });
 

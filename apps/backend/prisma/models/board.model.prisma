@@ -1,0 +1,29 @@
+model Board {
+  id        String    @id @default(uuid())
+  name      String
+  ownerId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  owner   User          @relation("BoardOwner", fields: [ownerId], references: [id])
+  members BoardMember[]
+
+  @@map("boards")
+}
+
+model BoardMember {
+  id        String    @id @default(uuid())
+  boardId   String
+  userId    String
+  role      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([boardId, userId])
+  @@map("board_members")
+}

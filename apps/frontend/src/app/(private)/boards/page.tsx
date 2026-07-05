@@ -1,5 +1,5 @@
-import { EmptyDashboard } from '@/shared/components/ui/empty-dashboard';
+import { BoardsDashboard } from '@/modules/boards/components/boards-dashboard.component';
 
 export default function BoardsPage() {
-  return <EmptyDashboard />;
+  return <BoardsDashboard />;
 }

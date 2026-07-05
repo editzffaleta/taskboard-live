@@ -73,8 +73,19 @@ fi
 
 # 7) Validacao das changes OpenSpec — bloqueante quando aplicavel; o CI instala o CLI.
 if command -v openspec >/dev/null 2>&1 && [ -d openspec ]; then
-  echo "▶ openspec validate --all --strict"
-  openspec validate --all --strict
+  echo "▶ openspec validate (por change, --strict)"
+  vfail=0
+  for cdir in openspec/changes/*/; do
+    [ -d "$cdir" ] || continue
+    cid="$(basename "$cdir")"
+    # Changes de PROCESSO (o ledger 000) nao tem specs/ com deltas — por design; nao valida.
+    if ! find "$cdir/specs" -name '*.md' 2>/dev/null | grep -q .; then
+      echo "⏭  $cid — change de processo sem deltas (nao validavel), ok"
+      continue
+    fi
+    if ! openspec validate "$cid" --strict; then vfail=1; fi
+  done
+  [ "$vfail" -eq 0 ] || { echo "❌ openspec validate reprovou"; exit 1; }
 else
   echo "⏭  openspec CLI/pasta ausente — pulando validacao de changes (o CI cobre)"
 fi

@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+
+### Cadastro com dados validos -> 201 sem corpo
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria.silva.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### Cadastro com e-mail ja existente -> 409 (repete o e-mail do cenario anterior)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Maria Silva",
+  "email": "maria.silva.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### Cadastro com senha fraca -> 422
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Joao Souza",
+  "email": "joao.souza.{{scenarioVersion}}@example.com",
+  "password": "123456"
+}
+
+### Cadastro com dados invalidos (nome e e-mail invalidos) -> 422 com multiplos erros
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "A",
+  "email": "email-invalido",
+  "password": "Str0ng!Passw0rd"
+}

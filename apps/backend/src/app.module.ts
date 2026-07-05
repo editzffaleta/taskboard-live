@@ -7,6 +7,7 @@ import { DbModule } from './db/db.module';
 import { JwtAuthModule } from './shared/auth/jwt-auth.module';
 import { JwtAuthGuard } from './shared/auth/jwt-auth.guard';
 import { ApiExceptionFilter } from './shared/errors/api-exception.filter';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ApiExceptionFilter } from './shared/errors/api-exception.filter';
     }),
     DbModule,
     JwtAuthModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

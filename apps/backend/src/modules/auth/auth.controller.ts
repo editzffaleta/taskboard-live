@@ -1,5 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import {
   LoginUser,
   RegisterUser,
@@ -11,6 +12,9 @@ import { BcryptCryptoProvider } from './bcrypt.crypto';
 import { signUserToken } from './jwt.util';
 import { PrismaUserRepository } from './user.prisma';
 
+const AUTH_THROTTLE_TTL_MS = Number(process.env.THROTTLE_AUTH_TTL ?? 60) * 1000;
+const AUTH_THROTTLE_LIMIT = Number(process.env.THROTTLE_AUTH_LIMIT ?? 5);
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -20,6 +24,9 @@ export class AuthController {
   ) {}
 
   @Public()
+  @Throttle({
+    default: { ttl: AUTH_THROTTLE_TTL_MS, limit: AUTH_THROTTLE_LIMIT },
+  })
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: RegisterUserIn): Promise<void> {
@@ -29,6 +36,9 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({
+    default: { ttl: AUTH_THROTTLE_TTL_MS, limit: AUTH_THROTTLE_LIMIT },
+  })
   @Post('login')
   @HttpCode(200)
   async login(@Body() body: LoginUserIn): Promise<{

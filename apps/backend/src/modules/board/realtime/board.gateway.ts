@@ -12,6 +12,7 @@ import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { Server, Socket } from 'socket.io';
 import { PrismaMembershipRepository } from '../membership.prisma';
 import { PresenceTracker } from './presence.tracker';
+import { resolveCorsOrigin } from '../../../shared/http';
 
 type AuthenticatedSocketUser = {
   id: string;
@@ -46,7 +47,7 @@ type JwtSocketPayload = {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGIN ?? process.env.NEXT_PUBLIC_API_URL,
+    origin: resolveCorsOrigin(),
     credentials: true,
   },
 })

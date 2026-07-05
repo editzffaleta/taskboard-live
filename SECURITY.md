@@ -1,24 +1,25 @@
-# Política de segurança — Fábrica Fullstack (template)
+# Política de segurança
 
-Este repositório é um **template**. Vulnerabilidades aqui se propagam para todos os projetos
-gerados a partir dele — reporte com prioridade.
+## Versões suportadas
 
-## Como reportar
+Somente a versão em produção (branch `producao`) e a `main` recebem correções de segurança.
 
-- **Não abra issue pública.** Contato: **seguranca@devcraft.dev** (DevCraft).
-- Inclua descrição, reprodução, impacto e o arquivo/skill/asset afetado.
-- Resposta inicial em até 72h úteis.
+## Como reportar uma vulnerabilidade
+
+- **Não abra issue pública.** Envie o relato para **brunofaleta0@gmail.com** (ou use
+  *Security → Report a vulnerability* se o repositório estiver no GitHub com
+  private vulnerability reporting habilitado).
+- Inclua: descrição, passos de reprodução, impacto estimado e versão/commit afetado.
+- Resposta inicial em até **72h úteis**; correção priorizada conforme severidade
+  (CRITICAL/HIGH antes de qualquer feature).
 
 ## Escopo
 
-Skills e assets (`.claude/skills/**` — em especial `gate.sh`, `ci.yml`, hooks, Dockerfiles),
-agentes e comandos (`.claude/agents/**`, `.claude/commands/**`), templates de change
-(`changes-templates/**`) e a documentação de processo. Projetos **gerados** têm o próprio
-`SECURITY.md` (semeado pela skill `spec-init`, fase 6).
+Backend (NestJS), frontend (Next.js), infraestrutura declarada neste repositório e o
+pipeline de CI. Segredos nunca são versionados — se você encontrou um, reporte imediatamente.
 
-## Postura do template
+## Boas práticas deste projeto
 
-Gate bloqueante com gitleaks + npm audit + Semgrep + Trivy no CI de cada projeto gerado;
-deny de leitura de `.env*`, chaves e `secrets/**` no `settings.json`; segredos de produção
-apenas no painel do Dokploy; branch `producao` protegida por ruleset (ver
-`docs/seguranca-github.md`).
+Gate de qualidade com gitleaks (segredos), npm audit (dependências), Semgrep (SAST) e
+Trivy (vulnerabilidades) bloqueantes no CI; RBAC e validação de entrada no backend;
+env de produção somente no painel de deploy.

@@ -1,4 +1,4 @@
-<!-- TEMPLATE — delta de capability da 002. Placeholders: TaskBoard Live, {{fonte-texto}}, {{fonte-dados}}. -->
+<!-- TEMPLATE — delta de capability da 002. Placeholders: TaskBoard Live, Inter, JetBrains Mono. -->
 
 ## ADDED Requirements
 
@@ -17,13 +17,13 @@ meio das CSS variables consumidas pela biblioteca de componentes, em tema claro 
 
 ### Requirement: Tipografia da marca
 
-O frontend SHALL usar {{fonte-texto}} para texto e {{fonte-dados}} para dados/codigo, carregadas via `next/font`.
+O frontend SHALL usar Inter para texto e JetBrains Mono para dados/codigo, carregadas via `next/font`.
 
 #### Scenario: Fontes da marca aplicadas
 
 - **WHEN** a tipografia e configurada
-- **THEN** o texto da aplicacao usa {{fonte-texto}}
-- **AND** conteudos de dados/codigo usam {{fonte-dados}}
+- **THEN** o texto da aplicacao usa Inter
+- **AND** conteudos de dados/codigo usam JetBrains Mono
 
 ### Requirement: Alternancia de tema claro/escuro persistente
 

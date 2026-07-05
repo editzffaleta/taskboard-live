@@ -68,7 +68,7 @@ export function DeleteConfirmationDialog({
             </Button>
             <Button
               type="button"
-              className="bg-red-600 text-white hover:bg-red-500 disabled:bg-red-900/70 disabled:text-red-200"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:bg-destructive/40 disabled:text-destructive-foreground/70"
               onClick={onConfirm}
               disabled={!canConfirm}
             >

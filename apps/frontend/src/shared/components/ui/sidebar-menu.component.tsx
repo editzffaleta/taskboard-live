@@ -42,13 +42,12 @@ export type SidebarMenuProps = {
 };
 
 const ITEM_BASE_CLASS =
-  'group relative box-border flex h-11 w-full max-w-full items-center gap-3 rounded-xl px-3 text-[15px] text-zinc-300 transition-all duration-200 hover:bg-white/6 hover:text-zinc-100';
+  'group relative box-border flex h-11 w-full max-w-full items-center gap-3 rounded-xl px-3 text-[15px] text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground';
 const COLLAPSED_CLASS = 'justify-center px-2';
-// Previous active treatment used `to-primary/18` before switching to a menu-matched accent.
 const ACTIVE_CLASS =
-  'border border-white/10 bg-linear-to-r from-white/10 via-white/6 to-zinc-800/70 text-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]';
+  'border border-border bg-accent text-accent-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]';
 const MODULE_RAIL_ITEM_CLASS =
-  'group relative flex h-11 items-center justify-center rounded-xl px-0 text-zinc-400 transition-all duration-200 hover:bg-white/6 hover:text-zinc-100 xl:h-auto xl:min-h-16 xl:flex-col xl:gap-1.5 xl:rounded-2xl xl:px-2 xl:py-2 xl:text-center xl:text-[11px] xl:leading-3.5';
+  'group relative flex h-11 items-center justify-center rounded-xl px-0 text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground xl:h-auto xl:min-h-16 xl:flex-col xl:gap-1.5 xl:rounded-2xl xl:px-2 xl:py-2 xl:text-center xl:text-[11px] xl:leading-3.5';
 const MENU_HEADER_HEIGHT_CLASS = 'h-16';
 
 function joinClassNames(values: Array<string | false | null | undefined>) {
@@ -144,7 +143,7 @@ function MenuSections({
       {sections.map((section) => (
         <div key={section.id}>
           {section.label && !isCollapsed ? (
-            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-zinc-500">
+            <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               {section.label}
             </p>
           ) : null}
@@ -187,7 +186,7 @@ function ModuleFlyoutContent({
               onNavigate={onNavigate}
             />
           </div>
-          <div className="my-4 h-px bg-white/8" />
+          <div className="my-4 h-px bg-border" />
         </>
       ) : null}
 
@@ -218,7 +217,7 @@ function CollapsedModuleItem({
           type="button"
           aria-label={entry.item.label}
           className={joinClassNames([
-            'group relative flex h-11 w-full items-center justify-center rounded-xl text-zinc-400 transition-all duration-200 hover:bg-white/6 hover:text-zinc-100',
+            'group relative flex h-11 w-full items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground',
             active && ACTIVE_CLASS,
           ])}
         >
@@ -229,10 +228,10 @@ function CollapsedModuleItem({
         side="right"
         align="start"
         sideOffset={12}
-        className="rounded-2xl border-white/10 bg-zinc-950/96 p-2 text-zinc-100 shadow-2xl backdrop-blur-xl"
+        className="rounded-2xl border-border bg-popover p-2 text-popover-foreground shadow-2xl backdrop-blur-xl"
         onMouseLeave={() => onOpenChange(false)}
       >
-        <PopoverArrow className="fill-zinc-950/96 stroke-white/10 stroke-[1px]" width={10} height={10} />
+        <PopoverArrow className="fill-popover stroke-border stroke-[1px]" width={10} height={10} />
         <ModuleFlyoutContent entry={entry} pathname={pathname} onNavigate={() => onOpenChange(false)} />
       </PopoverContent>
     </Popover>
@@ -265,7 +264,7 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
             aria-label="Ir para dashboard"
             className={joinClassNames([
               MENU_HEADER_HEIGHT_CLASS,
-              'flex items-center justify-center border-b border-white/8',
+              'flex items-center justify-center border-b border-border',
             ])}
           >
             <AppLogo size="md" showText={false} priority />
@@ -284,11 +283,11 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 border-l border-white/8 pl-2 xl:max-w-[16rem] xl:pl-3">
+        <div className="min-w-0 flex-1 border-l border-border pl-2 xl:max-w-[16rem] xl:pl-3">
           <Link
             href={defaultModuleHref}
             aria-label="Ir para dashboard"
-            className={joinClassNames([MENU_HEADER_HEIGHT_CLASS, 'flex items-center border-b border-white/8 px-2'])}
+            className={joinClassNames([MENU_HEADER_HEIGHT_CLASS, 'flex items-center border-b border-border px-2'])}
           >
             <AppLogo size="md" showMark={false} priority />
           </Link>
@@ -300,7 +299,7 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
               <div className="space-y-1">
                 <SidebarItemLink item={mainItem} active={isItemActive(pathname, mainItem)} collapsed={false} />
               </div>
-              <div className="my-4 h-px bg-white/8" />
+              <div className="my-4 h-px bg-border" />
             </>
           ) : null}
 
@@ -316,7 +315,7 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
         <div
           className={joinClassNames([
             MENU_HEADER_HEIGHT_CLASS,
-            'mb-3 flex items-center justify-center border-b border-white/8',
+            'mb-3 flex items-center justify-center border-b border-border',
           ])}
         >
           <Link href={defaultModuleHref} aria-label="Ir para dashboard" className="flex items-center justify-center">
@@ -345,7 +344,7 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
       {moduleNavigation ? (
         <>
           <MenuSections sections={moduleSections} pathname={pathname} isCollapsed={isCollapsed} />
-          {mainItem || sections.length > 0 ? <div className="my-4 h-px bg-white/8" /> : null}
+          {mainItem || sections.length > 0 ? <div className="my-4 h-px bg-border" /> : null}
         </>
       ) : null}
 
@@ -354,7 +353,7 @@ export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }:
           <div className="space-y-1">
             <SidebarItemLink item={mainItem} active={isItemActive(pathname, mainItem)} collapsed={isCollapsed} />
           </div>
-          <div className="my-4 h-px bg-white/8" />
+          <div className="my-4 h-px bg-border" />
         </>
       ) : null}
 

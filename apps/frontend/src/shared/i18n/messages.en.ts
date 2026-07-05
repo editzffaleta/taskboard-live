@@ -10,5 +10,6 @@ export const errorMessagesEn: ErrorMessages = {
   MIN_ITEMS: 'Minimum of {{min}} items.',
   REQUIRED_FIELD: 'This field is required.',
   SHELL_CONTEXT_PROVIDER_REQUIRED: 'useShellContext must be used within <ShellProvider>.',
+  THEME_CONTEXT_PROVIDER_REQUIRED: 'useTheme must be used within <ThemeProvider>.',
   UNKNOWN_ERROR_CODE: 'Unknown error: {{code}}',
 };

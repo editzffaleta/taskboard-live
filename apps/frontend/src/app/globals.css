@@ -1,6 +1,52 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
+  color-scheme: light;
+
+  /* Base */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  /* Surface */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* Semantic (neutros) */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #2563eb;
+
+  /* Primary (azul kanban) */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-foreground: #f8fafc;
+
+  /* Secondary */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  /* Accent (hover em menus) */
+  --accent: #e2e8f0;
+  --accent-foreground: #0f172a;
+
+  /* Status semantics */
+  --success: #16a34a;
+  --success-foreground: #f8fafc;
+  --warning: #d97706;
+  --warning-foreground: #1c1917;
+  --destructive: #dc2626;
+  --destructive-foreground: #f8fafc;
+}
+
+.dark {
+  color-scheme: dark;
+
   /* Base */
   --background: #09090b;
   --foreground: #fafafa;
@@ -11,7 +57,7 @@
   --popover: #1c1c1f;
   --popover-foreground: #fafafa;
 
-  /* Semantic */
+  /* Semantic (neutros) */
   --muted: #27272a;
   --muted-foreground: #d4d4d8;
   --border: rgba(255, 255, 255, 0.1);
@@ -31,7 +77,11 @@
   --accent: #27272a;
   --accent-foreground: #fafafa;
 
-  /* Destructive */
+  /* Status semantics */
+  --success: #22c55e;
+  --success-foreground: #052e12;
+  --warning: #f59e0b;
+  --warning-foreground: #1c1207;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
 }
@@ -61,17 +111,21 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
 
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-app-sans);
+  --font-mono: var(--font-app-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-app-sans), Arial, Helvetica, sans-serif;
 }
 
 input:-webkit-autofill,
@@ -86,10 +140,10 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus,
 select:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 9999px #18181b inset !important;
-  box-shadow: 0 0 0 9999px #18181b inset !important;
-  -webkit-text-fill-color: #fafafa !important;
-  caret-color: #fafafa;
+  -webkit-box-shadow: 0 0 0 9999px var(--card) inset !important;
+  box-shadow: 0 0 0 9999px var(--card) inset !important;
+  -webkit-text-fill-color: var(--card-foreground) !important;
+  caret-color: var(--card-foreground);
   outline: none !important;
   transition: background-color 9999s ease-in-out 0s !important;
 }
@@ -97,7 +151,7 @@ select:-webkit-autofill:active {
 input:autofill,
 textarea:autofill,
 select:autofill {
-  box-shadow: 0 0 0 9999px #18181b inset !important;
-  color: #fafafa !important;
+  box-shadow: 0 0 0 9999px var(--card) inset !important;
+  color: var(--card-foreground) !important;
   outline: none !important;
 }

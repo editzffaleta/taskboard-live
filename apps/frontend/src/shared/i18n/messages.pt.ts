@@ -8,6 +8,7 @@ export const errorMessagesPt = {
   MIN_ITEMS: 'Mínimo de {{min}} itens.',
   REQUIRED_FIELD: 'Campo de preenchimento obrigatório.',
   SHELL_CONTEXT_PROVIDER_REQUIRED: 'useShellContext deve ser usado dentro de <ShellProvider>.',
+  THEME_CONTEXT_PROVIDER_REQUIRED: 'useTheme deve ser usado dentro de <ThemeProvider>.',
   UNKNOWN_ERROR_CODE: 'Erro desconhecido: {{code}}',
 } as const;
 

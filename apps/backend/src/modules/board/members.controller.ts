@@ -12,6 +12,7 @@ import { CurrentUser } from '../../shared/decorators';
 import { PrismaMembershipRepository } from './membership.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { ActivityRecorderImpl } from './activity-recorder.provider';
 
 type MemberResponse = {
   userId: string;
@@ -26,6 +27,7 @@ export class MembersController {
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
+    private readonly activityRecorder: ActivityRecorderImpl,
   ) {}
 
   @Get()
@@ -65,6 +67,11 @@ export class MembersController {
       boardId,
       user: { id: member.id, name: member.name, email: member.email },
       role: member.role,
+    });
+
+    await this.activityRecorder.record(boardId, requesterId, 'member.added', {
+      memberId: member.id,
+      name: member.name,
     });
 
     return {

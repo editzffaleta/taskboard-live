@@ -6,9 +6,10 @@ model Board {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  owner   User          @relation("BoardOwner", fields: [ownerId], references: [id])
-  members BoardMember[]
-  lists   List[]
+  owner      User          @relation("BoardOwner", fields: [ownerId], references: [id])
+  members    BoardMember[]
+  lists      List[]
+  activities Activity[]
 
   @@map("boards")
 }
@@ -55,4 +56,19 @@ model Card {
 
   @@index([listId])
   @@map("cards")
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  boardId   String
+  actorId   String
+  type      String
+  data      Json
+  createdAt DateTime @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  actor User  @relation(fields: [actorId], references: [id])
+
+  @@index([boardId, createdAt])
+  @@map("activities")
 }

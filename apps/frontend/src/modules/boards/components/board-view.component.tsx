@@ -18,6 +18,7 @@ import {
 import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
 import type { BoardMember } from '@/modules/boards/api/members.api';
+import type { Activity } from '@/modules/boards/api/activity.api';
 import type { BoardState } from '@/modules/boards/types/board-state.type';
 import {
   applyCardCreated,
@@ -61,8 +62,17 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   const [board, setBoard] = useState<BoardState>(initialBoard);
   const [presenceUsers, setPresenceUsers] = useState<PresenceUser[]>([]);
   const [members, setMembers] = useState<BoardMember[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const snapshotRef = useRef<BoardState | null>(null);
   const isOwner = user?.id === board.ownerId;
+
+  function mergeActivitiesById(current: Activity[], incoming: Activity[]): Activity[] {
+    const byId = new Map(current.map((activity) => [activity.id, activity]));
+    incoming.forEach((activity) => byId.set(activity.id, activity));
+    return [...byId.values()].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
 
   const { connected } = useBoardSocket(board.id, token, {
     onCardCreated: (payload) => setBoard((current) => applyCardCreated(current, payload)),
@@ -82,7 +92,8 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           { userId: payload.user.id, name: payload.user.name, email: payload.user.email, role: payload.role },
         ];
       }),
-    // onActivityAppended: gancho reservado para 011
+    onActivityAppended: (payload) =>
+      setActivities((current) => mergeActivitiesById(current, [payload])),
   });
 
   const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
@@ -317,6 +328,11 @@ export function BoardView({ initialBoard }: BoardViewProps) {
         onMemberRemoved={(userId) =>
           setMembers((current) => current.filter((member) => member.userId !== userId))
         }
+        activities={activities}
+        onActivitiesLoaded={({ items }) => setActivities((current) => mergeActivitiesById(current, items))}
+        onActivitiesLoadMore={({ items }) =>
+          setActivities((current) => mergeActivitiesById(current, items))
+        }
       />
 
       <div className="flex gap-4">
@@ -341,8 +357,6 @@ export function BoardView({ initialBoard }: BoardViewProps) {
             )}
           </Droppable>
         </DragDropContext>
-
-        {/* painel de membros/atividade — 010/011 */}
       </div>
     </div>
   );

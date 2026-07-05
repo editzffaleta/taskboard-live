@@ -18,6 +18,7 @@ import { CurrentUser } from '../../shared/decorators';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { ActivityRecorderImpl } from './activity-recorder.provider';
 
 type ListResponse = {
   id: string;
@@ -33,6 +34,7 @@ export class ListController {
     private readonly listRepository: PrismaListRepository,
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
+    private readonly activityRecorder: ActivityRecorderImpl,
   ) {}
 
   @Post('boards/:boardId/lists')
@@ -58,6 +60,11 @@ export class ListController {
       'list.created',
       this.toResponse(list),
     );
+
+    await this.activityRecorder.record(boardId, requesterId, 'list.created', {
+      listId: list.id,
+      title: list.title,
+    });
 
     return this.toResponse(list);
   }
@@ -85,6 +92,13 @@ export class ListController {
       this.toResponse(list),
     );
 
+    await this.activityRecorder.record(
+      list.boardId,
+      requesterId,
+      'list.updated',
+      { listId: list.id, title: list.title },
+    );
+
     return this.toResponse(list);
   }
 
@@ -105,6 +119,10 @@ export class ListController {
     });
 
     this.realtimeEmitter.emitToBoard(boardId, 'list.deleted', {
+      listId: deletedListId,
+    });
+
+    await this.activityRecorder.record(boardId, requesterId, 'list.deleted', {
       listId: deletedListId,
     });
   }
@@ -132,6 +150,11 @@ export class ListController {
     if (boardId) {
       this.realtimeEmitter.emitToBoard(boardId, 'list.moved', {
         lists: response,
+      });
+
+      await this.activityRecorder.record(boardId, requesterId, 'list.moved', {
+        listId,
+        position: body.position,
       });
     }
 

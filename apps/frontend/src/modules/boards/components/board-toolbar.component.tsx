@@ -6,8 +6,12 @@ import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { BoardPresence } from '@/modules/boards/components/board-presence.component';
 import { MembersPanel } from '@/modules/boards/components/members-panel.component';
+import { ActivityPanel } from '@/modules/boards/components/activity-panel.component';
 import type { BoardMember } from '@/modules/boards/api/members.api';
+import type { Activity } from '@/modules/boards/api/activity.api';
 import type { PresenceUser } from '@/hooks/use-board-socket';
+
+type ActivityPageResult = { items: Activity[]; hasMore: boolean };
 
 type BoardToolbarProps = {
   boardId: string;
@@ -21,6 +25,9 @@ type BoardToolbarProps = {
   members: BoardMember[];
   onMembersLoaded: (members: BoardMember[]) => void;
   onMemberRemoved: (userId: string) => void;
+  activities: Activity[];
+  onActivitiesLoaded: (page: ActivityPageResult) => void;
+  onActivitiesLoadMore: (page: ActivityPageResult) => void;
 };
 
 /**
@@ -39,6 +46,9 @@ export function BoardToolbar({
   members,
   onMembersLoaded,
   onMemberRemoved,
+  activities,
+  onActivitiesLoaded,
+  onActivitiesLoadMore,
 }: BoardToolbarProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
@@ -77,6 +87,15 @@ export function BoardToolbar({
           members={members}
           onMembersLoaded={onMembersLoaded}
           onMemberRemoved={onMemberRemoved}
+        />
+
+        <ActivityPanel
+          boardId={boardId}
+          token={token}
+          activities={activities}
+          members={members}
+          onActivitiesLoaded={onActivitiesLoaded}
+          onLoadMore={onActivitiesLoadMore}
         />
 
         {isCreating ? (

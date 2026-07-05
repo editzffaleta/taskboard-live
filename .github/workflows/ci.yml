@@ -13,6 +13,13 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    # Envs de CI (dummy): o postinstall roda `prisma generate`, que valida a presenca
+    # de DATABASE_URL no config mas NAO conecta ao banco. Nenhum segredo real aqui.
+    env:
+      DATABASE_URL: postgresql://taskboard:taskboard@localhost:5432/taskboard?schema=public
+      JWT_SECRET: ci-dummy-secret-nao-usado-em-producao
+      JWT_EXPIRES_IN: 1d
+      NEXT_PUBLIC_API_URL: http://localhost:4000
     steps:
       - uses: actions/checkout@v4
         with:

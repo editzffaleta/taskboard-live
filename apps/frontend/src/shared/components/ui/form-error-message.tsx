@@ -11,7 +11,7 @@ export function FormErrorMessage({ children, size = 'xs', className }: FormError
   return (
     <p
       role="alert"
-      className={cn(size === 'xs' ? 'text-xs' : 'text-sm', 'font-medium text-red-400', className)}
+      className={cn(size === 'xs' ? 'text-xs' : 'text-sm', 'font-medium text-destructive', className)}
     >
       {children}
     </p>

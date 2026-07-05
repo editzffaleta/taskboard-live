@@ -46,14 +46,14 @@ type AppLogoProps = {
 };
 
 export function AppLogoMark({ size = 'md', className }: AppLogoMarkProps) {
-  return <Kanban className={cn(markIconSizeClasses[size], 'shrink-0 text-white', className)} />;
+  return <Kanban className={cn(markIconSizeClasses[size], 'shrink-0 text-primary', className)} />;
 }
 
 export function AppWordmark({ size = 'md', className }: AppWordmarkProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center font-medium leading-none tracking-normal',
+        'inline-flex items-center font-medium leading-none tracking-normal text-foreground',
         textSizeClasses[size],
         className,
       )}

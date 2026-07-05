@@ -1,4 +1,5 @@
 export * from './components/branding/app-logo.component';
+export * from './components/theme/theme-toggle.component';
 export * from './components/ui/badge';
 export * from './components/ui/button';
 export * from './components/ui/card';
@@ -43,8 +44,11 @@ export * from './components/ui/tabs';
 export * from './components/ui/textarea';
 export * from './components/ui/toaster';
 export * from './context/shell.context';
+export * from './context/theme.context';
 export * from './hooks/shell.hook';
 export * from './hooks/use-local-storage.hook';
+export * from './hooks/use-theme.hook';
+export * from './navigation/app-navigation.config';
 export * from './template';
 export * from './types/api-error.type';
 export * from './util/color.util';

@@ -14,6 +14,7 @@ import { Sheet, SheetContent } from '@/shared/components/ui/sheet';
 import { Separator } from '@/shared/components/ui/separator';
 import { useShell } from '@/shared/hooks/shell.hook';
 import { cn } from '@/shared/lib/class-name.util';
+import { ThemeToggle } from '@/shared/components/theme/theme-toggle.component';
 import Image from 'next/image';
 
 type AdminShellProps = {
@@ -48,15 +49,14 @@ export function AdminShell({
   void logoHref;
 
   return (
-    <div className="h-screen overflow-hidden bg-black text-foreground">
+    <div className="h-screen overflow-hidden bg-background text-foreground">
       <div className="flex h-full">
         <aside
           className={cn(
-            'relative hidden h-screen shrink-0 overflow-hidden border-r border-white/10 bg-linear-to-br from-black via-zinc-950/98 to-zinc-900/92 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] lg:flex lg:flex-col',
+            'relative hidden h-screen shrink-0 overflow-hidden border-r border-border bg-card shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] lg:flex lg:flex-col',
             collapsed ? 'w-18' : 'w-84 xl:w-88',
           )}
         >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_110%_120%,rgba(245,158,11,0.10),transparent_40%),radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.06),transparent_34%)]" />
           <div className="relative flex min-h-0 flex-1 flex-col">
             <div className="min-h-0 flex-1 overflow-y-auto">{sidebar}</div>
           </div>
@@ -65,18 +65,16 @@ export function AdminShell({
         <Sheet open={isMobile && isSidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent
           side="left"
-          className="w-[22rem] max-w-[95vw] overflow-hidden border-white/10 bg-linear-to-br from-black via-zinc-950/98 to-zinc-900/92 p-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
+          className="w-[22rem] max-w-[95vw] overflow-hidden border-border bg-card p-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]"
         >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_110%_120%,rgba(245,158,11,0.10),transparent_40%),radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.06),transparent_34%)]" />
             <div className="relative flex h-full min-h-0 flex-col">
               <div className="min-h-0 flex-1 overflow-y-auto">{sidebar}</div>
             </div>
           </SheetContent>
         </Sheet>
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-linear-to-br from-black via-zinc-950/98 to-zinc-950/92">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,rgba(245,158,11,0.06),transparent_38%),radial-gradient(circle_at_0%_0%,rgba(255,255,255,0.03),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.015),transparent_18%)]" />
-          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/8 bg-black/35 px-4 backdrop-blur-xl md:px-6">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Alternar menu lateral">
                 <Menu className="size-5" />
@@ -84,6 +82,7 @@ export function AdminShell({
             </div>
 
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-auto gap-2 px-2.5 py-1.5">
@@ -119,7 +118,7 @@ export function AdminShell({
                     <UserRound className="mr-2 size-4" />
                     Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={onLogout} className="text-red-500 focus:bg-red-500/10 focus:text-red-400">
+                  <DropdownMenuItem onSelect={onLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
                     <LogOut className="mr-2 size-4" />
                     Logout
                   </DropdownMenuItem>

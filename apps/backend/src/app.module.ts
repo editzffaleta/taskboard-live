@@ -8,6 +8,7 @@ import { JwtAuthModule } from './shared/auth/jwt-auth.module';
 import { JwtAuthGuard } from './shared/auth/jwt-auth.guard';
 import { ApiExceptionFilter } from './shared/errors/api-exception.filter';
 import { AuthModule } from './modules/auth/auth.module';
+import { BoardModule } from './modules/board/board.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './modules/auth/auth.module';
     DbModule,
     JwtAuthModule,
     AuthModule,
+    BoardModule,
   ],
   controllers: [AppController],
   providers: [

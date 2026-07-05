@@ -1,0 +1,99 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+
+### 0a. Registrar usuario owner (para obter token no proximo passo)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Owner Board",
+  "email": "owner.board.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0b. Login do owner -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "owner.board.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0c. Registrar usuario nao-membro (para os cenarios de 403/404)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Outro Usuario",
+  "email": "outro.usuario.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0d. Login do nao-membro -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "outro.usuario.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 1. Criar quadro (usar token do owner) -> 201, BoardMember owner criado
+POST {{baseUrl}}/boards
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "name": "Quadro de Marketing"
+}
+
+### 2. Listar meus quadros (owner) -> 200 contendo o quadro criado
+GET {{baseUrl}}/boards
+Authorization: Bearer {{ownerToken}}
+
+### 3. Obter detalhe como membro (owner) -> 200
+GET {{baseUrl}}/boards/{{boardId}}
+Authorization: Bearer {{ownerToken}}
+
+### 4. Obter detalhe como nao-membro -> 404 (board.not.found, sem vazar existencia)
+GET {{baseUrl}}/boards/{{boardId}}
+Authorization: Bearer {{outroToken}}
+
+### 5. Renomear como owner -> 200
+PATCH {{baseUrl}}/boards/{{boardId}}
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "name": "Quadro de Marketing (renomeado)"
+}
+
+### 6. Renomear como nao-owner -> 403 (board.owner.required)
+PATCH {{baseUrl}}/boards/{{boardId}}
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "name": "Tentativa de renomear"
+}
+
+### 7. Excluir como nao-owner -> 403 (board.owner.required)
+DELETE {{baseUrl}}/boards/{{boardId}}
+Authorization: Bearer {{outroToken}}
+
+### 8. Excluir como owner -> 204
+DELETE {{baseUrl}}/boards/{{boardId}}
+Authorization: Bearer {{ownerToken}}
+
+### 9. Criar quadro sem nome -> 422 (validacao de entrada)
+POST {{baseUrl}}/boards
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "name": ""
+}
+
+### 10. Acessar /boards sem token -> 401 (guard global de JWT)
+GET {{baseUrl}}/boards

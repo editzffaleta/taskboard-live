@@ -16,5 +16,6 @@ export type ListState = {
 export type BoardState = {
   id: string;
   name: string;
+  ownerId: string;
   lists: ListState[];
 };

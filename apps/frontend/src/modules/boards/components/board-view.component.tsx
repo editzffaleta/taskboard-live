@@ -17,6 +17,7 @@ import {
 } from '@/modules/boards/api/boards.api';
 import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
+import type { BoardMember } from '@/modules/boards/api/members.api';
 import type { BoardState } from '@/modules/boards/types/board-state.type';
 import {
   applyCardCreated,
@@ -56,10 +57,12 @@ function reportError(error: unknown) {
  * e cartões, e reconciliação em tempo real via `useBoardSocket`.
  */
 export function BoardView({ initialBoard }: BoardViewProps) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [board, setBoard] = useState<BoardState>(initialBoard);
   const [presenceUsers, setPresenceUsers] = useState<PresenceUser[]>([]);
+  const [members, setMembers] = useState<BoardMember[]>([]);
   const snapshotRef = useRef<BoardState | null>(null);
+  const isOwner = user?.id === board.ownerId;
 
   const { connected } = useBoardSocket(board.id, token, {
     onCardCreated: (payload) => setBoard((current) => applyCardCreated(current, payload)),
@@ -71,7 +74,14 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     onListMoved: (payload) => setBoard((current) => applyListMoved(current, payload)),
     onListDeleted: (payload) => setBoard((current) => applyListDeleted(current, payload)),
     onPresenceUpdate: (payload) => setPresenceUsers(payload.users),
-    // onMemberAdded: gancho reservado para 010
+    onMemberAdded: (payload) =>
+      setMembers((current) => {
+        if (current.some((member) => member.userId === payload.user.id)) return current;
+        return [
+          ...current,
+          { userId: payload.user.id, name: payload.user.name, email: payload.user.email, role: payload.role },
+        ];
+      }),
     // onActivityAppended: gancho reservado para 011
   });
 
@@ -294,10 +304,19 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   return (
     <div className="flex flex-col gap-4">
       <BoardToolbar
+        boardId={board.id}
         boardName={board.name}
         connected={connected}
         presenceUsers={presenceUsers}
         onCreateList={handleCreateList}
+        token={token}
+        currentUserId={user?.id ?? null}
+        isOwner={isOwner}
+        members={members}
+        onMembersLoaded={setMembers}
+        onMemberRemoved={(userId) =>
+          setMembers((current) => current.filter((member) => member.userId !== userId))
+        }
       />
 
       <div className="flex gap-4">

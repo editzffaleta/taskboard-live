@@ -39,6 +39,20 @@ export class PrismaMembershipRepository implements MembershipRepository {
     return found.map((item) => this.toDomain(item));
   }
 
+  async listByBoardId(boardId: string): Promise<Membership[]> {
+    const found = await this.prisma.boardMember.findMany({
+      where: { boardId },
+    });
+
+    return found.map((item) => this.toDomain(item));
+  }
+
+  async delete(boardId: string, userId: string): Promise<void> {
+    await this.prisma.boardMember.delete({
+      where: { boardId_userId: { boardId, userId } },
+    });
+  }
+
   async create(
     boardId: string,
     userId: string,

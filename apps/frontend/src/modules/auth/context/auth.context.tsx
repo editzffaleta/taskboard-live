@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import Cookies from 'js-cookie';
 import { decodeJwtPayload } from '@/modules/auth/util/jwt.util';
 
@@ -44,10 +52,13 @@ function readSessionFromCookie(): { user: AuthUser; token: string } | null {
 }
 
 /**
- * Hidrata a sessão a partir do cookie na primeira renderização do client.
- * Usa o padrão de "lazy state update" (updater síncrono na chamada de setState,
- * fora de um `useEffect`) para evitar cascata de re-render e mismatch de SSR:
- * o `AuthGuard`/`/join` tratam o estado inicial `loading` como placeholder neutro.
+ * Hidrata a sessão a partir do cookie.
+ *
+ * O estado inicial (`INITIAL_STATE`, status `loading`) é idêntico no servidor e no
+ * primeiro render do client — nenhum acesso a `document`/`localStorage`/cookie
+ * acontece durante o render. A leitura do cookie só ocorre dentro de um
+ * `useEffect`, que roda depois da hidratação, então o React nunca precisa
+ * reconciliar uma árvore diferente da que o servidor enviou.
  */
 function hydrateStateOnce(previous: AuthState): AuthState {
   if (previous.status !== 'loading') return previous;
@@ -65,12 +76,12 @@ function hydrateStateOnce(previous: AuthState): AuthState {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(INITIAL_STATE);
 
-  if (typeof window !== 'undefined' && state.status === 'loading') {
-    const hydrated = hydrateStateOnce(state);
-    if (hydrated !== state) {
-      setState(hydrated);
-    }
-  }
+  useEffect(() => {
+    // Hidratação client-only inevitável: o cookie de sessão não existe no
+    // servidor, então o estado real só pode ser lido depois do mount (aqui).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setState((previous) => hydrateStateOnce(previous));
+  }, []);
 
   const login = useCallback((newToken: string) => {
     const payload = decodeJwtPayload(newToken);

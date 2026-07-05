@@ -55,3 +55,30 @@ jobs:
 
       - name: Rodar gate (segredos, audit, lint, typecheck, test, build, SAST, vulnerabilidades, openspec)
         run: bash scripts/ci/gate.sh
+
+      # E2E (Playwright) — DESLIGADO por padrao neste ci.yml basico: exige Postgres de pe
+      # e os dois apps (backend :4000 + frontend :3000) rodando, o que este job nao provisiona.
+      # Para ligar quando houver ambiente com servicos (job dedicado ou runner com docker
+      # compose), descomente e adapte o bloco abaixo (change 013-fundacao-e2e):
+      #
+      # - name: Subir Postgres de teste
+      #   run: docker compose -f apps/backend/docker-compose.yml up -d postgres
+      #
+      # - name: Rodar migrations
+      #   working-directory: apps/backend
+      #   run: npx prisma migrate deploy
+      #
+      # - name: Instalar browsers do Playwright
+      #   run: npx playwright install --with-deps chromium
+      #
+      # - name: Subir backend e frontend em background
+      #   run: |
+      #     npm --workspace apps/backend run start &
+      #     NEXT_IGNORE_INCORRECT_LOCKFILE=1 npm --workspace apps/frontend run build
+      #     NEXT_IGNORE_INCORRECT_LOCKFILE=1 npm --workspace apps/frontend run start &
+      #     npx wait-on http://localhost:4000/health http://localhost:3000
+      #
+      # - name: Rodar e2e (smoke de auth + vitrine de colaboracao ao vivo)
+      #   env:
+      #     E2E_BASE_URL: http://localhost:3000
+      #   run: npm run test:e2e

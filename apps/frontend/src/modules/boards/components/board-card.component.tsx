@@ -79,7 +79,12 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
   }
 
   return (
-    <Card className="group relative flex flex-col justify-between gap-4 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60">
+    <Card
+      className="group relative flex flex-col justify-between gap-4 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60"
+      data-testid="board-card"
+      data-board-id={board.id}
+      data-board-name={board.name}
+    >
       <div
         role="button"
         tabIndex={0}
@@ -88,6 +93,7 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
           if (event.key === 'Enter') router.push(`/boards/${board.id}`);
         }}
         className="flex cursor-pointer flex-col gap-3"
+        data-testid="board-card-open"
       >
         <div className="flex size-10 items-center justify-center rounded-xl border border-border/70 bg-background/70 text-primary">
           <Kanban className="size-5" />

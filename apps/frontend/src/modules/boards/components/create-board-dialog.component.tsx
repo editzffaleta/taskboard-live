@@ -47,7 +47,7 @@ export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Criar quadro</Button>
+        <Button data-testid="create-board-trigger">Criar quadro</Button>
       </DialogTrigger>
 
       <StandardDialogContent
@@ -58,7 +58,12 @@ export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
             <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" form="create-board-form" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              form="create-board-form"
+              disabled={isSubmitting}
+              data-testid="create-board-submit"
+            >
               {isSubmitting ? 'Criando...' : 'Criar'}
             </Button>
           </>
@@ -71,6 +76,7 @@ export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
             name="name"
             autoComplete="off"
             required
+            data-testid="create-board-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
           />

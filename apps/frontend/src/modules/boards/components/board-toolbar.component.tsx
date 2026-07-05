@@ -109,13 +109,20 @@ export function BoardToolbar({
                 if (!title.trim()) setIsCreating(false);
               }}
               className="h-9 w-48"
+              data-testid="new-list-title"
             />
-            <Button type="submit" size="sm">
+            <Button type="submit" size="sm" data-testid="new-list-submit">
               Criar
             </Button>
           </form>
         ) : (
-          <Button type="button" size="sm" variant="outline" onClick={() => setIsCreating(true)}>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => setIsCreating(true)}
+            data-testid="new-list-trigger"
+          >
             <Plus className="size-4" />
             Nova lista
           </Button>

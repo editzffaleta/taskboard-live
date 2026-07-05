@@ -53,7 +53,7 @@ export function BoardsDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" data-testid="boards-dashboard">
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black tracking-tight">Meus quadros</h1>
@@ -81,7 +81,7 @@ export function BoardsDashboard() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="boards-list">
           {boards.map((board) => (
             <BoardCard key={board.id} board={board} onRenamed={handleRenamed} onDeleted={handleDeleted} />
           ))}

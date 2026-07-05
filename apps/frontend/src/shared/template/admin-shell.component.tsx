@@ -49,7 +49,7 @@ export function AdminShell({
   void logoHref;
 
   return (
-    <div className="h-screen overflow-hidden bg-background text-foreground">
+    <div className="h-screen overflow-hidden bg-background text-foreground" data-testid="app-shell">
       <div className="flex h-full">
         <aside
           className={cn(
@@ -85,7 +85,7 @@ export function AdminShell({
               <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-auto gap-2 px-2.5 py-1.5">
+                  <Button variant="ghost" className="h-auto gap-2 px-2.5 py-1.5" data-testid="user-menu-trigger">
                     {resolvedAvatarUrl ? (
                       <Image
                         src={resolvedAvatarUrl}
@@ -118,7 +118,11 @@ export function AdminShell({
                     <UserRound className="mr-2 size-4" />
                     Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={onLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                  <DropdownMenuItem
+                    onSelect={onLogout}
+                    data-testid="logout-button"
+                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                  >
                     <LogOut className="mr-2 size-4" />
                     Logout
                   </DropdownMenuItem>

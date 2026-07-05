@@ -49,6 +49,9 @@ export function KanbanCard({ card, index, onRename, onDelete }: KanbanCardProps)
           className={`group flex items-start justify-between gap-2 rounded-md border border-border/70 bg-background px-3 py-2 text-sm shadow-sm ${
             snapshot.isDragging ? 'ring-2 ring-primary' : ''
           }`}
+          data-testid="kanban-card"
+          data-card-id={card.id}
+          data-card-title={card.title}
         >
           {isEditing ? (
             <Input

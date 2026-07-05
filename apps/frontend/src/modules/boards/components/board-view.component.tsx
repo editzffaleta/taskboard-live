@@ -180,14 +180,25 @@ export function BoardView({ initialBoard }: BoardViewProps) {
 
     try {
       const created = await createList(token, board.id, title);
-      setBoard((current) => ({
-        ...current,
-        lists: current.lists.map((list) =>
-          list.id === tempId
-            ? { id: created.id, title: created.title, position: created.position, cards: [] }
-            : list,
-        ),
-      }));
+      setBoard((current) => {
+        // O eco do proprio Socket.IO (`list.created`) pode ter chegado antes desta resposta
+        // REST e ja adicionado a lista definitiva (mesmo `created.id`). Nesse caso, so remove
+        // o placeholder otimista em vez de duplicar a lista.
+        const jaReconciliadaPeloSocket = current.lists.some((list) => list.id === created.id);
+
+        if (jaReconciliadaPeloSocket) {
+          return { ...current, lists: current.lists.filter((list) => list.id !== tempId) };
+        }
+
+        return {
+          ...current,
+          lists: current.lists.map((list) =>
+            list.id === tempId
+              ? { id: created.id, title: created.title, position: created.position, cards: [] }
+              : list,
+          ),
+        };
+      });
     } catch (error) {
       revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
       reportError(error);
@@ -245,27 +256,45 @@ export function BoardView({ initialBoard }: BoardViewProps) {
 
     try {
       const created = await createCard(token, board.id, listId, title);
-      setBoard((current) => ({
-        ...current,
-        lists: current.lists.map((list) =>
-          list.id === listId
-            ? {
-                ...list,
-                cards: list.cards.map((card) =>
-                  card.id === tempId
-                    ? {
-                        id: created.id,
-                        listId: created.listId,
-                        title: created.title,
-                        description: created.description,
-                        position: created.position,
-                      }
-                    : card,
-                ),
-              }
-            : list,
-        ),
-      }));
+      setBoard((current) => {
+        // Mesma corrida do `handleCreateList`: o eco do proprio Socket.IO pode ja ter
+        // inserido o cartao definitivo antes desta resposta REST resolver.
+        const listAtual = current.lists.find((list) => list.id === listId);
+        const jaReconciliadoPeloSocket = listAtual?.cards.some((card) => card.id === created.id) ?? false;
+
+        if (jaReconciliadoPeloSocket) {
+          return {
+            ...current,
+            lists: current.lists.map((list) =>
+              list.id === listId
+                ? { ...list, cards: list.cards.filter((card) => card.id !== tempId) }
+                : list,
+            ),
+          };
+        }
+
+        return {
+          ...current,
+          lists: current.lists.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  cards: list.cards.map((card) =>
+                    card.id === tempId
+                      ? {
+                          id: created.id,
+                          listId: created.listId,
+                          title: created.title,
+                          description: created.description,
+                          position: created.position,
+                        }
+                      : card,
+                  ),
+                }
+              : list,
+          ),
+        };
+      });
     } catch (error) {
       revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
       reportError(error);

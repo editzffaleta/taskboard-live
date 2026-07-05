@@ -73,6 +73,9 @@ export function KanbanColumn({
           ref={provided.innerRef}
           {...provided.draggableProps}
           className="flex w-72 shrink-0 flex-col rounded-lg border border-border/70 bg-muted/40"
+          data-testid="kanban-column"
+          data-list-id={list.id}
+          data-list-title={list.title}
         >
           <div
             {...provided.dragHandleProps}
@@ -148,8 +151,9 @@ export function KanbanColumn({
                     if (!newCardTitle.trim()) setIsAddingCard(false);
                   }}
                   className="h-8"
+                  data-testid="new-card-title"
                 />
-                <Button type="submit" size="sm">
+                <Button type="submit" size="sm" data-testid="new-card-submit">
                   Adicionar cartão
                 </Button>
               </form>
@@ -160,6 +164,7 @@ export function KanbanColumn({
                 size="sm"
                 className="w-full justify-start"
                 onClick={() => setIsAddingCard(true)}
+                data-testid="new-card-trigger"
               >
                 <Plus className="size-4" />
                 Novo cartão

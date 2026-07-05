@@ -130,7 +130,7 @@ export function MembersPanel({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size="sm" variant="outline">
+        <Button type="button" size="sm" variant="outline" data-testid="members-panel-trigger">
           <Users className="size-4" />
           {getMessage('membersPanel.trigger')}
         </Button>
@@ -150,9 +150,15 @@ export function MembersPanel({
                 value={email}
                 placeholder={getMessage('membersPanel.invitePlaceholder')}
                 onChange={(event) => setEmail(event.target.value)}
+                data-testid="members-panel-invite-email"
               />
             </div>
-            <Button type="submit" size="sm" disabled={inviting || !email.trim()}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={inviting || !email.trim()}
+              data-testid="members-panel-invite-submit"
+            >
               {getMessage('membersPanel.inviteButton')}
             </Button>
           </form>
@@ -169,6 +175,8 @@ export function MembersPanel({
                 <li
                   key={member.userId}
                   className="flex items-center justify-between gap-3 rounded-md border border-border/70 px-3 py-2"
+                  data-testid="members-panel-member"
+                  data-member-email={member.email}
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{member.name}</p>

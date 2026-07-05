@@ -80,7 +80,7 @@ function RegisterForm() {
   }
 
   return (
-    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>
+    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit} data-testid="register-form">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="register-name">Nome</Label>
         <Input
@@ -89,6 +89,7 @@ function RegisterForm() {
           type="text"
           autoComplete="name"
           required
+          data-testid="register-name"
           value={form.name}
           onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
         />
@@ -102,6 +103,7 @@ function RegisterForm() {
           type="email"
           autoComplete="email"
           required
+          data-testid="register-email"
           value={form.email}
           onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
         />
@@ -115,6 +117,7 @@ function RegisterForm() {
           type="password"
           autoComplete="new-password"
           required
+          data-testid="register-password"
           value={form.password}
           onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
         />
@@ -125,6 +128,7 @@ function RegisterForm() {
         size="lg"
         disabled={isSubmitting}
         className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700"
+        data-testid="register-submit"
       >
         {isSubmitting ? 'Cadastrando...' : 'Criar conta'}
       </Button>
@@ -201,7 +205,7 @@ function LoginForm() {
   }
 
   return (
-    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit}>
+    <form className="flex w-full flex-col gap-4" onSubmit={handleSubmit} data-testid="login-form">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="login-email">E-mail</Label>
         <Input
@@ -209,6 +213,7 @@ function LoginForm() {
           name="email"
           type="email"
           autoComplete="email"
+          data-testid="login-email"
           value={form.email}
           onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
         />
@@ -221,6 +226,7 @@ function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
+          data-testid="login-password"
           value={form.password}
           onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
         />
@@ -231,6 +237,7 @@ function LoginForm() {
         size="lg"
         disabled={isSubmitting}
         className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700"
+        data-testid="login-submit"
       >
         {isSubmitting ? 'Entrando...' : 'Entrar'}
       </Button>
@@ -259,7 +266,10 @@ export default function JoinPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-black px-6 text-white">
+    <div
+      className="flex min-h-screen flex-col items-center justify-center bg-black px-6 text-white"
+      data-testid="join-page"
+    >
       <div className="flex w-full max-w-sm flex-col items-center gap-8">
         <div className="flex flex-col items-center gap-3">
           <div className="flex size-14 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10">
@@ -279,6 +289,7 @@ export default function JoinPage() {
           type="button"
           onClick={() => setMode((prev) => (prev === 'register' ? 'login' : 'register'))}
           className="text-xs text-white/50 transition-colors hover:text-white/80"
+          data-testid="join-toggle-mode"
         >
           {mode === 'register' ? 'Já tem uma conta? Entrar' : 'Não tem uma conta? Cadastre-se'}
         </button>

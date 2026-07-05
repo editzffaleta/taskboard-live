@@ -25,4 +25,5 @@ export const errorMessagesEn: ErrorMessages = {
   'registerUser.password.strong.password':
     'Password must have at least 8 characters, including uppercase, lowercase, a number and a special character.',
   'registerUser.password.no.common.password': 'Please choose a less common password.',
+  'user.credentials.invalid': 'Invalid email or password.',
 };

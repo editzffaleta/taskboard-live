@@ -6,6 +6,7 @@ export function mapJwtPayloadToAuthenticatedUser(
 ): AuthenticatedUser {
   return {
     id: payload.sub,
+    name: typeof payload.name === 'string' ? payload.name : undefined,
     email: typeof payload.email === 'string' ? payload.email : undefined,
     claims: payload,
   };

@@ -1,4 +1,5 @@
 import { AddressInfo } from 'net';
+import http from 'http';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -76,6 +77,41 @@ describe('BoardGateway (integração)', () => {
       auth: token ? { token } : {},
     });
   }
+
+  /**
+   * O middleware `cors` do engine.io não recusa a conexão a nível de servidor: ele apenas
+   * omite/nao reflete o header `Access-Control-Allow-Origin`, e é o navegador quem bloqueia a
+   * leitura da resposta para origens não permitidas. Por isso o teste de rejeição de origem
+   * verifica o header de resposta do handshake HTTP, em vez de esperar uma falha de conexão do
+   * cliente Node (que, diferente de um browser, ignora o CORS).
+   */
+  function handshakeOriginHeader(origin: string): Promise<string | undefined> {
+    return new Promise((resolve, reject) => {
+      const req = http.get(
+        {
+          port,
+          path: '/socket.io/?EIO=4&transport=polling',
+          headers: { origin },
+        },
+        (res) => {
+          resolve(res.headers['access-control-allow-origin']);
+          res.resume();
+        },
+      );
+      req.on('error', reject);
+    });
+  }
+
+  it('reflete apenas a origem configurada em CORS_ORIGIN no handshake', async () => {
+    const allowed = await handshakeOriginHeader('http://localhost:3000');
+    expect(allowed).toBe('http://localhost:3000');
+
+    const disallowed = await handshakeOriginHeader(
+      'https://origem-nao-permitida.example.com',
+    );
+    expect(disallowed).not.toBe('https://origem-nao-permitida.example.com');
+    expect(disallowed).toBe('http://localhost:3000');
+  });
 
   it('recusa conexão sem token', (done) => {
     const client = connect();

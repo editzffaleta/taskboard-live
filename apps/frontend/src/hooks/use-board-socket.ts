@@ -52,6 +52,16 @@ export type PresencePayload = {
   users: PresenceUser[];
 };
 
+export type MemberAddedPayload = {
+  boardId: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  role: 'owner' | 'member';
+};
+
 export type BoardSocketHandlers = {
   onCardCreated?: (payload: CardEventPayload) => void;
   onCardUpdated?: (payload: CardEventPayload) => void;
@@ -61,7 +71,7 @@ export type BoardSocketHandlers = {
   onListUpdated?: (payload: ListEventPayload) => void;
   onListMoved?: (payload: ListMovedPayload) => void;
   onListDeleted?: (payload: ListDeletedPayload) => void;
-  onMemberAdded?: (payload: unknown) => void; // gancho para 010
+  onMemberAdded?: (payload: MemberAddedPayload) => void;
   onPresenceUpdate?: (payload: PresencePayload) => void;
   onActivityAppended?: (payload: unknown) => void; // gancho reservado para 011
 };
@@ -138,7 +148,7 @@ export function useBoardSocket(
     socket.on('list.deleted', (payload: ListDeletedPayload) => {
       handlersRef.current.onListDeleted?.(payload);
     });
-    socket.on('member.added', (payload: unknown) => {
+    socket.on('member.added', (payload: MemberAddedPayload) => {
       handlersRef.current.onMemberAdded?.(payload);
     });
     socket.on('presence.update', (payload: PresencePayload) => {

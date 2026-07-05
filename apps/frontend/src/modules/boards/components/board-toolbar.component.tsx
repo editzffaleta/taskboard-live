@@ -5,20 +5,41 @@ import { Plus, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { BoardPresence } from '@/modules/boards/components/board-presence.component';
+import { MembersPanel } from '@/modules/boards/components/members-panel.component';
+import type { BoardMember } from '@/modules/boards/api/members.api';
 import type { PresenceUser } from '@/hooks/use-board-socket';
 
 type BoardToolbarProps = {
+  boardId: string;
   boardName: string;
   connected: boolean;
   presenceUsers: PresenceUser[];
   onCreateList: (title: string) => void;
+  token: string | null;
+  currentUserId: string | null;
+  isOwner: boolean;
+  members: BoardMember[];
+  onMembersLoaded: (members: BoardMember[]) => void;
+  onMemberRemoved: (userId: string) => void;
 };
 
 /**
- * Cabeçalho do quadro: nome, criação de nova lista, presença e indicador discreto de
- * conexão do socket.
+ * Cabeçalho do quadro: nome, criação de nova lista, presença, painel de membros e
+ * indicador discreto de conexão do socket.
  */
-export function BoardToolbar({ boardName, connected, presenceUsers, onCreateList }: BoardToolbarProps) {
+export function BoardToolbar({
+  boardId,
+  boardName,
+  connected,
+  presenceUsers,
+  onCreateList,
+  token,
+  currentUserId,
+  isOwner,
+  members,
+  onMembersLoaded,
+  onMemberRemoved,
+}: BoardToolbarProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
 
@@ -47,6 +68,16 @@ export function BoardToolbar({ boardName, connected, presenceUsers, onCreateList
 
       <div className="flex items-center gap-3">
         <BoardPresence users={presenceUsers} />
+
+        <MembersPanel
+          boardId={boardId}
+          token={token}
+          currentUserId={currentUserId}
+          isOwner={isOwner}
+          members={members}
+          onMembersLoaded={onMembersLoaded}
+          onMemberRemoved={onMemberRemoved}
+        />
 
         {isCreating ? (
           <form onSubmit={handleSubmit} className="flex items-center gap-2">

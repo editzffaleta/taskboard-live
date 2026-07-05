@@ -18,6 +18,7 @@ function toBoardState(detail: BoardDetail): BoardState {
   return {
     id: detail.id,
     name: detail.name,
+    ownerId: detail.ownerId,
     lists: detail.lists.map(toListState),
   };
 }

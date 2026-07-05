@@ -6,9 +6,11 @@ export interface MembershipRepository {
     userId: string,
   ): Promise<Membership | null>;
   listBoardsByUser(userId: string): Promise<Membership[]>;
+  listByBoardId(boardId: string): Promise<Membership[]>;
   create(
     boardId: string,
     userId: string,
     role: MembershipRole,
   ): Promise<Membership>;
+  delete(boardId: string, userId: string): Promise<void>;
 }

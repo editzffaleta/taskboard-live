@@ -1,27 +1,60 @@
 <p align="center">
-  <img src="docs/assets/capa.svg" alt="Fábrica Fullstack — template spec-driven (Turborepo · NestJS · Next.js · Prisma · OpenSpec)" width="100%"/>
+  <img src="docs/assets/capa.svg" alt="TaskBoard Live — quadro kanban colaborativo em tempo real (Turborepo · NestJS · Next.js · Prisma · Socket.IO)" width="100%"/>
 </p>
 
-# Template — Fábrica Fullstack ({{produto}})
+# TaskBoard Live — quadro kanban colaborativo em tempo real
 
-Template de desenvolvimento "fábrica fullstack": **NestJS + Next.js + Prisma + Turborepo**
-(npm, Jest), **Clean Architecture + DDD**, já com **OpenSpec + git/CI** no fluxo. Você duplica
-esta pasta, dispara a orquestração e o sistema é construído mudança a mudança, com dois portões
-de qualidade por change — desenhado para que **modelos fracos executem em trilhos**, cada change
-cabendo em ≤ ~250k tokens de contexto.
+Um quadro kanban colaborativo estilo Trello simplificado: **duas pessoas abrem o mesmo quadro e
+veem os cartões se moverem ao vivo.** React/Next.js no front, **WebSockets (Socket.IO)** no back —
+tempo real de verdade, não só CRUD.
 
-> Este README é a visão geral. O passo a passo operacional está em **[`WORKFLOW.md`](./WORKFLOW.md)**;
-> a fonte única para agentes é **[`AGENTS.md`](./AGENTS.md)**.
+Construído **spec-driven**, uma mudança OpenSpec por vez, em **Clean Architecture + DDD**, com dois
+portões de qualidade por change e um time de agentes que executa em trilhos.
+
+> Visão geral aqui. Passo a passo operacional em **[`WORKFLOW.md`](./WORKFLOW.md)**; a fonte única
+> de instruções para agentes é **[`AGENTS.md`](./AGENTS.md)**.
+
+## O que faz
+
+- **Quadros** — crie quadros, veja "meus quadros", abra um quadro.
+- **Listas e cartões** — colunas e cartões com **drag-and-drop** (mover entre colunas, reordenar).
+- **Tempo real** — cada movimento é transmitido por Socket.IO à sala do quadro; quem está com o
+  quadro aberto vê a mudança **sem recarregar**, com update otimista + reconciliação.
+- **Presença** — avatares de quem está vendo o quadro naquele momento.
+- **Compartilhamento** — convide membros por e-mail; autorização por quadro (`owner`/`member`).
+- **Atividade** — feed do quadro ("Fulano moveu o cartão X"), ao vivo.
 
 ## Stack
 
 - **Monorepo:** Turborepo + npm workspaces
-- **Backend:** NestJS — `apps/backend` (:4000)
-- **Frontend:** Next.js 15 (App Router, TS) — `apps/frontend` (:3000)
+- **Backend:** NestJS — `apps/backend` (:4000) · **tempo real:** Socket.IO gateway
+- **Frontend:** Next.js (App Router, TS) — `apps/frontend` (:3000) · **DnD:** `@hello-pangea/dnd`
 - **ORM/DB:** Prisma + PostgreSQL
-- **Testes:** Jest (unitário/integração) + Playwright (e2e)
+- **Testes:** Jest (unitário/integração) + Playwright (e2e, incl. o teste de colaboração ao vivo)
 - **Processo:** OpenSpec (spec-driven) + git + CI + gate com scanners
-- **Entrega:** Dokploy (Traefik + Docker) observando a branch `producao`
+- **Arquitetura:** Clean Architecture + DDD (domain não importa infra; casos de uso recebem *ports*)
+
+## Como o tempo real funciona
+
+- Sala por quadro: **`board:{boardId}`**. O cliente conecta passando o JWT em
+  `socket.handshake.auth.token` (mesmo segredo do HTTP) e entra emitindo `board:join {boardId}`;
+  o gateway confere que o usuário é **membro** (`BoardMember`) antes de admitir na sala.
+- Toda mutação REST (criar/mover cartão, etc.), **após** o caso de uso ter sucesso, transmite o
+  evento pela porta **`RealtimeEmitter`**: `card.moved`, `card.created`, `list.moved`,
+  `member.added`, `activity.created`, `presence.update`…
+- O front aplica o evento no estado local e reconcilia — o autor da ação usa update otimista; os
+  demais recebem ao vivo.
+
+## Modelo de dados
+
+```
+User        { id, name, email, password }
+Board       { id, name, ownerId → User, createdAt }
+BoardMember { id, boardId → Board, userId → User, role: owner|member, unique(boardId,userId) }
+List        { id, boardId → Board, title, position, createdAt }        // coluna do kanban
+Card        { id, listId → List, title, description?, position, createdAt }
+Activity    { id, boardId → Board, actorId → User, type, data (json), createdAt }
+```
 
 ## Estrutura
 
@@ -31,111 +64,64 @@ cabendo em ≤ ~250k tokens de contexto.
 ├── WORKFLOW.md                ← guia operacional passo a passo
 ├── AGENTS.md                  ← fonte ÚNICA de instruções para qualquer agente
 ├── CLAUDE.md / GEMINI.md / .cursor/ / .windsurf/ / .github/  ← adaptadores finos (só apontam)
-├── SECURITY.md                ← política de segurança do template
-├── docs/                      ← auditoria, portabilidade, deploy, segurança, ciclo de vida
-├── changes-templates/         ← changes OpenSpec reaproveitáveis (000–010, com splits a/b/c)
-│   ├── 000-orquestracao-execucao/   ← o "maestro": como o projeto é construído
-│   └── 001…010-*/                   ← núcleo universal multi-tenant
+├── docs/                      ← auditoria, portabilidade, deploy, segurança
+├── changes-templates/         ← as changes OpenSpec do TaskBoard Live (000–013)
+│   ├── 000-orquestracao-execucao/   ← o "maestro": como o projeto é construído (ledger)
+│   ├── 001…004-*/                   ← base + design system + registro + login
+│   ├── 005…011-*/                   ← domínio kanban em tempo real
+│   └── 012…013-*/                   ← hardening HTTP + fundação e2e
 ├── .agents/skills → .claude/skills  ← symlink cross-tool
 └── .claude/
-    ├── settings.json          ← guardrail (nega leitura de .env/segredos/chaves)
     ├── agents/                ← time de agentes (orquestrador + especialistas)
     ├── commands/              ← /inicializar, /orquestrar, /analisar, /portao
-    └── skills/                ← catálogo de skills (28 ativas + _arquivadas/)
+    └── skills/                ← catálogo de skills (implementação das tasks)
 ```
 
-## Portabilidade multi-agente
+## As changes (`changes-templates/`, 000–013)
 
-O `AGENTS.md` é a **fonte única** (o quê, stack, mapa, loop por change, restrições). Claude Code
-lê via `CLAUDE.md` (`@AGENTS.md`); Codex, Cursor, Copilot, Windsurf e OpenCode leem o `AGENTS.md`
-nativamente; Gemini via ponteiro. Zero conteúdo duplicado — adaptador que cresce é regressão.
-Tabela ferramenta→arquivo em `docs/portabilidade.md`.
+O sistema inteiro está especificado em **14 changes OpenSpec**, na ordem topológica das
+dependências. Cada `proposal.md` abre com um **contrato de leitura** (a lista fechada do que abrir),
+e cada task tem `Aceite:`/`Pré:`/guardrails — os trilhos que mantêm a execução sob ≤ ~250k tokens
+por change. Mapa completo e contrato de tempo real em [`changes-templates/README.md`](./changes-templates/README.md).
+
+| # | Change | Entrega |
+|---|---|---|
+| 000 | orquestração/execução | maestro + ledger (processo) |
+| 001–002 | base · design system | monorepo, Prisma, shell, tokens |
+| 003–004 | registro · login | `auth`, bcrypt, JWT, `AuthContext`/`AuthGuard` |
+| 005 | quadros | módulo `board`, CRUD, membership |
+| 006 | tempo real | **Socket.IO gateway**, salas, presença, `RealtimeEmitter` |
+| 007–008 | listas · cartões | colunas e cartões, mover, eventos ao vivo |
+| 009 | quadro ao vivo | **vitrine**: página kanban com DnD + updates ao vivo |
+| 010–011 | membros · atividade | compartilhamento por e-mail, feed do quadro |
+| 012–013 | hardening · e2e | helmet/CORS/rate limit, Playwright (colaboração ao vivo) |
 
 ## O time de agentes (`.claude/agents/`)
 
-Um **orquestrador** dirige; **especialistas** executam por disciplina. Coordenação
-**hub-and-spoke**: os especialistas reportam ao orquestrador (eles não conversam entre si por
-padrão — peer-to-peer só com Agent Teams, ver abaixo). O handoff tem **formato fixo** nos dois
-sentidos (briefing e retorno com campos nomeados — ver `agents/README.md`).
-
-| Agente | Lane | Modelo |
-|---|---|---|
-| `orchestrator-fullstack` | maestro | opus |
-| `architecture-specialist` | bookend (DDD + auditoria de dependência) | opus |
-| `security-specialist` | bookend (STRIDE + auditoria OWASP) | opus |
-| `backend-specialist` | builder | sonnet |
-| `database-specialist` | builder | sonnet |
-| `frontend-specialist` | builder | sonnet |
-| `e2e-specialist` | builder/gate | sonnet |
-| `deploy-specialist` | entrega (Dokploy) | sonnet |
-| `openspec-specialist` | processo | sonnet |
+Um **orquestrador** dirige; **especialistas** executam por disciplina (backend, frontend, database,
+e2e, arquitetura, segurança, deploy, openspec). Coordenação **hub-and-spoke**: os especialistas
+reportam ao orquestrador e não conversam entre si por padrão.
 
 ## Comandos (`.claude/commands/`)
 
-Todos com **pré-condições verificáveis** no topo.
-
-- **`/inicializar`** — bootstrap de projeto novo (pré-`000`): monorepo + `spec-init`
-  (git + OpenSpec + CI/gate) + `spec-conventions` (shared/templates/memory, incl. a **constituição**)
-  e cópia das changes para `openspec/changes/`. É o ponto de entrada.
-- **`/orquestrar [id]`** — dispara o orquestrador a partir da change `000`; constrói tudo
-  sequencialmente. Opcionalmente retoma de uma mudança.
-- **`/analisar <id>`** — portão **pré-build** (skill `spec-analyze`): coerência dos artefatos da
-  change + conformidade com a **constituição**, antes de implementar. Somente-leitura.
-- **`/portao <id>`** — portão **pós-build** (Definition of Done): typecheck nos dois apps, testes,
-  `openspec validate --strict` e o **gate com scanners bloqueantes** (gitleaks, npm audit,
-  Semgrep, Trivy) — depois de implementar, antes de arquivar/mergear.
-
-## Skills (`.claude/skills/`)
-
-Cada skill é uma pasta com `SKILL.md` (+ `references/`/`assets/` e `agents/openai.yaml`, 28/28).
-São a **implementação principal** das tasks das changes. Convenção (frontmatter com gatilho/
-anti-gatilho, `compatibility`, corpo ≤150 linhas com progressive disclosure) em
-`.claude/skills/README.md`. Grupos: Projeto (`config-project-fullstack`, `spec-init`), DDD/Design
-(`ddd-strategic-design`, `security-threat-model`), Base (`config-package-shared`, `config-prisma`,
-`backend-nest-config`, `frontend-next-config`), Domínio (`module-*`), Backend (`backend-*`),
-Frontend (`frontend-next-config`, `spec-frontend-auth`), Segurança (`backend-authorization`,
-`security-review`, `security-threat-model`), E2E (`e2e-playwright`), Deploy (**`deploy-dokploy`**),
-Fluxo (`spec-flow`, `spec-analyze`, `spec-conventions`). Legadas em `_arquivadas/`.
-
-## Changes (`changes-templates/`, 000–010 + extensões 011–017)
-
-Núcleo universal multi-tenant em formato OpenSpec, **com trilhos para modelos fracos**: cada
-`proposal.md` abre com o **contrato de leitura** (lista fechada do que abrir e do que NÃO abrir);
-mockups condicionais em `mockups/<tela>/` (layout fiel + dado real); densas divididas por sufixo
-(`006a`/`006b`, `008a`/`008b`/`008c`, `009a`/`009b`/`009c`); ritual de fechamento com
-`EXECUTION-LOG.md` + **zerar o contexto** entre changes. As **extensões `011–017`** (e-mail,
-hardening HTTP, observabilidade, seeds, e2e, auditoria, sessão rotativa) são opcionais e
-recomendadas para produção. Mapa e regras no `changes-templates/README.md`. Versão do template
-em `VERSION`/`CHANGELOG.md`.
+- **`/inicializar`** — bootstrap do projeto novo (pré-`000`): monorepo + git + OpenSpec + CI/gate e
+  cópia das changes para `openspec/changes/`. Ponto de entrada.
+- **`/orquestrar [id]`** — dispara o orquestrador a partir da `000`; constrói tudo sequencialmente.
+- **`/analisar <id>`** — portão **pré-build**: coerência dos artefatos + constituição. Somente-leitura.
+- **`/portao <id>`** — portão **pós-build** (Definition of Done): typecheck, testes,
+  `openspec validate --strict` e gate com scanners (gitleaks, npm audit, Semgrep, Trivy).
 
 ## Fluxo (resumo)
 
-1. **Bootstrap:** duplique esta pasta e rode **`/inicializar`**.
-2. **Placeholders:** troque `{{produto}}`, `{{namespace}}`, papéis e códigos de tela nas changes.
-3. **Construção:** rode **`/orquestrar`**. Por mudança: **`/analisar`** (pré-build) → sub-passos
-   por especialista (sequencial) → **`/portao`** (pós-build) → archive → commit → ledger →
+1. **Bootstrap:** rode **`/inicializar`**.
+2. **Construção:** rode **`/orquestrar`**. Por mudança: **`/analisar`** (pré-build) → sub-passos por
+   especialista (sequencial) → **`/portao`** (pós-build) → archive → commit → ledger →
    `EXECUTION-LOG.md` → **zerar contexto**.
-4. **Entrega:** merge de `main` → `producao` publica via Dokploy (`docs/deploy-dokploy.md`).
+3. **Entrega:** merge de `main` → `producao` publica via Dokploy (`docs/deploy-dokploy.md`).
 
 ## Regras de ouro
 
-- Os **princípios inegociáveis** vivem em `openspec/memory/constitution.md`; toda change os
-  respeita (exceção só via `## Constitution Exception` no `design.md`).
 - Nunca mergeia no `main` com gate/CI vermelho; **scan pulado local nunca é verde definitivo**.
 - Nunca commita segredo (`.env`); só `.env.example` é versionado. Env de produção = painel Dokploy.
-- 1 change OpenSpec = 1 branch = 1 PR. Deploy só pela `producao` (que só recebe merge de `main`).
-- Execução sequencial, nunca paralela (mudanças tocam arquivos compartilhados).
+- 1 change OpenSpec = 1 branch = 1 PR. Execução **sequencial**, nunca paralela.
 - **Dois portões por change**: `/analisar` (pré-build) → build → `/portao` (pós-build).
-
-## Segurança
-
-Gate bloqueante com **gitleaks + npm audit + Semgrep + Trivy** (local best-effort, CI garante);
-`SECURITY.md` semeado por projeto; Dependabot + rulesets (`main` e `producao`) no plano Pro —
-o que o Pro não cobre (CodeQL, secret scanning nativo) os scanners OSS cobrem:
-`docs/seguranca-github.md`.
-
-## Agent Teams (opcional)
-
-Comunicação peer-to-peer real entre agentes é experimental e desligada por padrão. Habilite com a
-env `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` no `settings.json`/ambiente — os mesmos arquivos de
-`.claude/agents/` passam a ser teammates. Reserve para mudanças densas; tem limitações conhecidas.

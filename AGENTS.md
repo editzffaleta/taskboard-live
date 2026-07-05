@@ -1,4 +1,4 @@
-# AGENTS.md — Template Fábrica Fullstack
+# AGENTS.md — TaskBoard Live
 
 > **Fonte única de instruções deste repositório** para qualquer agente de código
 > (Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Gemini CLI, OpenCode, Windsurf, Zed…).
@@ -7,27 +7,41 @@
 
 ## O que é este repositório
 
-Template "fábrica fullstack": duplique a pasta, rode o bootstrap e o sistema é construído
-**uma change OpenSpec por vez, em contexto limpo**, com dois portões de qualidade por change.
-Foi projetado para que **qualquer modelo que saiba programar — inclusive modelos fracos —**
-construa o sistema inteiro sem alucinar e **sem ultrapassar ~250k tokens por change**.
+**TaskBoard Live** — um quadro kanban colaborativo em tempo real (estilo Trello simplificado):
+duas pessoas abrem o mesmo quadro e veem os cartões se moverem ao vivo. Next.js no front,
+**Socket.IO** no back. O sistema é construído **uma change OpenSpec por vez, em contexto limpo**
+(changes `000…013` em `changes-templates/`), com dois portões de qualidade por change — em trilhos
+que mantêm cada change sob **~250k tokens** e sem alucinação, mesmo em modelos fracos.
 
-## Stack de referência (não invente alternativas)
+## Stack (não invente alternativas)
 
 - Monorepo: **Turborepo + npm workspaces** — use `npm`, nunca pnpm/yarn.
-- Backend: **NestJS** em `apps/backend` (porta **4000**).
+- Backend: **NestJS** em `apps/backend` (porta **4000**). **Tempo real: Socket.IO gateway**
+  (`@nestjs/websockets` + `@nestjs/platform-socket.io`), salas `board:{id}` com handshake JWT.
 - Frontend: **Next.js App Router + TypeScript** em `apps/frontend` (porta **3000**).
+  Drag-and-drop com **`@hello-pangea/dnd`**; cliente **`socket.io-client`**.
 - ORM/DB: **Prisma + PostgreSQL** · Testes: **Jest** (unit/integração) + **Playwright** (e2e).
 - Arquitetura: Clean Architecture + DDD. Regra de dependência: `domain` **não** importa de
   `application`/`infrastructure`/`interface`; casos de uso recebem *ports*, nunca Prisma concreto.
+  Autorização é **por quadro** (`owner`/`member` em `BoardMember`) — sem multi-tenancy nem RBAC global.
 - Processo: **OpenSpec** (spec-driven) + git + CI + gate.
+
+## Domínio (modelo canônico)
+
+- `User { id, name, email, password }` · `Board { id, name, ownerId, createdAt }`
+- `BoardMember { id, boardId, userId, role: owner|member, unique(boardId,userId) }`
+- `List { id, boardId, title, position }` (coluna) · `Card { id, listId, title, description?, position }`
+- `Activity { id, boardId, actorId, type, data, createdAt }`
+- **Contrato de tempo real** (definido na change `006`, consumido pelas demais): porta
+  `RealtimeEmitter.emitToBoard(boardId, event, payload)` chamada **após** o caso de uso ter sucesso;
+  eventos `card.*`, `list.*`, `member.added`, `activity.created`, `presence.update`.
 
 ## Mapa de pastas
 
 ```
 AGENTS.md                  ← você está aqui (fonte única)
 README.md / WORKFLOW.md    ← visão geral / guia operacional passo a passo
-changes-templates/         ← os "trilhos": changes OpenSpec reaproveitáveis (000…010)
+changes-templates/         ← os "trilhos": as changes OpenSpec do TaskBoard Live (000…013)
 docs/                      ← auditoria, portabilidade, deploy Dokploy, segurança GitHub
 .claude/
   agents/                  ← time hub-and-spoke (orquestrador + especialistas)
@@ -41,8 +55,8 @@ memory/, templates/, EXECUTION-LOG.md) e `apps/` + `modules/` + `packages/`.
 
 ## Como o sistema é construído (leia antes de tocar em qualquer change)
 
-1. **Bootstrap (uma vez):** `/inicializar` — monorepo + git + OpenSpec + CI + cópia de
-   `changes-templates/` para `openspec/changes/` + substituição de placeholders.
+1. **Bootstrap (uma vez):** `/inicializar` — monorepo + git + OpenSpec + CI + cópia das changes
+   de `changes-templates/` (`000…013`) para `openspec/changes/`.
 2. **Loop por change (o coração):** para cada change, **em um chat/contexto NOVO**:
    - Abra **apenas** o que o *Contrato de leitura* no topo do `proposal.md` da change manda
      (orientação mínima do OpenSpec + a própria change + arquivos que o `design.md` citar).

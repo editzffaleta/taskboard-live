@@ -1,9 +1,9 @@
-<!-- TEMPLATE — design da fundacao. Placeholders: {{produto}}, {{namespace}}. -->
+<!-- TEMPLATE — design da fundacao. Placeholders: TaskBoard Live, taskboard. -->
 
 ## Context
 
-O {{produto}} adota um monorepo Turbo com `apps/frontend` (Next.js, porta 3000) e `apps/backend`
-(NestJS, porta 4000), sob o namespace npm `@{{namespace}}`. A persistencia e via Prisma com schema
+O TaskBoard Live adota um monorepo Turbo com `apps/frontend` (Next.js, porta 3000) e `apps/backend`
+(NestJS, porta 4000), sob o namespace npm `@taskboard`. A persistencia e via Prisma com schema
 modular por dominio, e o backend usa autenticacao baseada em JWT com tratamento de erros
 centralizado. O frontend e organizado com a pasta `shared/`, grupos de rotas `(public)`/`(private)`,
 shell de navegacao (AdminShell + sidebar) e base de i18n (pt/en).
@@ -18,7 +18,7 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 ## Goals / Non-Goals
 
 **Goals:**
-- Estabelecer a base do monorepo (backend + frontend) sob `@{{namespace}}`.
+- Estabelecer a base do monorepo (backend + frontend) sob `@taskboard`.
 - Configurar a infraestrutura do Prisma (schema modular por dominio), pronta para receber models.
 - Criar o pacote compartilhado consumivel por backend, frontend e modulos.
 - Configurar tratamento de erros centralizado e base de autenticacao JWT no backend.
@@ -33,8 +33,8 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 
 ## Decisions
 
-- **Namespace `@{{namespace}}`**: alinha os pacotes do workspace a identidade do produto. Decisao
-  tomada via flag `--namespace @{{namespace}}` da skill `config-project-fullstack`. *(Caso prefira
+- **Namespace `@taskboard`**: alinha os pacotes do workspace a identidade do produto. Decisao
+  tomada via flag `--namespace @taskboard` da skill `config-project-fullstack`. *(Caso prefira
   outro scope, esta e a unica decisao a reverter antes de aplicar.)*
 - **Skills dedicadas como implementacao principal**: cada etapa e executada por uma skill especifica
   (`config-project-fullstack`, `config-prisma`, `config-package-shared`, `backend-nest-config`,

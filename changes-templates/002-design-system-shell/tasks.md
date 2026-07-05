@@ -12,7 +12,7 @@ Cada task tem **Aceite**. Fonte de verdade dos tokens: as suas telas/mockups.
 
 - [ ] 1.1 Reescrever `apps/frontend/src/app/globals.css` mapeando as CSS variables (`--primary`,
   `--accent`, `--border`, `--muted`, `--destructive`, `--ring`, superficies e textos) para a paleta
-  {{produto}} (primario `{{cor-primaria}}`, hover `{{cor-primaria-hover}}`), definindo **tema claro
+  TaskBoard Live (primario `{{cor-primaria}}`, hover `{{cor-primaria-hover}}`), definindo **tema claro
   (`:root`) e tema escuro (`.dark`)**. Fonte de verdade: as suas telas.
   - **Aceite:** `globals.css` com claro e escuro, `color-scheme` por tema e todas as variables
     mapeadas a paleta; nenhum componente alterado para isso.
@@ -38,8 +38,8 @@ Cada task tem **Aceite**. Fonte de verdade dos tokens: as suas telas/mockups.
 
 ## 3. Shell e navegacao
 
-- [ ] 3.1 Adaptar `shared/components/branding/app-logo.component.tsx` para a marca **{{produto}}**.
-  - **Aceite:** logo/wordmark com a marca {{produto}} (funciona em claro e escuro); API do
+- [ ] 3.1 Adaptar `shared/components/branding/app-logo.component.tsx` para a marca **TaskBoard Live**.
+  - **Aceite:** logo/wordmark com a marca TaskBoard Live (funciona em claro e escuro); API do
     componente preservada (`AppLogo`, `AppLogoMark`, `AppWordmark`, tamanhos sm/md/lg).
 - [ ] 3.2 Popular a navegacao da sidebar (config estatica em `shared/navigation/app-navigation.config.ts`)
   com as secoes {{secoes-sidebar}}, declarativa e **preparada para o gating por papel da `006`** —

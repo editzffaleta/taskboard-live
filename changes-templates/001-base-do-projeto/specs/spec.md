@@ -1,17 +1,17 @@
-<!-- TEMPLATE — delta de capability da 001. Placeholders: {{produto}}, {{namespace}}. -->
+<!-- TEMPLATE — delta de capability da 001. Placeholders: TaskBoard Live, taskboard. -->
 
 ## ADDED Requirements
 
 ### Requirement: Monorepo Turbo funcional
 
 O sistema SHALL prover um monorepo Turbo com `apps/backend` (NestJS, porta 4000) e `apps/frontend`
-(Next.js, porta 3000) sob o namespace npm `@{{namespace}}`.
+(Next.js, porta 3000) sob o namespace npm `@taskboard`.
 
 #### Scenario: Aplicacoes inicializam nas portas configuradas
 
 - **WHEN** o monorepo e inicializado
 - **THEN** o backend NestJS sobe na porta 4000 e o frontend Next.js sobe na porta 3000 sem erros
-- **AND** os pacotes do workspace usam o namespace `@{{namespace}}`
+- **AND** os pacotes do workspace usam o namespace `@taskboard`
 
 ### Requirement: Infraestrutura Prisma configurada
 
@@ -33,7 +33,7 @@ negocio, restrito a contratos e utilitarios base.
 #### Scenario: Pacote compartilhado consumivel
 
 - **WHEN** o pacote compartilhado e criado
-- **THEN** ele esta disponivel para ser importado por backend, frontend e modulos sob `@{{namespace}}`
+- **THEN** ele esta disponivel para ser importado por backend, frontend e modulos sob `@taskboard`
 - **AND** nao contem logica de dominio
 
 ### Requirement: Backend com tratamento de erros e autenticacao JWT

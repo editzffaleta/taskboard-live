@@ -1,4 +1,4 @@
-<!-- TEMPLATE — design do design system. Placeholders: {{produto}}, {{cor-primaria}},
+<!-- TEMPLATE — design do design system. Placeholders: TaskBoard Live, {{cor-primaria}},
 {{cor-primaria-hover}}, {{fonte-texto}}, {{fonte-dados}}, {{secoes-sidebar}}, {{N-telas}}. -->
 
 ## Context
@@ -6,7 +6,7 @@
 Apos a `001`, o frontend tem uma base generica entregue pela skill `frontend-next-config`:
 biblioteca de componentes em `shared/components/ui/`, um `globals.css` com CSS variables no padrao
 shadcn/radix (atualmente **dark-only**) e o shell de navegacao (`AdminShell` + sidebar generica). As
-{{N-telas}} telas do {{produto}} definem a identidade visual real: paleta, fontes, suporte a **tema
+{{N-telas}} telas do TaskBoard Live definem a identidade visual real: paleta, fontes, suporte a **tema
 claro e escuro** e uma sidebar organizada por secoes/persona.
 
 Esta mudanca aplica essa identidade sobre a base herdada, sem recriar componentes. Como os
@@ -15,15 +15,15 @@ multi-tenancy (`003`), os papeis/RBAC (`006`) e os modulos de dominio (`004`+) f
 
 Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
 [Regras de nomenclatura](../../shared/regras-de-nomenclatura.md). Fonte de verdade dos tokens: as
-{{N-telas}} telas do {{produto}}.
+{{N-telas}} telas do TaskBoard Live.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Aplicar a paleta {{produto}} (primaria + semanticas + escala neutra) via CSS variables, em claro e escuro.
+- Aplicar a paleta TaskBoard Live (primaria + semanticas + escala neutra) via CSS variables, em claro e escuro.
 - Configurar a tipografia da marca ({{fonte-texto}} para texto, {{fonte-dados}} para dados/codigo).
 - Prover alternancia de tema claro/escuro persistente, com o controle no shell.
-- Aplicar a marca {{produto}} no shell (logo) e garantir o `toaster` montado.
+- Aplicar a marca TaskBoard Live no shell (logo) e garantir o `toaster` montado.
 - Estruturar a navegacao da sidebar por secoes, preparada para gating por papel na `006`.
 
 **Non-Goals:**
@@ -38,7 +38,7 @@ Referencias compartilhadas: [Como executar](../../shared/como-executar.md) e
   a tipografia), aproveitando que os componentes ja leem `--primary`, `--accent`, `--border`,
   `--muted`, `--destructive` etc. Alternativa (estilizar componente a componente) descartada por ser
   fragil, repetitiva e divergir da arquitetura herdada.
-- **Tokens {{produto}} (das telas)**: primario `{{cor-primaria}}` (hover/realce
+- **Tokens TaskBoard Live (das telas)**: primario `{{cor-primaria}}` (hover/realce
   `{{cor-primaria-hover}}`); escala neutra para superficies/bordas/textos; semanticas `success`,
   `warning`, `danger/destructive`. *(Ajuste os hex a sua marca; a fonte de verdade sao as telas.)*
 - **Tema claro + escuro (base era dark-only)**: as telas suportam ambos; a `002` adiciona o tema

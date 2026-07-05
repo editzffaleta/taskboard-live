@@ -2,8 +2,8 @@
 TEMPLATE DE CHANGE — 001-base-do-projeto (fundacao tecnica do monorepo).
 Substitua os placeholders e remova este comentario antes de usar.
 Placeholders:
-  {{produto}}    — nome do produto (ex.: AlphaBet)
-  {{namespace}}  — scope npm SEM @ (ex.: alphabet) → usado como @{{namespace}}
+  TaskBoard Live    — nome do produto (ex.: AlphaBet)
+  taskboard  — scope npm SEM @ (ex.: alphabet) → usado como @taskboard
 -->
 
 
@@ -20,7 +20,7 @@ Placeholders:
 
 ## Why
 
-O {{produto}} ainda nao possui uma base tecnica compartilhada. Antes de implementar qualquer
+O TaskBoard Live ainda nao possui uma base tecnica compartilhada. Antes de implementar qualquer
 modulo de negocio — e antes mesmo do design system (`002`) e do multi-tenancy (`003`) — e
 necessario estabelecer o monorepo, a persistencia, o pacote compartilhado e a infraestrutura
 base de backend e frontend. Esta e a fundacao sobre a qual todas as demais changes (`002` em
@@ -29,7 +29,7 @@ diante) sao construidas, garantindo um ponto de partida consistente, seguro e ra
 ## What Changes
 
 - Criar a estrutura base do monorepo Turbo com `apps/frontend` (Next.js, porta 3000) e
-  `apps/backend` (NestJS, porta 4000), sob o namespace npm `@{{namespace}}`.
+  `apps/backend` (NestJS, porta 4000), sob o namespace npm `@taskboard`.
 - Configurar a infraestrutura do Prisma no backend com schema modular por dominio (`DbModule`,
   `PrismaService`, seed tecnico neutro, docker compose derivado da identidade do projeto),
   pronta para receber models de modulos — **sem definir nenhum model de dominio**.
@@ -47,8 +47,8 @@ diante) sao construidas, garantindo um ponto de partida consistente, seguro e ra
 ## Capabilities
 
 ### New Capabilities
-- `base-projeto`: Base tecnica compartilhada do monorepo {{produto}} — estrutura Turbo
-  (backend/frontend) sob `@{{namespace}}`, persistencia Prisma modular, pacote compartilhado,
+- `base-projeto`: Base tecnica compartilhada do monorepo TaskBoard Live — estrutura Turbo
+  (backend/frontend) sob `@taskboard`, persistencia Prisma modular, pacote compartilhado,
   tratamento de erros e autenticacao JWT no backend, e estrutura compartilhada, rotas, shell de
   navegacao e base de i18n no frontend.
 
@@ -58,7 +58,7 @@ diante) sao construidas, garantindo um ponto de partida consistente, seguro e ra
 ## Impact
 
 - **Estrutura**: criacao de `apps/backend`, `apps/frontend`, pacote compartilhado e config de
-  monorepo Turbo sob `@{{namespace}}`.
+  monorepo Turbo sob `@taskboard`.
 - **Persistencia**: infraestrutura Prisma (schema modular por dominio, `DbModule`, `PrismaService`,
   seed tecnico neutro, docker compose), sem models de dominio.
 - **Backend**: tratamento de erros centralizado e base de autenticacao JWT (guard global +
@@ -66,4 +66,4 @@ diante) sao construidas, garantindo um ponto de partida consistente, seguro e ra
 - **Frontend**: pasta `shared/`, grupos de rotas `(public)`/`(private)`, shell com sidebar e base
   de i18n (pt/en).
 - **Configuracao**: baseline de `.env`/`.env.example` (`DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_API_URL`).
-- **Dependencias**: namespace npm `@{{namespace}}`; nenhum modulo de dominio afetado.
+- **Dependencias**: namespace npm `@taskboard`; nenhum modulo de dominio afetado.

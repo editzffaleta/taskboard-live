@@ -13,9 +13,9 @@ Use a skill indicada como implementacao principal; se nao cobrir tudo, complete 
 
 - [ ] 1.1 Criar a estrutura base do monorepo com a skill
   [config-project-fullstack](../../../.claude/skills/config-project-fullstack) usando o namespace
-  `@{{namespace}}` (flag `--namespace @{{namespace}}`).
+  `@taskboard` (flag `--namespace @taskboard`).
   - **Aceite:** existem `apps/backend` (Nest, :4000) e `apps/frontend` (Next, :3000); pacotes do
-    workspace sob `@{{namespace}}`; `.env`/`.env.example` em ambos os apps.
+    workspace sob `@taskboard`; `.env`/`.env.example` em ambos os apps.
 - [ ] 1.2 Configurar a infraestrutura do Prisma com a skill
   [config-prisma](../../../.claude/skills/config-prisma): schema modular por dominio, `DbModule`,
   `PrismaService`, seed tecnico neutro e docker compose — **sem models de dominio**.
@@ -23,9 +23,9 @@ Use a skill indicada como implementacao principal; se nao cobrir tudo, complete 
     `docker-compose.yml`, `src/db/{db.module.ts,prisma.service.ts}`, `DbModule` no `AppModule`,
     `DATABASE_URL` no `.env`.
 - [ ] 1.3 Criar o pacote compartilhado com a skill
-  [config-package-shared](../../../.claude/skills/config-package-shared) sob `@{{namespace}}`,
+  [config-package-shared](../../../.claude/skills/config-package-shared) sob `@taskboard`,
   restrito a contratos e utilitarios base.
-  - **Aceite:** `packages/shared` como `@{{namespace}}/shared` com contratos base (`model`,
+  - **Aceite:** `packages/shared` como `@taskboard/shared` com contratos base (`model`,
     `usecase`, `error`, `validation`), **sem logica de dominio**; `build` e testes do pacote verdes.
 - [ ] 1.4 Configurar erros centralizados + autenticacao JWT com a skill
   [backend-nest-config](../../../.claude/skills/backend-nest-config) (filtro global de erros,
@@ -58,6 +58,6 @@ Use a skill indicada como implementacao principal; se nao cobrir tudo, complete 
   `npm --workspace apps/backend run prisma:generate`.
   - **Aceite:** container do Postgres ativo; Prisma Client gerado sem erros.
 - [ ] 3.2 Verificar que o backend sobe em `:4000` e o frontend em `:3000` sem erros, que os pacotes
-  usam `@{{namespace}}` e que **nenhum modulo de dominio** foi criado.
+  usam `@taskboard` e que **nenhum modulo de dominio** foi criado.
   - **Aceite:** boot 200 nas duas portas; `npx tsc --noEmit` limpo nos dois apps; testes do shared
     verdes; sem `src/modules` no backend e sem `modules/` na raiz (Prisma so com model bootstrap/neutro).

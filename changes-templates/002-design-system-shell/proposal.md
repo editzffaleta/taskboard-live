@@ -2,7 +2,7 @@
 TEMPLATE DE CHANGE — 002-design-system-shell (identidade visual sobre a base da 001).
 Substitua os placeholders e remova este comentario antes de usar.
 Placeholders:
-  {{produto}}            — nome do produto (ex.: AlphaBet)
+  TaskBoard Live            — nome do produto (ex.: AlphaBet)
   {{cor-primaria}}       — hex da cor primaria (ex.: #4F46E5)
   {{cor-primaria-hover}} — hex de hover/realce (ex.: #6366F1)
   {{fonte-texto}}        — fonte de texto (ex.: Inter)
@@ -30,7 +30,7 @@ A `001` deixou o frontend com uma base generica: a skill `frontend-next-config` 
 biblioteca de componentes em `shared/components/ui/` (button, input, table, dialog, badge, toaster,
 `form-section-layout`, `delete-confirmation-dialog`, paginacao, charts), um `globals.css` baseado em
 CSS variables (padrao shadcn/radix) e o shell de navegacao (`AdminShell` + sidebar). Falta dar a essa
-base a **identidade visual do {{produto}}** — a paleta, as fontes, o suporte a tema claro/escuro e a
+base a **identidade visual do TaskBoard Live** — a paleta, as fontes, o suporte a tema claro/escuro e a
 estrutura de navegacao por secoes — extraida das {{N-telas}} telas. Como toda a UI das mudancas `004`
 em diante reusa esses componentes e essas variaveis, a tematizacao precisa vir cedo para garantir
 consistencia sem retrabalho.
@@ -42,14 +42,14 @@ biblioteca inteira de uma vez.
 ## What Changes
 
 - Reescrever o `globals.css` mapeando as CSS variables (`--primary`, `--accent`, `--border`,
-  `--muted`, `--destructive`, `--ring`, superficies e textos) para a paleta {{produto}}: primario
+  `--muted`, `--destructive`, `--ring`, superficies e textos) para a paleta TaskBoard Live: primario
   `{{cor-primaria}}` (hover `{{cor-primaria-hover}}`), escala neutra e semanticas
   (`success`, `warning`, `danger`), definindo **tema claro e tema escuro** (a base herdada e dark-only).
 - Configurar as fontes da marca: **{{fonte-texto}}** para texto e **{{fonte-dados}}** para
   dados/codigo, via `next/font`, e aplicar a tipografia base.
 - Adicionar o provider de tema e a alternancia claro/escuro baseada na classe `.dark`, com
   persistencia via o `use-local-storage.hook` ja existente; tema padrao **claro**, com o controle no shell.
-- Adaptar o `app-logo.component` para a marca **{{produto}}**.
+- Adaptar o `app-logo.component` para a marca **TaskBoard Live**.
 - Popular a navegacao da sidebar com a estrutura por secoes ({{secoes-sidebar}}) como configuracao
   estatica, **estruturada para receber o gating por papel na `006`** — sem aplicar regras de papel aqui.
 - Garantir o `toaster` (sonner) montado no shell para as mudancas seguintes.
@@ -58,7 +58,7 @@ biblioteca inteira de uma vez.
 ## Capabilities
 
 ### New Capabilities
-- `design-system`: Identidade visual do {{produto}} aplicada sobre a base de frontend da `001` —
+- `design-system`: Identidade visual do TaskBoard Live aplicada sobre a base de frontend da `001` —
   tokens de tema (paleta, semanticas, escala neutra) em CSS variables para claro e escuro,
   tipografia {{fonte-texto}}/{{fonte-dados}}, alternancia de tema persistente, marca no shell e
   navegacao por secoes preparada para papeis, reusando a biblioteca de componentes existente sem recria-la.
@@ -71,7 +71,7 @@ biblioteca inteira de uma vez.
 - **Frontend (tema)**: reescrita de `apps/frontend/src/app/globals.css` (CSS variables claro + escuro).
 - **Frontend (tipografia)**: {{fonte-texto}} e {{fonte-dados}} via `next/font` + tipografia base.
 - **Frontend (tema claro/escuro)**: provider + alternancia `.dark` com persistencia, controle no shell.
-- **Frontend (marca e shell)**: `app-logo.component` com a marca {{produto}}; `toaster` montado.
+- **Frontend (marca e shell)**: `app-logo.component` com a marca TaskBoard Live; `toaster` montado.
 - **Frontend (navegacao)**: config estatica da sidebar por secoes, preparada para gating na `006`.
 - **Reuso**: a biblioteca `shared/components/ui/*` herdada da `001` e reaproveitada sem recriacao.
 - **Escopo**: sem backend, sem dominio, sem papeis, sem tenant.

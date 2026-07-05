@@ -1,11 +1,7 @@
 <!--
-TEMPLATE DE CHANGE — 000-orquestracao-execucao (mudanca de PROCESSO, o "maestro").
-Substitua os placeholders e remova este comentario antes de usar.
-Placeholders:
-  {{produto}}   — nome do produto (ex.: AlphaBet)
-  {{N}}         — numero da ultima mudanca de feature (ex.: 025)
-Convenção de comandos: este projeto usa /openspec:* (apply/archive/sync).
-Time de agentes: ver `.claude/agents/` (orquestrador + especialistas).
+000-orquestracao-execucao — mudanca de PROCESSO, o "maestro" do TaskBoard Live.
+Conduz a implementacao das changes 001..013 na ordem, com portao de qualidade entre cada uma.
+Convenção de comandos: /openspec:* (apply/archive/sync). Time de agentes: ver `.claude/agents/`.
 -->
 
 
@@ -19,7 +15,7 @@ Time de agentes: ver `.claude/agents/` (orquestrador + especialistas).
 
 ## Why
 
-O {{produto}} tem mudancas especificadas (`001-...` … `{{N}}-...`), mas ainda nao ha codigo
+O TaskBoard Live tem mudancas especificadas (`001-...` … `013-...`), mas ainda nao ha codigo
 (`apps/` nao existe). Executa-las a mao, na ordem certa e mantendo o contexto sob controle,
 e trabalhoso e propenso a erro. Esta mudanca **000** e o maestro: o artefato entregue ao
 Claude Code para que o **agente orquestrador** conduza a implementacao de ponta a ponta,

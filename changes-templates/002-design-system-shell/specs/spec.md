@@ -1,15 +1,15 @@
-<!-- TEMPLATE — delta de capability da 002. Placeholders: {{produto}}, {{fonte-texto}}, {{fonte-dados}}. -->
+<!-- TEMPLATE — delta de capability da 002. Placeholders: TaskBoard Live, {{fonte-texto}}, {{fonte-dados}}. -->
 
 ## ADDED Requirements
 
-### Requirement: Paleta {{produto}} aplicada via CSS variables
+### Requirement: Paleta TaskBoard Live aplicada via CSS variables
 
-O frontend SHALL aplicar a paleta visual do {{produto}} (primaria, escala neutra e semanticas) por
+O frontend SHALL aplicar a paleta visual do TaskBoard Live (primaria, escala neutra e semanticas) por
 meio das CSS variables consumidas pela biblioteca de componentes, em tema claro e tema escuro.
 
 #### Scenario: Componentes refletem a paleta sem alteracao individual
 
-- **WHEN** o tema {{produto}} e aplicado no `globals.css`
+- **WHEN** o tema TaskBoard Live e aplicado no `globals.css`
 - **THEN** os componentes de `shared/components/ui/*` renderizam com a cor primaria, a escala neutra
   e as semanticas (`success`, `warning`, `danger`) das telas
 - **AND** a paleta esta definida para tema claro e tema escuro
@@ -37,14 +37,14 @@ usuario, sendo o tema claro o padrao.
 - **AND** a escolha e persistida (via `use-local-storage.hook`) e mantida entre sessoes
 - **AND** na ausencia de escolha previa, o tema padrao e o claro
 
-### Requirement: Marca {{produto}} no shell
+### Requirement: Marca TaskBoard Live no shell
 
-O shell de navegacao SHALL exibir a marca {{produto}}.
+O shell de navegacao SHALL exibir a marca TaskBoard Live.
 
 #### Scenario: Logo da marca no shell
 
 - **WHEN** o shell e renderizado
-- **THEN** o `app-logo.component` exibe a marca {{produto}}
+- **THEN** o `app-logo.component` exibe a marca TaskBoard Live
 
 ### Requirement: Navegacao por secoes preparada para papeis
 
@@ -54,7 +54,7 @@ preparada para receber o gating por papel em mudanca futura, sem aplicar regras 
 #### Scenario: Sidebar com estrutura por secoes
 
 - **WHEN** o shell e renderizado
-- **THEN** a sidebar apresenta a estrutura por secoes do {{produto}} (config estatica)
+- **THEN** a sidebar apresenta a estrutura por secoes do TaskBoard Live (config estatica)
 - **AND** a estrutura e declarativa e permite adicionar gating por papel na `006` sem reescrita
 - **AND** nenhuma regra de papel e aplicada nesta mudanca
 
@@ -64,7 +64,7 @@ Esta mudanca SHALL reaproveitar a biblioteca de componentes herdada da `001` e M
 
 #### Scenario: Biblioteca reaproveitada, nao recriada
 
-- **WHEN** o design system {{produto}} e aplicado
+- **WHEN** o design system TaskBoard Live e aplicado
 - **THEN** os componentes de `shared/components/ui/*` sao reaproveitados como estao
 - **AND** o re-skin acontece via CSS variables e tipografia, sem recriar componentes
 

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Kanban } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/shared/components/ui/button';
@@ -9,6 +10,9 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { getMessage } from '@/shared/i18n';
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
+import { useAuth } from '@/modules/auth/context/auth.context';
+
+const PRIVATE_HOME_ROUTE = '/boards';
 
 type JoinMode = 'register' | 'login';
 
@@ -128,14 +132,72 @@ function RegisterForm() {
   );
 }
 
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+type LoginFormState = {
+  email: string;
+  password: string;
+};
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    // NOTE: login apenas visual nesta change (003) — a integração funcional com o
-    // backend é implementada na change 004 (login).
+const INITIAL_LOGIN_FORM: LoginFormState = {
+  email: '',
+  password: '',
+};
+
+type LoginSuccessResponse = {
+  token: string;
+  user: { id: string; name: string; email: string };
+};
+
+function isLoginSuccessResponse(value: unknown): value is LoginSuccessResponse {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as Record<string, unknown>).token === 'string'
+  );
+}
+
+function LoginForm() {
+  const [form, setForm] = useState<LoginFormState>(INITIAL_LOGIN_FORM);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      let body: unknown = null;
+      try {
+        body = await response.json();
+      } catch {
+        body = null;
+      }
+
+      if (response.status === 200 && isLoginSuccessResponse(body)) {
+        login(body.token);
+        router.push(PRIVATE_HOME_ROUTE);
+        return;
+      }
+
+      if (isApiErrorResponse(body) && body.errors.length > 0) {
+        body.errors.forEach((code) => {
+          toast.error(getMessage(code));
+        });
+        return;
+      }
+
+      toast.error(getMessage('INTERNAL_SERVER_ERROR'));
+    } catch {
+      toast.error(getMessage('DEFAULT_API_ERROR'));
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -147,8 +209,8 @@ function LoginForm() {
           name="email"
           type="email"
           autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          value={form.email}
+          onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
         />
       </div>
 
@@ -159,17 +221,18 @@ function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          value={form.password}
+          onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
         />
       </div>
 
       <Button
         type="submit"
         size="lg"
+        disabled={isSubmitting}
         className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700"
       >
-        Entrar
+        {isSubmitting ? 'Entrando...' : 'Entrar'}
       </Button>
     </form>
   );
@@ -177,6 +240,23 @@ function LoginForm() {
 
 export default function JoinPage() {
   const [mode, setMode] = useState<JoinMode>('register');
+  const { status } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace(PRIVATE_HOME_ROUTE);
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'authenticated') {
+    return (
+      <div
+        aria-busy="true"
+        className="flex min-h-screen items-center justify-center bg-black"
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-black px-6 text-white">

@@ -8,13 +8,20 @@ import {
   APP_NAVIGATION_SECTIONS,
   DEFAULT_NAVIGATION_MODULE_ID,
 } from '@/shared/navigation/app-navigation.config';
+import { AuthGuard } from '@/modules/auth/guard/auth.guard';
+import { useAuth } from '@/modules/auth/context/auth.context';
 
-export default function PrivateGroupLayout({ children }: { children: React.ReactNode }) {
+function PrivateShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { user, logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    router.push('/join');
+  }
 
   return (
     <ShellProvider defaultOpen>
-      {/* TODO: adicionar guard de autenticação (spec-frontend-auth, change 003/004) */}
       <AdminShell
         sidebar={
           <AppSidebarNavigation
@@ -22,10 +29,20 @@ export default function PrivateGroupLayout({ children }: { children: React.React
             defaultModuleId={DEFAULT_NAVIGATION_MODULE_ID}
           />
         }
-        onLogout={() => router.push('/')}
+        userName={user?.name}
+        userEmail={user?.email}
+        onLogout={handleLogout}
       >
         {children}
       </AdminShell>
     </ShellProvider>
+  );
+}
+
+export default function PrivateGroupLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AuthGuard>
+      <PrivateShell>{children}</PrivateShell>
+    </AuthGuard>
   );
 }

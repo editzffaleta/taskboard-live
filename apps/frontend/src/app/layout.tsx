@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { Toaster } from "@/shared/components/ui/toaster";
 import { ThemeProvider, THEME_ANTI_FLASH_SCRIPT } from "@/shared/context/theme.context";
+import { AuthProvider } from "@/modules/auth/context/auth.context";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,8 +38,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-          <Toaster />
+          <AuthProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

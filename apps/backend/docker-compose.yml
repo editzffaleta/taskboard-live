@@ -1,0 +1,24 @@
+name: taskboard-taskboard-live-backend-db
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskboard-taskboard-live-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: taskboard_taskboard_live
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: taskboard_taskboard_live_db
+    ports:
+      - '6284:5432'
+    volumes:
+      - taskboard-taskboard-live-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U taskboard_taskboard_live']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  taskboard-taskboard-live-postgres-data:
+    driver: local

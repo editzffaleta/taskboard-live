@@ -1,0 +1,13 @@
+# Semgrep — ignora tooling/template, foca no codigo do produto.
+# Definicoes de agentes/skills/commands do Claude Code e assets de template
+# (ex.: .claude/skills/.../assets/ci.yml) nao sao workflows nem codigo executado.
+.claude/
+.agents/
+changes-templates/
+
+# Padroes de higiene
+node_modules/
+.next/
+dist/
+coverage/
+build/

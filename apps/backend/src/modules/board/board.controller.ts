@@ -11,13 +11,16 @@ import {
 import {
   CreateBoard,
   DeleteBoard,
-  GetBoard,
+  GetBoardDetail,
   ListMyBoards,
   RenameBoard,
   type Board,
+  type BoardDetail,
 } from '@taskboard/board';
 import { CurrentUser } from '../../shared/decorators';
 import { PrismaBoardRepository } from './board.prisma';
+import { PrismaListRepository } from './list.prisma';
+import { PrismaCardRepository } from './card.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
 
 type BoardResponse = {
@@ -27,11 +30,15 @@ type BoardResponse = {
   createdAt: Date;
 };
 
+type BoardDetailResponse = BoardDetail;
+
 @Controller('boards')
 export class BoardController {
   constructor(
     private readonly boardRepository: PrismaBoardRepository,
     private readonly membershipRepository: PrismaMembershipRepository,
+    private readonly listRepository: PrismaListRepository,
+    private readonly cardRepository: PrismaCardRepository,
   ) {}
 
   @Post()
@@ -66,15 +73,17 @@ export class BoardController {
   async getOne(
     @Param('id') boardId: string,
     @CurrentUser('id') requesterId: string,
-  ): Promise<BoardResponse> {
-    const useCase = new GetBoard(
+  ): Promise<BoardDetailResponse> {
+    const useCase = new GetBoardDetail(
       this.boardRepository,
       this.membershipRepository,
+      this.listRepository,
+      this.cardRepository,
     );
 
     const { board } = await useCase.execute({ boardId, requesterId });
 
-    return this.toResponse(board);
+    return board;
   }
 
   @Patch(':id')

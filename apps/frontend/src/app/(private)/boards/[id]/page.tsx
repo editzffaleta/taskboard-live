@@ -1,4 +1,4 @@
-import { BoardDetailPlaceholder } from '@/modules/boards/components/board-detail-placeholder.component';
+import { BoardPage } from '@/modules/boards/components/board-page.component';
 
 type BoardDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -7,5 +7,5 @@ type BoardDetailPageProps = {
 export default async function BoardDetailPage({ params }: BoardDetailPageProps) {
   const { id } = await params;
 
-  return <BoardDetailPlaceholder boardId={id} />;
+  return <BoardPage boardId={id} />;
 }

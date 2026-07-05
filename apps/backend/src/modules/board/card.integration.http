@@ -1,0 +1,162 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+
+### 0a. Registrar usuario membro (owner do quadro)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Owner Cartao",
+  "email": "owner.cartao.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0b. Login do owner -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "owner.cartao.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0c. Registrar usuario nao-membro (para os cenarios de 403)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Outro Usuario Cartao",
+  "email": "outro.cartao.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0d. Login do nao-membro -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "outro.cartao.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0e. Criar quadro (usar token do owner) -> 201
+POST {{baseUrl}}/boards
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "name": "Quadro de Cartoes"
+}
+
+### 0f. Criar lista A -> 201, position = 0
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "A Fazer"
+}
+
+### 0g. Criar lista B -> 201, position = 1
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Em Progresso"
+}
+
+### 1. Criar cartao na lista A -> 201, position = 0
+POST {{baseUrl}}/boards/{{boardId}}/cards
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "listId": "{{listAId}}",
+  "title": "Implementar login"
+}
+
+### 2. Criar cartao como nao-membro -> 403
+POST {{baseUrl}}/boards/{{boardId}}/cards
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "listId": "{{listAId}}",
+  "title": "Tentativa"
+}
+
+### 3. Criar cartao sem token -> 401
+POST {{baseUrl}}/boards/{{boardId}}/cards
+Content-Type: application/json
+
+{
+  "listId": "{{listAId}}",
+  "title": "Sem token"
+}
+
+### 4. Editar cartao (owner) -> 200
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Implementar login (revisado)",
+  "description": "Detalhar fluxo de autenticacao"
+}
+
+### 5. Editar cartao como nao-membro -> 403
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "title": "Tentativa"
+}
+
+### 6. Editar cartao inexistente (UUID valido, nao persistido) -> 404
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/9c858901-8a57-4791-81fe-4c455b099bc9
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Nao existe"
+}
+
+### 7. Mover cartao para a lista B -> 200, position renormalizada
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}/move
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "toListId": "{{listBId}}",
+  "position": 0
+}
+
+### 8. Mover cartao para lista de outro quadro -> 404 (sem mutar, sem evento)
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}/move
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "toListId": "{{listIdDeOutroQuadro}}",
+  "position": 0
+}
+
+### 9. Mover cartao como nao-membro -> 403
+PATCH {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}/move
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "toListId": "{{listBId}}",
+  "position": 0
+}
+
+### 10. Excluir cartao como nao-membro -> 403
+DELETE {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}
+Authorization: Bearer {{outroToken}}
+
+### 11. Excluir cartao (owner) -> 204
+DELETE {{baseUrl}}/boards/{{boardId}}/cards/{{cardId}}
+Authorization: Bearer {{ownerToken}}

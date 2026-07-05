@@ -28,6 +28,8 @@ export const errorMessagesEn: ErrorMessages = {
   'user.credentials.invalid': 'Invalid email or password.',
   'board.not.found': 'Board not found.',
   'board.owner.required': 'Only the board owner can perform this action.',
+  'board.member.required': 'You must be a member of this board.',
+  'list.not.found': 'List not found.',
   'createBoard.name.required': 'Please enter the board name.',
   'createBoard.name.min.length': 'Board name must be at least 1 character long.',
   'createBoard.name.max.length': 'Board name must be at most 120 characters long.',

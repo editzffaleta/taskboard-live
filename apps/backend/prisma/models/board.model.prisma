@@ -8,6 +8,7 @@ model Board {
 
   owner   User          @relation("BoardOwner", fields: [ownerId], references: [id])
   members BoardMember[]
+  lists   List[]
 
   @@map("boards")
 }
@@ -26,4 +27,17 @@ model BoardMember {
 
   @@unique([boardId, userId])
   @@map("board_members")
+}
+
+model List {
+  id        String   @id @default(uuid())
+  boardId   String
+  title     String
+  position  Int
+  createdAt DateTime @default(now())
+
+  board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([boardId])
+  @@map("lists")
 }

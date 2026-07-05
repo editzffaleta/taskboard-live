@@ -26,6 +26,8 @@ export const errorMessagesPt = {
   'user.credentials.invalid': 'E-mail ou senha inválidos.',
   'board.not.found': 'Quadro não encontrado.',
   'board.owner.required': 'Apenas o proprietário do quadro pode realizar esta ação.',
+  'board.member.required': 'Você precisa ser membro deste quadro.',
+  'list.not.found': 'Lista não encontrada.',
   'createBoard.name.required': 'Informe o nome do quadro.',
   'createBoard.name.min.length': 'O nome do quadro deve ter pelo menos 1 caractere.',
   'createBoard.name.max.length': 'O nome do quadro deve ter no máximo 120 caracteres.',

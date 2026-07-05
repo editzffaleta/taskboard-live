@@ -1,0 +1,137 @@
+@baseUrl = http://localhost:4000
+@scenarioVersion = {{$timestamp}}
+
+### 0a. Registrar usuario membro (owner do quadro)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Owner Lista",
+  "email": "owner.lista.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0b. Login do owner -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "owner.lista.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0c. Registrar usuario nao-membro (para os cenarios de 403)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Outro Usuario Lista",
+  "email": "outro.lista.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0d. Login do nao-membro -> 200 com token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "outro.lista.{{scenarioVersion}}@example.com",
+  "password": "Str0ng!Passw0rd"
+}
+
+### 0e. Criar quadro (usar token do owner) -> 201
+POST {{baseUrl}}/boards
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "name": "Quadro de Listas"
+}
+
+### 1. Criar primeira lista -> 201, position = 0
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "A Fazer"
+}
+
+### 2. Criar segunda lista -> 201, position = 1 (insere no fim)
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Em Progresso"
+}
+
+### 3. Criar lista como nao-membro -> 403
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "title": "Tentativa"
+}
+
+### 4. Criar lista sem token -> 401
+POST {{baseUrl}}/boards/{{boardId}}/lists
+Content-Type: application/json
+
+{
+  "title": "Sem token"
+}
+
+### 5. Renomear lista (owner) -> 200
+PATCH {{baseUrl}}/lists/{{listId}}
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Backlog"
+}
+
+### 6. Renomear lista como nao-membro -> 403
+PATCH {{baseUrl}}/lists/{{listId}}
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "title": "Tentativa"
+}
+
+### 7. Renomear lista inexistente (UUID v4 valido, porem nao persistido) -> 404
+PATCH {{baseUrl}}/lists/9c858901-8a57-4791-81fe-4c455b099bc9
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "title": "Nao existe"
+}
+
+### 8. Mover lista para posicao 0 -> 200, posicoes renormalizadas sem lacunas
+PATCH {{baseUrl}}/lists/{{secondListId}}/move
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "position": 0
+}
+
+### 9. Mover lista como nao-membro -> 403
+PATCH {{baseUrl}}/lists/{{listId}}/move
+Content-Type: application/json
+Authorization: Bearer {{outroToken}}
+
+{
+  "position": 0
+}
+
+### 10. Excluir lista como nao-membro -> 403
+DELETE {{baseUrl}}/lists/{{listId}}
+Authorization: Bearer {{outroToken}}
+
+### 11. Excluir lista (owner) -> 204
+DELETE {{baseUrl}}/lists/{{listId}}
+Authorization: Bearer {{ownerToken}}

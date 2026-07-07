@@ -21,3 +21,5 @@ export * from "./card-assignee";
 export * from "./comment";
 
 export * from "./notification";
+
+export * from "./template";

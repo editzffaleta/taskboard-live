@@ -73,6 +73,10 @@ export const errorMessagesEn: ErrorMessages = {
   'createBoard.name.max.length': 'Board name must be at most 120 characters long.',
   'createBoard.ownerId.required': 'Board owner not provided.',
   'createBoard.ownerId.uuid': 'Invalid board owner.',
+  'boardTemplate.not.found': 'Board template not found.',
+  'createBoardFromTemplate.templateId.required': 'Select a board template.',
+  'createBoardFromTemplate.ownerId.required': 'Board owner not provided.',
+  'createBoardFromTemplate.ownerId.uuid': 'Invalid board owner.',
   'renameBoard.boardId.required': 'Board not provided.',
   'renameBoard.boardId.uuid': 'Invalid board.',
   'renameBoard.requesterId.required': 'Requesting user not provided.',
@@ -341,6 +345,19 @@ export const errorMessagesEn: ErrorMessages = {
   'archived.time.weeks': '{{count}} weeks',
   'archived.time.oneWeek': '1 week',
   'archived.nav.item': 'Archived',
+
+  // 025 — Template gallery
+  'templates.nav.item': 'Templates',
+  'templates.title': 'Start with a template',
+  'templates.subtitle':
+    'Pre-configured boards with example lists and cards. Pick one and get started in seconds.',
+  'templates.category.all': 'All',
+  'templates.use': 'Use template',
+  'templates.using': 'Creating...',
+  'templates.useSuccess': 'Board created from template.',
+  'templates.empty': 'No templates found for this category.',
+  'templates.error': 'Could not load templates. Please try again.',
+
   'search.title': 'Search',
   'search.placeholder': 'Search boards and cards…',
   'search.filter.all': 'All',

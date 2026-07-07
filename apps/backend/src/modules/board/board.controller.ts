@@ -10,7 +10,9 @@ import {
 } from '@nestjs/common';
 import {
   ArchiveBoard,
+  BOARD_TEMPLATES,
   CreateBoard,
+  CreateBoardFromTemplate,
   DeleteBoard,
   GetBoardDetail,
   ListMyBoards,
@@ -72,6 +74,43 @@ export class BoardController {
     });
 
     return this.toResponse(board);
+  }
+
+  @Post('from-template')
+  @HttpCode(201)
+  async createFromTemplate(
+    @Body() body: { templateId: string; name?: string },
+    @CurrentUser('id') ownerId: string,
+  ): Promise<BoardDetailResponse> {
+    const createUseCase = new CreateBoardFromTemplate(
+      this.boardRepository,
+      BOARD_TEMPLATES,
+    );
+
+    const { board } = await createUseCase.execute({
+      templateId: body.templateId,
+      name: body.name,
+      ownerId,
+    });
+
+    const detailUseCase = new GetBoardDetail(
+      this.boardRepository,
+      this.membershipRepository,
+      this.listRepository,
+      this.cardRepository,
+      this.cardLabelRepository,
+      this.labelRepository,
+      this.checklistItemRepository,
+      this.cardAssigneeRepository,
+      this.memberDirectory,
+    );
+
+    const { board: detail } = await detailUseCase.execute({
+      boardId: board.id,
+      requesterId: ownerId,
+    });
+
+    return detail;
   }
 
   @Get()

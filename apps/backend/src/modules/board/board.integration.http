@@ -97,3 +97,46 @@ Authorization: Bearer {{ownerToken}}
 
 ### 10. Acessar /boards sem token -> 401 (guard global de JWT)
 GET {{baseUrl}}/boards
+
+### 11. Listar modelos de quadro (change 025) -> 200, 6 modelos com lists[].title
+GET {{baseUrl}}/board-templates
+Authorization: Bearer {{ownerToken}}
+
+### 12. Listar modelos sem token -> 401
+GET {{baseUrl}}/board-templates
+
+### 13. Criar quadro a partir de um modelo valido -> 201, board com lists+cards populados, owner confirmado
+POST {{baseUrl}}/boards/from-template
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "templateId": "crm-vendas"
+}
+
+### 14. Criar quadro a partir de modelo com nome customizado -> 201, board.name customizado
+POST {{baseUrl}}/boards/from-template
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "templateId": "scrum-engenharia",
+  "name": "Sprint do time X"
+}
+
+### 15. Criar quadro a partir de templateId inexistente -> 404 (boardTemplate.not.found)
+POST {{baseUrl}}/boards/from-template
+Content-Type: application/json
+Authorization: Bearer {{ownerToken}}
+
+{
+  "templateId": "nao-existe"
+}
+
+### 16. Criar quadro a partir de modelo sem token -> 401
+POST {{baseUrl}}/boards/from-template
+Content-Type: application/json
+
+{
+  "templateId": "crm-vendas"
+}

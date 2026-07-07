@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DbModule } from '../../db/db.module';
 import { AuthModule } from '../auth/auth.module';
 import { BoardController } from './board.controller';
+import { BoardTemplateController } from './board-template.controller';
 import { ArchivedController } from './archived.controller';
 import { SearchController } from './search.controller';
 import { ListController } from './list.controller';
@@ -39,6 +40,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
   imports: [DbModule, ConfigModule, forwardRef(() => AuthModule)],
   controllers: [
     BoardController,
+    BoardTemplateController,
     ArchivedController,
     SearchController,
     ListController,

@@ -17,6 +17,7 @@ import {
 } from '@/modules/boards/api/boards.api';
 import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
+import { BoardReconnectBanner } from '@/modules/boards/components/board-reconnect-banner.component';
 import type { BoardMember } from '@/modules/boards/api/members.api';
 import type { Activity } from '@/modules/boards/api/activity.api';
 import type { BoardState } from '@/modules/boards/types/board-state.type';
@@ -74,7 +75,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     );
   }
 
-  const { connected } = useBoardSocket(board.id, token, {
+  const { connected, reconnecting, reconnectAttempt } = useBoardSocket(board.id, token, {
     onCardCreated: (payload) => setBoard((current) => applyCardCreated(current, payload)),
     onCardUpdated: (payload) => setBoard((current) => applyCardUpdated(current, payload)),
     onCardMoved: (payload) => setBoard((current) => applyCardMoved(current, payload)),
@@ -343,6 +344,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
 
   return (
     <div className="flex flex-col gap-4">
+      {reconnecting ? <BoardReconnectBanner attempt={reconnectAttempt} /> : null}
       <BoardToolbar
         boardId={board.id}
         boardName={board.name}

@@ -14,9 +14,11 @@ import { PublicBoxedLayout } from '@/shared/template/public-boxed-layout.compone
 
 export default function PublicGroupLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuthRoute = pathname === '/join' || pathname.startsWith('/join/');
+  // Landing (`/`) e Entrar (`/join`) têm layout próprio (fiel aos mockups), por isso não
+  // usam o wrapper `PublicBoxedLayout` — apenas rotas públicas futuras sem visual dedicado.
+  const hasOwnLayout = pathname === '/' || pathname === '/join' || pathname.startsWith('/join/');
 
-  if (isAuthRoute) {
+  if (hasOwnLayout) {
     return <>{children}</>;
   }
 

@@ -8,11 +8,14 @@ import { useAuth } from '@/modules/auth/context/auth.context';
 import { BoardsApiError, listMyBoards, type Board } from '@/modules/boards/api/boards.api';
 import { CreateBoardDialog } from '@/modules/boards/components/create-board-dialog.component';
 import { BoardCard } from '@/modules/boards/components/board-card.component';
+import { BoardsDashboardSkeleton } from '@/modules/boards/components/boards-dashboard-skeleton.component';
+import { BoardOnboarding } from '@/modules/boards/components/board-onboarding.component';
 
 export function BoardsDashboard() {
   const { token } = useAuth();
   const [boards, setBoards] = useState<Board[]>([]);
   const [status, setStatus] = useState<'loading' | 'ready'>('loading');
+  const [onboardingSkipped, setOnboardingSkipped] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -65,9 +68,9 @@ export function BoardsDashboard() {
       </div>
 
       {status === 'loading' ? (
-        <div aria-busy="true" className="py-16 text-center text-sm text-muted-foreground">
-          Carregando quadros...
-        </div>
+        <BoardsDashboardSkeleton />
+      ) : boards.length === 0 && !onboardingSkipped ? (
+        <BoardOnboarding onSkip={() => setOnboardingSkipped(true)} onBoardCreated={handleCreated} />
       ) : boards.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border/70 py-16 text-center">
           <div className="flex size-14 items-center justify-center rounded-2xl border border-border/70 bg-background/70 text-primary">

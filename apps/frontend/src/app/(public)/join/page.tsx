@@ -3,11 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Kanban } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { AppLogo } from '@/shared/components/branding/app-logo.component';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { ThemeToggle } from '@/shared/components/theme/theme-toggle.component';
 import { getMessage } from '@/shared/i18n';
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 import { useAuth } from '@/modules/auth/context/auth.context';
@@ -33,6 +35,48 @@ function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
     typeof value === 'object' &&
     value !== null &&
     Array.isArray((value as Record<string, unknown>).errors)
+  );
+}
+
+function PasswordInput({
+  id,
+  value,
+  onChange,
+  autoComplete,
+  dataTestId,
+  required,
+}: {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  autoComplete: string;
+  dataTestId: string;
+  required?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        name="password"
+        type={visible ? 'text' : 'password'}
+        autoComplete={autoComplete}
+        required={required}
+        data-testid={dataTestId}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((prev) => !prev)}
+        aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
+        className="absolute right-1.5 top-1.5 inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+      >
+        {visible ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
+      </button>
+    </div>
   );
 }
 
@@ -111,15 +155,13 @@ function RegisterForm() {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="register-password">Senha</Label>
-        <Input
+        <PasswordInput
           id="register-password"
-          name="password"
-          type="password"
           autoComplete="new-password"
           required
-          data-testid="register-password"
+          dataTestId="register-password"
           value={form.password}
-          onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+          onChange={(value) => setForm((prev) => ({ ...prev, password: value }))}
         />
       </div>
 
@@ -127,7 +169,7 @@ function RegisterForm() {
         type="submit"
         size="lg"
         disabled={isSubmitting}
-        className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700"
+        className="mt-1 w-full gap-2 font-semibold"
         data-testid="register-submit"
       >
         {isSubmitting ? 'Cadastrando...' : 'Criar conta'}
@@ -221,14 +263,12 @@ function LoginForm() {
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="login-password">Senha</Label>
-        <Input
+        <PasswordInput
           id="login-password"
-          name="password"
-          type="password"
           autoComplete="current-password"
-          data-testid="login-password"
+          dataTestId="login-password"
           value={form.password}
-          onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+          onChange={(value) => setForm((prev) => ({ ...prev, password: value }))}
         />
       </div>
 
@@ -236,7 +276,7 @@ function LoginForm() {
         type="submit"
         size="lg"
         disabled={isSubmitting}
-        className="w-full bg-blue-600 font-bold text-white hover:bg-blue-700"
+        className="mt-1 w-full gap-2 font-semibold"
         data-testid="login-submit"
       >
         {isSubmitting ? 'Entrando...' : 'Entrar'}
@@ -257,49 +297,118 @@ export default function JoinPage() {
   }, [status, router]);
 
   if (status === 'loading' || status === 'authenticated') {
-    return (
-      <div
-        aria-busy="true"
-        className="flex min-h-screen items-center justify-center bg-black"
-      />
-    );
+    return <div aria-busy="true" className="flex min-h-screen items-center justify-center bg-background" />;
   }
 
+  const isRegister = mode === 'register';
+
   return (
-    <div
-      className="flex min-h-screen flex-col items-center justify-center bg-black px-6 text-white"
-      data-testid="join-page"
-    >
-      <div className="flex w-full max-w-sm flex-col items-center gap-8">
-        <div className="flex flex-col items-center gap-3">
-          <div className="flex size-14 items-center justify-center rounded-2xl border border-blue-500/30 bg-blue-500/10">
-            <Kanban className="size-7 text-blue-500" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-black tracking-tight">TaskBoard Live</h1>
-            <p className="mt-1 text-sm text-white/50">
-              {mode === 'register' ? 'Crie sua conta para começar' : 'Entre na sua conta para continuar'}
-            </p>
+    <div className="flex min-h-screen bg-background text-foreground" data-testid="join-page">
+      {/* Painel esquerdo — decorativo/marketing, igual ao mockup (texto fixo, sem dado de API). */}
+      <div className="relative hidden flex-1 flex-col overflow-hidden bg-[#0b1220] p-11 text-white lg:flex">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_80%_at_20%_0%,rgba(37,99,235,0.4),transparent_55%)]" />
+        <div className="relative">
+          <AppLogo size="md" textClassName="text-white" />
+        </div>
+        <div className="relative mt-auto">
+          <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.08] px-2.5 py-1 text-xs font-semibold text-slate-300">
+            <span className="relative inline-flex size-[7px]">
+              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500" />
+              <span className="relative size-[7px] rounded-full bg-emerald-500" />
+            </span>
+            ao vivo
+          </span>
+          <h2 className="mb-4 max-w-md text-[32px] font-extrabold leading-[1.15] tracking-tight">
+            Onde o time trabalha junto, no mesmo instante.
+          </h2>
+          <p className="mb-7 max-w-sm text-[15px] leading-relaxed text-slate-300">
+            &quot;Migramos do e-mail e das planilhas para o TaskBoard Live. Ver os cartões se moverem
+            em tempo real mudou a forma como nosso time de produto trabalha.&quot;
+          </p>
+          <div className="flex items-center gap-3">
+            <span className="flex size-11 items-center justify-center rounded-full bg-purple-600 text-sm font-semibold">
+              AC
+            </span>
+            <div>
+              <div className="text-sm font-semibold">Ana Beatriz Costa</div>
+              <div className="text-xs text-slate-400">Head de Produto · Acme Inc</div>
+            </div>
           </div>
         </div>
+        <div className="relative mt-8 flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex">
+            <span className="flex size-7 items-center justify-center rounded-full border-2 border-[#0b1220] bg-emerald-600 text-[10px] font-semibold text-white">
+              RO
+            </span>
+            <span className="-ml-2 flex size-7 items-center justify-center rounded-full border-2 border-[#0b1220] bg-rose-600 text-[10px] font-semibold text-white">
+              MS
+            </span>
+            <span className="-ml-2 flex size-7 items-center justify-center rounded-full border-2 border-[#0b1220] bg-indigo-600 text-[10px] font-semibold text-white">
+              LF
+            </span>
+          </div>
+          Mais de 40 mil times já colaboram ao vivo
+        </div>
+      </div>
 
-        {mode === 'register' ? <RegisterForm key="register" /> : <LoginForm key="login" />}
+      {/* Painel direito — formulário real (registro/login). */}
+      <div className="flex w-full flex-col p-6 lg:w-[min(560px,100%)] lg:flex-none">
+        <div className="flex justify-end">
+          <ThemeToggle />
+        </div>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-sm">
+            <h1 className="mb-1.5 text-2xl font-extrabold tracking-tight">
+              {isRegister ? 'Crie sua conta' : 'Bem-vindo de volta'}
+            </h1>
+            <p className="mb-6 text-sm text-muted-foreground">
+              {isRegister
+                ? 'Comece grátis — leva menos de um minuto.'
+                : 'Entre para continuar de onde parou.'}
+            </p>
 
-        <button
-          type="button"
-          onClick={() => setMode((prev) => (prev === 'register' ? 'login' : 'register'))}
-          className="text-xs text-white/50 transition-colors hover:text-white/80"
-          data-testid="join-toggle-mode"
-        >
-          {mode === 'register' ? 'Já tem uma conta? Entrar' : 'Não tem uma conta? Cadastre-se'}
-        </button>
+            <div className="mb-6 flex gap-0.5 rounded-xl border border-border bg-muted/60 p-1">
+              <button
+                type="button"
+                onClick={() => setMode('register')}
+                className={`h-9 flex-1 rounded-lg text-sm font-semibold transition-colors ${
+                  isRegister ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+                }`}
+              >
+                Criar conta
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('login')}
+                className={`h-9 flex-1 rounded-lg text-sm font-semibold transition-colors ${
+                  !isRegister ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'
+                }`}
+              >
+                Entrar
+              </button>
+            </div>
 
-        <Link
-          href="/"
-          className="text-xs text-white/30 transition-colors hover:text-white/60"
-        >
-          ← Voltar para o início
-        </Link>
+            {isRegister ? <RegisterForm key="register" /> : <LoginForm key="login" />}
+
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              {isRegister ? 'Já tem uma conta?' : 'Novo no TaskBoard Live?'}{' '}
+              <button
+                type="button"
+                onClick={() => setMode((prev) => (prev === 'register' ? 'login' : 'register'))}
+                className="font-semibold text-foreground hover:text-primary"
+                data-testid="join-toggle-mode"
+              >
+                {isRegister ? 'Entrar' : 'Criar conta grátis'}
+              </button>
+            </div>
+
+            <div className="mt-4 text-center">
+              <Link href="/" className="text-xs text-muted-foreground hover:text-foreground">
+                ← Voltar para o início
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

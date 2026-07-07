@@ -7,6 +7,7 @@ import { getMessage } from '@/shared/i18n';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import { BoardsApiError, getBoard } from '@/modules/boards/api/boards.api';
 import { BoardView } from '@/modules/boards/components/board-view.component';
+import { BoardColumnsSkeleton } from '@/modules/boards/components/board-columns-skeleton.component';
 import type { BoardDetail, BoardDetailList } from '@/modules/boards/api/boards.api';
 import type { BoardState, ListState } from '@/modules/boards/types/board-state.type';
 
@@ -87,11 +88,7 @@ export function BoardPage({ boardId }: BoardPageProps) {
   }, [status, router]);
 
   if (status === 'loading' || status === 'error' || !board) {
-    return (
-      <div aria-busy="true" className="py-16 text-center text-sm text-muted-foreground">
-        Carregando quadro...
-      </div>
-    );
+    return <BoardColumnsSkeleton />;
   }
 
   return <BoardView initialBoard={board} />;

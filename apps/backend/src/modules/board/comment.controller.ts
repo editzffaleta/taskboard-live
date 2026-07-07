@@ -14,8 +14,12 @@ import { PrismaCardRepository } from './card.prisma';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
 import { PrismaCommentRepository } from './comment.prisma';
+import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { NotificationRecorderImpl } from './notification-recorder.provider';
+
+const EXCERPT_MAX_LENGTH = 140;
 
 export type CommentResponse = {
   id: string;
@@ -42,6 +46,8 @@ export class CommentController {
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
+    private readonly cardAssigneeRepository: PrismaCardAssigneeRepository,
+    private readonly notificationRecorder: NotificationRecorderImpl,
   ) {}
 
   @Post()
@@ -71,6 +77,29 @@ export class CommentController {
     this.realtimeEmitter.emitToBoard(boardId, 'comment.created', {
       comment: response,
     });
+
+    const card = await this.cardRepository.findById(cardId);
+    const assigneeIds =
+      await this.cardAssigneeRepository.findAllByCardId(cardId);
+    const excerpt =
+      body.text.length > EXCERPT_MAX_LENGTH
+        ? `${body.text.slice(0, EXCERPT_MAX_LENGTH)}…`
+        : body.text;
+
+    for (const assigneeId of assigneeIds) {
+      if (assigneeId === authorId) {
+        continue;
+      }
+
+      await this.notificationRecorder.record(assigneeId, 'comment.added', {
+        boardId,
+        cardId,
+        cardTitle: card?.title ?? '',
+        commentId: comment.id,
+        authorName: response.authorName,
+        excerpt,
+      });
+    }
 
     return response;
   }

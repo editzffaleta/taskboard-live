@@ -12,6 +12,7 @@ import {
 import { PrismaChecklistItemRepository } from './checklist-item.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
+import { NotificationRecorderImpl } from './notification-recorder.provider';
 import { buildCardResponse, type CardResponse } from './card-response.util';
 
 @Controller('boards/:boardId/cards/:cardId/assignees')
@@ -26,6 +27,7 @@ export class CardAssigneeController {
     private readonly checklistItemRepository: PrismaChecklistItemRepository,
     private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
+    private readonly notificationRecorder: NotificationRecorderImpl,
   ) {}
 
   @Put(':userId')
@@ -49,7 +51,20 @@ export class CardAssigneeController {
       requesterId,
     });
 
-    return this.emitAndRespond(boardId, card);
+    const response = await this.emitAndRespond(boardId, card);
+
+    if (userId !== requesterId) {
+      const assignedBy = await this.memberDirectory.findById(requesterId);
+
+      await this.notificationRecorder.record(userId, 'card.assigned.you', {
+        boardId,
+        cardId,
+        cardTitle: response.title,
+        assignedByName: assignedBy?.name ?? '',
+      });
+    }
+
+    return response;
   }
 
   @Delete(':userId')

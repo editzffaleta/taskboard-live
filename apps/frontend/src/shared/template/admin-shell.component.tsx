@@ -28,6 +28,8 @@ type AdminShellProps = {
   userAvatarUrl?: string | null;
   profileHref?: string;
   onLogout?: () => void;
+  /** Slot opcional do sino de notificações (`024`), ao lado do `ThemeToggle`. */
+  notificationsSlot?: ReactNode;
 };
 
 export function AdminShell({
@@ -39,6 +41,7 @@ export function AdminShell({
   userAvatarUrl,
   profileHref = '/auth/profile',
   onLogout,
+  notificationsSlot,
 }: AdminShellProps) {
   const router = useRouter();
   const { isSidebarOpen, isMobile, setSidebarOpen, toggleSidebar } = useShell();
@@ -82,6 +85,7 @@ export function AdminShell({
             </div>
 
             <div className="flex items-center gap-2">
+              {notificationsSlot}
               <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

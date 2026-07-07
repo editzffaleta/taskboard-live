@@ -10,9 +10,11 @@ import {
 import { AddMember, ListMembers, RemoveMember } from '@taskboard/board';
 import { CurrentUser } from '../../shared/decorators';
 import { PrismaMembershipRepository } from './membership.prisma';
+import { PrismaBoardRepository } from './board.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
+import { NotificationRecorderImpl } from './notification-recorder.provider';
 
 type MemberResponse = {
   userId: string;
@@ -25,9 +27,11 @@ type MemberResponse = {
 export class MembersController {
   constructor(
     private readonly membershipRepository: PrismaMembershipRepository,
+    private readonly boardRepository: PrismaBoardRepository,
     private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
     private readonly activityRecorder: ActivityRecorderImpl,
+    private readonly notificationRecorder: NotificationRecorderImpl,
   ) {}
 
   @Get()
@@ -72,6 +76,15 @@ export class MembersController {
     await this.activityRecorder.record(boardId, requesterId, 'member.added', {
       memberId: member.id,
       name: member.name,
+    });
+
+    const board = await this.boardRepository.findById(boardId);
+    const addedBy = await this.memberDirectory.findById(requesterId);
+
+    await this.notificationRecorder.record(member.id, 'member.added.you', {
+      boardId,
+      boardName: board?.name ?? '',
+      addedByName: addedBy?.name ?? '',
     });
 
     return {

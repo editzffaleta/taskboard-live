@@ -14,6 +14,7 @@ import { CardLabelController } from './card-label.controller';
 import { ChecklistController } from './checklist.controller';
 import { CardAssigneeController } from './card-assignee.controller';
 import { CommentController } from './comment.controller';
+import { NotificationController } from './notification.controller';
 import { BoardGateway } from './realtime/board.gateway';
 import { PresenceTracker } from './realtime/presence.tracker';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
@@ -31,6 +32,8 @@ import {
 import { PrismaChecklistItemRepository } from './checklist-item.prisma';
 import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
 import { PrismaCommentRepository } from './comment.prisma';
+import { PrismaNotificationRepository } from './notification.prisma';
+import { NotificationRecorderImpl } from './notification-recorder.provider';
 
 @Module({
   imports: [DbModule, ConfigModule, forwardRef(() => AuthModule)],
@@ -47,6 +50,7 @@ import { PrismaCommentRepository } from './comment.prisma';
     ChecklistController,
     CardAssigneeController,
     CommentController,
+    NotificationController,
   ],
   providers: [
     PrismaBoardRepository,
@@ -59,11 +63,13 @@ import { PrismaCommentRepository } from './comment.prisma';
     PrismaChecklistItemRepository,
     PrismaCardAssigneeRepository,
     PrismaCommentRepository,
+    PrismaNotificationRepository,
     MemberDirectoryAdapter,
     BoardGateway,
     PresenceTracker,
     RealtimeEmitterImpl,
     ActivityRecorderImpl,
+    NotificationRecorderImpl,
   ],
   exports: [
     PrismaBoardRepository,
@@ -76,8 +82,10 @@ import { PrismaCommentRepository } from './comment.prisma';
     PrismaChecklistItemRepository,
     PrismaCardAssigneeRepository,
     PrismaCommentRepository,
+    PrismaNotificationRepository,
     RealtimeEmitterImpl,
     ActivityRecorderImpl,
+    NotificationRecorderImpl,
   ],
 })
 export class BoardModule {}

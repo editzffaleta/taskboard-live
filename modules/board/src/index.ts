@@ -19,3 +19,5 @@ export * from "./checklist-item";
 export * from "./card-assignee";
 
 export * from "./comment";
+
+export * from "./notification";

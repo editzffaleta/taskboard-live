@@ -18,17 +18,13 @@ import { CurrentUser } from '../../shared/decorators';
 import { PrismaCardRepository } from './card.prisma';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
+import {
+  PrismaCardLabelRepository,
+  PrismaLabelRepository,
+} from './label.prisma';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
-
-type CardResponse = {
-  id: string;
-  listId: string;
-  title: string;
-  description: string | null;
-  position: number;
-  createdAt: Date;
-};
+import { buildCardResponse, type CardResponse } from './card-response.util';
 
 @Controller('boards/:boardId/cards')
 export class CardController {
@@ -36,6 +32,8 @@ export class CardController {
     private readonly cardRepository: PrismaCardRepository,
     private readonly listRepository: PrismaListRepository,
     private readonly membershipRepository: PrismaMembershipRepository,
+    private readonly cardLabelRepository: PrismaCardLabelRepository,
+    private readonly labelRepository: PrismaLabelRepository,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
     private readonly activityRecorder: ActivityRecorderImpl,
   ) {}
@@ -60,8 +58,10 @@ export class CardController {
       title: body.title,
     });
 
+    const response = await this.toResponse(card);
+
     this.realtimeEmitter.emitToBoard(boardId, 'card.created', {
-      card: this.toResponse(card),
+      card: response,
     });
 
     await this.activityRecorder.record(boardId, requesterId, 'card.created', {
@@ -70,7 +70,7 @@ export class CardController {
       title: card.title,
     });
 
-    return this.toResponse(card);
+    return response;
   }
 
   @Patch(':id')
@@ -94,8 +94,10 @@ export class CardController {
       description: body.description,
     });
 
+    const response = await this.toResponse(card);
+
     this.realtimeEmitter.emitToBoard(boardId, 'card.updated', {
-      card: this.toResponse(card),
+      card: response,
     });
 
     await this.activityRecorder.record(boardId, requesterId, 'card.updated', {
@@ -104,7 +106,7 @@ export class CardController {
       title: card.title,
     });
 
-    return this.toResponse(card);
+    return response;
   }
 
   @Delete(':id')
@@ -182,14 +184,11 @@ export class CardController {
     return payload;
   }
 
-  private toResponse(card: Card): CardResponse {
-    return {
-      id: card.id,
-      listId: card.listId,
-      title: card.title,
-      description: card.description,
-      position: card.position,
-      createdAt: card.createdAt,
-    };
+  private toResponse(card: Card): Promise<CardResponse> {
+    return buildCardResponse(
+      card,
+      this.cardLabelRepository,
+      this.labelRepository,
+    );
   }
 }

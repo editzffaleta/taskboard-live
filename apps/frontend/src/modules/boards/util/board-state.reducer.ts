@@ -3,6 +3,8 @@ import type {
   CardDeletedPayload,
   CardEventPayload,
   CardMovedPayload,
+  LabelDeletedPayload,
+  LabelEventPayload,
   ListDeletedPayload,
   ListEventPayload,
   ListMovedPayload,
@@ -123,6 +125,34 @@ export function applyListDeleted(state: BoardState, payload: ListDeletedPayload)
   };
 }
 
+export function applyLabelCreated(state: BoardState, payload: LabelEventPayload): BoardState {
+  const alreadyExists = state.labels.some((label) => label.id === payload.label.id);
+  if (alreadyExists) return state;
+
+  return { ...state, labels: [...state.labels, payload.label] };
+}
+
+export function applyLabelUpdated(state: BoardState, payload: LabelEventPayload): BoardState {
+  return {
+    ...state,
+    labels: state.labels.map((label) => (label.id === payload.label.id ? payload.label : label)),
+  };
+}
+
+export function applyLabelDeleted(state: BoardState, payload: LabelDeletedPayload): BoardState {
+  return {
+    ...state,
+    labels: state.labels.filter((label) => label.id !== payload.labelId),
+    lists: state.lists.map((list) => ({
+      ...list,
+      cards: list.cards.map((card) => ({
+        ...card,
+        labels: card.labels.filter((label) => label.id !== payload.labelId),
+      })),
+    })),
+  };
+}
+
 function toCardState(card: CardEventPayload['card']): CardState {
   return {
     id: card.id,
@@ -130,6 +160,7 @@ function toCardState(card: CardEventPayload['card']): CardState {
     title: card.title,
     description: card.description,
     position: card.position,
+    labels: card.labels,
   };
 }
 

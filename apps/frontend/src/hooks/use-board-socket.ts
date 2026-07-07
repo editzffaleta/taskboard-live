@@ -3,6 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
 
+export type LabelColor = 'red' | 'amber' | 'green' | 'blue' | 'purple' | 'teal' | 'pink';
+
+export type LabelDto = {
+  id: string;
+  name: string;
+  color: LabelColor;
+};
+
 export type CardEventPayload = {
   card: {
     id: string;
@@ -11,6 +19,7 @@ export type CardEventPayload = {
     description: string | null;
     position: number;
     createdAt: string;
+    labels: LabelDto[];
   };
 };
 
@@ -71,6 +80,14 @@ export type ActivityCreatedPayload = {
   createdAt: string;
 };
 
+export type LabelEventPayload = {
+  label: LabelDto;
+};
+
+export type LabelDeletedPayload = {
+  labelId: string;
+};
+
 export type BoardSocketHandlers = {
   onCardCreated?: (payload: CardEventPayload) => void;
   onCardUpdated?: (payload: CardEventPayload) => void;
@@ -83,6 +100,9 @@ export type BoardSocketHandlers = {
   onMemberAdded?: (payload: MemberAddedPayload) => void;
   onPresenceUpdate?: (payload: PresencePayload) => void;
   onActivityAppended?: (payload: ActivityCreatedPayload) => void;
+  onLabelCreated?: (payload: LabelEventPayload) => void;
+  onLabelUpdated?: (payload: LabelEventPayload) => void;
+  onLabelDeleted?: (payload: LabelDeletedPayload) => void;
 };
 
 export type UseBoardSocketResult = {
@@ -187,6 +207,15 @@ export function useBoardSocket(
     });
     socket.on('activity.created', (payload: ActivityCreatedPayload) => {
       handlersRef.current.onActivityAppended?.(payload);
+    });
+    socket.on('label.created', (payload: LabelEventPayload) => {
+      handlersRef.current.onLabelCreated?.(payload);
+    });
+    socket.on('label.updated', (payload: LabelEventPayload) => {
+      handlersRef.current.onLabelUpdated?.(payload);
+    });
+    socket.on('label.deleted', (payload: LabelDeletedPayload) => {
+      handlersRef.current.onLabelDeleted?.(payload);
     });
 
     return () => {

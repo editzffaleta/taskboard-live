@@ -7,6 +7,8 @@ import { ListController } from './list.controller';
 import { CardController } from './card.controller';
 import { MembersController } from './members.controller';
 import { ActivityController } from './activity.controller';
+import { LabelController } from './label.controller';
+import { CardLabelController } from './card-label.controller';
 import { BoardGateway } from './realtime/board.gateway';
 import { PresenceTracker } from './realtime/presence.tracker';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
@@ -17,6 +19,10 @@ import { PrismaMembershipRepository } from './membership.prisma';
 import { PrismaActivityRepository } from './activity.prisma';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
 import { MemberDirectoryAdapter } from './member-directory.provider';
+import {
+  PrismaLabelRepository,
+  PrismaCardLabelRepository,
+} from './label.prisma';
 
 @Module({
   imports: [DbModule, ConfigModule, AuthModule],
@@ -26,6 +32,8 @@ import { MemberDirectoryAdapter } from './member-directory.provider';
     CardController,
     MembersController,
     ActivityController,
+    LabelController,
+    CardLabelController,
   ],
   providers: [
     PrismaBoardRepository,
@@ -33,6 +41,8 @@ import { MemberDirectoryAdapter } from './member-directory.provider';
     PrismaCardRepository,
     PrismaMembershipRepository,
     PrismaActivityRepository,
+    PrismaLabelRepository,
+    PrismaCardLabelRepository,
     MemberDirectoryAdapter,
     BoardGateway,
     PresenceTracker,
@@ -45,6 +55,8 @@ import { MemberDirectoryAdapter } from './member-directory.provider';
     PrismaCardRepository,
     PrismaMembershipRepository,
     PrismaActivityRepository,
+    PrismaLabelRepository,
+    PrismaCardLabelRepository,
     RealtimeEmitterImpl,
     ActivityRecorderImpl,
   ],

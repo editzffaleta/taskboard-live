@@ -11,3 +11,5 @@ export * from "./list";
 export * from "./card";
 
 export * from "./activity";
+
+export * from "./label";

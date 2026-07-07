@@ -42,6 +42,22 @@
   --warning-foreground: #1c1917;
   --destructive: #dc2626;
   --destructive-foreground: #f8fafc;
+
+  /* Etiquetas (paleta fixa do mockup — 7 cores) */
+  --lbl-red-bg: #fee2e2;
+  --lbl-red-fg: #b91c1c;
+  --lbl-amber-bg: #fef3c7;
+  --lbl-amber-fg: #b45309;
+  --lbl-green-bg: #dcfce7;
+  --lbl-green-fg: #15803d;
+  --lbl-blue-bg: #dbeafe;
+  --lbl-blue-fg: #1d4ed8;
+  --lbl-purple-bg: #f3e8ff;
+  --lbl-purple-fg: #7e22ce;
+  --lbl-teal-bg: #ccfbf1;
+  --lbl-teal-fg: #0f766e;
+  --lbl-pink-bg: #fce7f3;
+  --lbl-pink-fg: #be185d;
 }
 
 .dark {
@@ -84,6 +100,22 @@
   --warning-foreground: #1c1207;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
+
+  /* Etiquetas (paleta fixa do mockup, tons ajustados para fundo escuro) */
+  --lbl-red-bg: rgba(239, 68, 68, 0.18);
+  --lbl-red-fg: #fca5a5;
+  --lbl-amber-bg: rgba(245, 158, 11, 0.18);
+  --lbl-amber-fg: #fcd34d;
+  --lbl-green-bg: rgba(34, 197, 94, 0.18);
+  --lbl-green-fg: #86efac;
+  --lbl-blue-bg: rgba(59, 130, 246, 0.22);
+  --lbl-blue-fg: #93c5fd;
+  --lbl-purple-bg: rgba(168, 85, 247, 0.22);
+  --lbl-purple-fg: #d8b4fe;
+  --lbl-teal-bg: rgba(20, 184, 166, 0.22);
+  --lbl-teal-fg: #5eead4;
+  --lbl-pink-bg: rgba(236, 72, 153, 0.22);
+  --lbl-pink-fg: #f9a8d4;
 }
 
 @theme inline {
@@ -117,6 +149,21 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-lbl-red-bg: var(--lbl-red-bg);
+  --color-lbl-red-fg: var(--lbl-red-fg);
+  --color-lbl-amber-bg: var(--lbl-amber-bg);
+  --color-lbl-amber-fg: var(--lbl-amber-fg);
+  --color-lbl-green-bg: var(--lbl-green-bg);
+  --color-lbl-green-fg: var(--lbl-green-fg);
+  --color-lbl-blue-bg: var(--lbl-blue-bg);
+  --color-lbl-blue-fg: var(--lbl-blue-fg);
+  --color-lbl-purple-bg: var(--lbl-purple-bg);
+  --color-lbl-purple-fg: var(--lbl-purple-fg);
+  --color-lbl-teal-bg: var(--lbl-teal-bg);
+  --color-lbl-teal-fg: var(--lbl-teal-fg);
+  --color-lbl-pink-bg: var(--lbl-pink-bg);
+  --color-lbl-pink-fg: var(--lbl-pink-fg);
 
   --font-sans: var(--font-app-sans);
   --font-mono: var(--font-app-mono);

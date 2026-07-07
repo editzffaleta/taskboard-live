@@ -6,7 +6,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { KanbanCard } from '@/modules/boards/components/kanban-card.component';
-import type { ListState } from '@/modules/boards/types/board-state.type';
+import type { LabelColor, LabelState, ListState } from '@/modules/boards/types/board-state.type';
 
 type KanbanColumnProps = {
   list: ListState;
@@ -16,6 +16,9 @@ type KanbanColumnProps = {
   onCreateCard: (listId: string, title: string) => void;
   onRenameCard: (cardId: string, title: string) => void;
   onDeleteCard: (cardId: string) => void;
+  boardLabels: LabelState[];
+  onCreateLabel: (name: string, color: LabelColor) => void;
+  onToggleLabel: (cardId: string, labelId: string, assigned: boolean) => void;
 };
 
 /**
@@ -30,6 +33,9 @@ export function KanbanColumn({
   onCreateCard,
   onRenameCard,
   onDeleteCard,
+  boardLabels,
+  onCreateLabel,
+  onToggleLabel,
 }: KanbanColumnProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(list.title);
@@ -138,6 +144,9 @@ export function KanbanColumn({
                     index={cardIndex}
                     onRename={onRenameCard}
                     onDelete={onDeleteCard}
+                    boardLabels={boardLabels}
+                    onCreateLabel={onCreateLabel}
+                    onToggleLabel={onToggleLabel}
                   />
                 ))}
                 {dropProvided.placeholder}

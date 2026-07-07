@@ -22,6 +22,10 @@ import { PrismaBoardRepository } from './board.prisma';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaCardRepository } from './card.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
+import {
+  PrismaCardLabelRepository,
+  PrismaLabelRepository,
+} from './label.prisma';
 
 type BoardResponse = {
   id: string;
@@ -39,6 +43,8 @@ export class BoardController {
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly listRepository: PrismaListRepository,
     private readonly cardRepository: PrismaCardRepository,
+    private readonly cardLabelRepository: PrismaCardLabelRepository,
+    private readonly labelRepository: PrismaLabelRepository,
   ) {}
 
   @Post()
@@ -79,6 +85,8 @@ export class BoardController {
       this.membershipRepository,
       this.listRepository,
       this.cardRepository,
+      this.cardLabelRepository,
+      this.labelRepository,
     );
 
     const { board } = await useCase.execute({ boardId, requesterId });

@@ -5,8 +5,10 @@ import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import {
+  assignLabel,
   BoardsApiError,
   createCard,
+  createLabel,
   createList,
   deleteCard,
   deleteList,
@@ -14,7 +16,9 @@ import {
   moveList,
   renameCard,
   renameList,
+  unassignLabel,
 } from '@/modules/boards/api/boards.api';
+import type { LabelColor } from '@/modules/boards/types/board-state.type';
 import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
 import { BoardReconnectBanner } from '@/modules/boards/components/board-reconnect-banner.component';
@@ -26,6 +30,9 @@ import {
   applyCardDeleted,
   applyCardMoved,
   applyCardUpdated,
+  applyLabelCreated,
+  applyLabelDeleted,
+  applyLabelUpdated,
   applyListCreated,
   applyListDeleted,
   applyListMoved,
@@ -95,6 +102,9 @@ export function BoardView({ initialBoard }: BoardViewProps) {
       }),
     onActivityAppended: (payload) =>
       setActivities((current) => mergeActivitiesById(current, [payload])),
+    onLabelCreated: (payload) => setBoard((current) => applyLabelCreated(current, payload)),
+    onLabelUpdated: (payload) => setBoard((current) => applyLabelUpdated(current, payload)),
+    onLabelDeleted: (payload) => setBoard((current) => applyLabelDeleted(current, payload)),
   });
 
   const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
@@ -249,7 +259,10 @@ export function BoardView({ initialBoard }: BoardViewProps) {
         list.id === listId
           ? {
               ...list,
-              cards: [...list.cards, { id: tempId, listId, title, description: null, position: list.cards.length }],
+              cards: [
+                ...list.cards,
+                { id: tempId, listId, title, description: null, position: list.cards.length, labels: [] },
+              ],
             }
           : list,
       ),
@@ -288,6 +301,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                           title: created.title,
                           description: created.description,
                           position: created.position,
+                          labels: created.labels,
                         }
                       : card,
                   ),
@@ -342,6 +356,30 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     }
   }
 
+  async function handleCreateLabel(name: string, color: LabelColor) {
+    if (!token) return;
+
+    try {
+      await createLabel(token, board.id, name, color);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleToggleLabel(cardId: string, labelId: string, assigned: boolean) {
+    if (!token) return;
+
+    try {
+      if (assigned) {
+        await unassignLabel(token, board.id, cardId, labelId);
+      } else {
+        await assignLabel(token, board.id, cardId, labelId);
+      }
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
   return (
     <div className="-m-4 flex h-[calc(100vh-3.5rem)] flex-col gap-4 bg-muted/30 p-4 md:-m-6 md:p-6">
       {reconnecting ? <BoardReconnectBanner attempt={reconnectAttempt} /> : null}
@@ -385,6 +423,9 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                     onCreateCard={handleCreateCard}
                     onRenameCard={handleRenameCard}
                     onDeleteCard={handleDeleteCard}
+                    boardLabels={board.labels}
+                    onCreateLabel={handleCreateLabel}
+                    onToggleLabel={handleToggleLabel}
                   />
                 ))}
                 {provided.placeholder}

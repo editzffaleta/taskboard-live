@@ -5,22 +5,23 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { getMessage } from '@/shared/i18n';
 import { useAuth } from '@/modules/auth/context/auth.context';
-import { BoardsApiError, getBoard } from '@/modules/boards/api/boards.api';
+import { BoardsApiError, getBoard, listLabels } from '@/modules/boards/api/boards.api';
 import { BoardView } from '@/modules/boards/components/board-view.component';
 import { BoardColumnsSkeleton } from '@/modules/boards/components/board-columns-skeleton.component';
-import type { BoardDetail, BoardDetailList } from '@/modules/boards/api/boards.api';
+import type { BoardDetail, BoardDetailList, LabelDto } from '@/modules/boards/api/boards.api';
 import type { BoardState, ListState } from '@/modules/boards/types/board-state.type';
 
 type BoardPageProps = {
   boardId: string;
 };
 
-function toBoardState(detail: BoardDetail): BoardState {
+function toBoardState(detail: BoardDetail, labels: LabelDto[]): BoardState {
   return {
     id: detail.id,
     name: detail.name,
     ownerId: detail.ownerId,
     lists: detail.lists.map(toListState),
+    labels,
   };
 }
 
@@ -35,6 +36,7 @@ function toListState(list: BoardDetailList): ListState {
       title: card.title,
       description: card.description,
       position: card.position,
+      labels: card.labels,
     })),
   };
 }
@@ -58,10 +60,10 @@ export function BoardPage({ boardId }: BoardPageProps) {
 
     let cancelled = false;
 
-    getBoard(token, boardId)
-      .then((result) => {
+    Promise.all([getBoard(token, boardId), listLabels(token, boardId)])
+      .then(([result, labels]) => {
         if (cancelled) return;
-        setBoard(toBoardState(result));
+        setBoard(toBoardState(result, labels));
         setStatus('ready');
       })
       .catch((error) => {

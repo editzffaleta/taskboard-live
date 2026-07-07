@@ -12,6 +12,8 @@ import { List } from "../../list/model";
 import { ListRepository } from "../../list/provider";
 import { Card } from "../../card/model";
 import { CardRepository } from "../../card/provider";
+import { CardLabelRepository, LabelRepository } from "../../label/provider";
+import { Label } from "../../label/model";
 
 export interface GetBoardDetailIn {
   boardId: string;
@@ -26,12 +28,19 @@ export interface BoardDetailList {
   cards: BoardDetailCard[];
 }
 
+export interface BoardDetailCardLabel {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export interface BoardDetailCard {
   id: string;
   listId: string;
   title: string;
   description: string | null;
   position: number;
+  labels: BoardDetailCardLabel[];
 }
 
 export interface BoardDetail {
@@ -54,6 +63,8 @@ export class GetBoardDetail
     private readonly membershipRepository: MembershipRepository,
     private readonly listRepository: ListRepository,
     private readonly cardRepository: CardRepository,
+    private readonly cardLabelRepository: CardLabelRepository,
+    private readonly labelRepository: LabelRepository,
   ) {}
 
   async execute(input: GetBoardDetailIn): Promise<GetBoardDetailOut> {
@@ -107,22 +118,40 @@ export class GetBoardDetail
     const cards = await this.cardRepository.findAllByListId(list.id);
     const sortedCards = [...cards].sort((a, b) => a.position - b.position);
 
+    const labelsByCardId = await this.cardLabelRepository.findAllByCardIds(
+      sortedCards.map((card) => card.id),
+    );
+    const allLabels = await this.labelRepository.findAllByBoardId(
+      list.boardId,
+    );
+    const labelById = new Map(allLabels.map((label) => [label.id, label]));
+
     return {
       id: list.id,
       boardId: list.boardId,
       title: list.title,
       position: list.position,
-      cards: sortedCards.map((card) => this.toCardDetail(card)),
+      cards: sortedCards.map((card) =>
+        this.toCardDetail(card, labelsByCardId[card.id] ?? [], labelById),
+      ),
     };
   }
 
-  private toCardDetail(card: Card): BoardDetailCard {
+  private toCardDetail(
+    card: Card,
+    labelIds: string[],
+    labelById: Map<string, Label>,
+  ): BoardDetailCard {
     return {
       id: card.id,
       listId: card.listId,
       title: card.title,
       description: card.description,
       position: card.position,
+      labels: labelIds
+        .map((labelId) => labelById.get(labelId))
+        .filter((label): label is NonNullable<typeof label> => label !== undefined)
+        .map((label) => ({ id: label.id, name: label.name, color: label.color })),
     };
   }
 }

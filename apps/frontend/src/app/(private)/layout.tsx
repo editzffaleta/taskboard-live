@@ -10,6 +10,7 @@ import {
 } from '@/shared/navigation/app-navigation.config';
 import { AuthGuard } from '@/modules/auth/guard/auth.guard';
 import { useAuth } from '@/modules/auth/context/auth.context';
+import { CommandPalette } from '@/shared/components/ui/command-palette.component';
 
 function PrivateShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -35,6 +36,8 @@ function PrivateShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </AdminShell>
+      {/* Command palette global (`023`), montado uma única vez para toda rota privada. */}
+      <CommandPalette />
     </ShellProvider>
   );
 }

@@ -16,4 +16,15 @@ export interface CardRepository {
   archive(id: string, archivedAt: Date): Promise<void>;
   restore(id: string): Promise<void>;
   findAllArchivedByBoardId(boardId: string): Promise<Card[]>;
+  /**
+   * Busca cartoes nao arquivados (nem a lista pai), dentro de `boardIds` (ja
+   * restritos por membership no caso de uso `Search`), cujo `title` ou
+   * `description` contem `query` (case-insensitive), limitado a `limit`
+   * itens, hidratando `boardId`/`boardName`/`listTitle` (change `023`).
+   */
+  searchByBoardIds(
+    boardIds: string[],
+    query: string,
+    limit: number,
+  ): Promise<{ card: Card; boardId: string; boardName: string; listTitle: string }[]>;
 }

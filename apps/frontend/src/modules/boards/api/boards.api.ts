@@ -358,3 +358,25 @@ export type ArchivedItems = {
 export function listArchivedItems(token: string): Promise<ArchivedItems> {
   return request<ArchivedItems>(token, '/archived', { method: 'GET' });
 }
+
+/** Item de quadro retornado por `GET /search` (`023`). */
+export type SearchBoardResult = { id: string; name: string };
+
+/** Item de cartão retornado por `GET /search` (`023`), já com contexto de quadro/lista. */
+export type SearchCardResult = {
+  id: string;
+  title: string;
+  boardId: string;
+  boardName: string;
+  listTitle: string;
+};
+
+export type SearchResult = {
+  boards: SearchBoardResult[];
+  cards: SearchCardResult[];
+};
+
+/** Busca global escopada aos quadros do usuário autenticado (`023`). */
+export function search(token: string, query: string): Promise<SearchResult> {
+  return request<SearchResult>(token, `/search?q=${encodeURIComponent(query)}`, { method: 'GET' });
+}

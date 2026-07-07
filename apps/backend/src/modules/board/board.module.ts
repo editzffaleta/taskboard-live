@@ -4,6 +4,7 @@ import { DbModule } from '../../db/db.module';
 import { AuthModule } from '../auth/auth.module';
 import { BoardController } from './board.controller';
 import { ArchivedController } from './archived.controller';
+import { SearchController } from './search.controller';
 import { ListController } from './list.controller';
 import { CardController } from './card.controller';
 import { MembersController } from './members.controller';
@@ -36,6 +37,7 @@ import { PrismaCommentRepository } from './comment.prisma';
   controllers: [
     BoardController,
     ArchivedController,
+    SearchController,
     ListController,
     CardController,
     MembersController,

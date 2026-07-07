@@ -330,6 +330,23 @@ export const errorMessagesPt = {
   'archived.time.weeks': '{{count}} semanas',
   'archived.time.oneWeek': '1 semana',
   'archived.nav.item': 'Arquivados',
+  'search.title': 'Buscar',
+  'search.placeholder': 'Buscar quadros e cartões…',
+  'search.filter.all': 'Tudo',
+  'search.filter.boards': 'Quadros',
+  'search.filter.cards': 'Cartões',
+  'search.emptyQuery': 'Digite ao menos 2 caracteres para buscar.',
+  'search.loading': 'Buscando…',
+  'search.noResults': 'Nenhum resultado encontrado.',
+  'search.section.boards': 'Quadros',
+  'search.section.cards': 'Cartões',
+  'search.cardContext': '{{boardName}} · {{listTitle}}',
+  'commandPalette.title': 'Busca rápida',
+  'commandPalette.placeholder': 'Buscar quadros e cartões…',
+  'commandPalette.escHint': 'esc',
+  'commandPalette.hint.navigate': '↑↓ navegar',
+  'commandPalette.hint.open': '↵ abrir',
+  'commandPalette.hint.close': 'esc fechar',
 } as const;
 
 export type ErrorMessageKey = keyof typeof errorMessagesPt;

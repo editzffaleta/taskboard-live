@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAuth } from '@/modules/auth/context/auth.context';
@@ -99,6 +100,7 @@ function reportError(error: unknown) {
  */
 export function BoardView({ initialBoard }: BoardViewProps) {
   const { token, user } = useAuth();
+  const searchParams = useSearchParams();
   const [board, setBoard] = useState<BoardState>(initialBoard);
   const [presenceUsers, setPresenceUsers] = useState<PresenceUser[]>([]);
   const [members, setMembers] = useState<BoardMember[]>([]);
@@ -121,6 +123,21 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   useEffect(() => {
     saveBoardViewPreference(board.id, { filters, activeView });
   }, [board.id, filters, activeView]);
+
+  // Deep-link do cartão (`023`): `/boards/{id}?card={cardId}` abre o modal de detalhe
+  // automaticamente ao montar, se o cartão existir entre os já carregados do quadro. Um
+  // `cardId` inexistente/de outro quadro simplesmente não abre nada — não lança erro.
+  useEffect(() => {
+    const cardId = searchParams.get('card');
+    if (!cardId) return;
+
+    const exists = board.lists.some((list) => list.cards.some((card) => card.id === cardId));
+    if (exists) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedCardId(cardId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Deriva o cartão aberto diretamente de `board.lists[].cards[]` a cada render (mesmo
   // objeto de estado do quadro, sem cópia buscada à parte). Se o cartão for excluído

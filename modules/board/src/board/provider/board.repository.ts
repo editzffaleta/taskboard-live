@@ -22,4 +22,10 @@ export interface BoardRepository extends FindByIdRepository<Board> {
   archive(id: string, archivedAt: Date): Promise<void>;
   restore(id: string): Promise<void>;
   findAllArchivedByOwnerId(ownerId: string): Promise<Board[]>;
+  /**
+   * Busca quadros nao arquivados, dentre `ids` (ja restritos por membership no
+   * caso de uso `Search`), cujo `name` contem `query` (case-insensitive),
+   * limitado a `limit` itens (change `023`).
+   */
+  searchByIds(ids: string[], query: string, limit: number): Promise<Board[]>;
 }

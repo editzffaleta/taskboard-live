@@ -73,4 +73,20 @@ export class FakeBoardRepository implements BoardRepository {
       (board) => board.archivedAt !== null && board.ownerId === ownerId,
     );
   }
+
+  async searchByIds(
+    ids: string[],
+    query: string,
+    limit: number,
+  ): Promise<Board[]> {
+    const normalizedQuery = query.toLowerCase();
+    return this.boards
+      .filter(
+        (board) =>
+          ids.includes(board.id) &&
+          board.archivedAt === null &&
+          board.name.toLowerCase().includes(normalizedQuery),
+      )
+      .slice(0, limit);
+  }
 }

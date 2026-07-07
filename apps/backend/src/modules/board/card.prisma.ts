@@ -91,6 +91,35 @@ export class PrismaCardRepository implements CardRepository {
     return found.map((item) => this.toDomain(item));
   }
 
+  async searchByBoardIds(
+    boardIds: string[],
+    query: string,
+    limit: number,
+  ): Promise<
+    { card: Card; boardId: string; boardName: string; listTitle: string }[]
+  > {
+    const found = await this.prisma.card.findMany({
+      where: {
+        archivedAt: null,
+        list: { boardId: { in: boardIds }, archivedAt: null },
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: { list: { include: { board: true } } },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return found.map((item) => ({
+      card: this.toDomain(item),
+      boardId: item.list.boardId,
+      boardName: item.list.board.name,
+      listTitle: item.list.title,
+    }));
+  }
+
   private toPersistence(card: Card) {
     return {
       id: card.id,

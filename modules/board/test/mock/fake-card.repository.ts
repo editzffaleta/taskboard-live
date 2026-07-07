@@ -3,6 +3,17 @@ import { CardRepository } from "../../src/card/provider";
 
 export class FakeCardRepository implements CardRepository {
   readonly cards: Card[] = [];
+  /**
+   * Associacao listId -> boardId usada apenas por `findAllArchivedByBoardId`
+   * (o dominio de `Card` nao guarda `boardId` diretamente; a implementacao
+   * Prisma resolve isso via join com `List`). Testes que exercitam esse
+   * metodo devem popular via `registerListBoard`.
+   */
+  private readonly boardIdByListId = new Map<string, string>();
+
+  registerListBoard(listId: string, boardId: string): void {
+    this.boardIdByListId.set(listId, boardId);
+  }
 
   async create(card: Card): Promise<Card> {
     this.cards.push(card);
@@ -15,7 +26,7 @@ export class FakeCardRepository implements CardRepository {
 
   async findAllByListId(listId: string): Promise<Card[]> {
     return this.cards
-      .filter((card) => card.listId === listId)
+      .filter((card) => card.listId === listId && card.archivedAt === null)
       .sort((a, b) => a.position - b.position);
   }
 
@@ -46,5 +57,27 @@ export class FakeCardRepository implements CardRepository {
     if (index >= 0) {
       this.cards.splice(index, 1);
     }
+  }
+
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    const index = this.cards.findIndex((card) => card.id === id);
+    if (index >= 0) {
+      this.cards[index] = this.cards[index].clone({ archivedAt });
+    }
+  }
+
+  async restore(id: string): Promise<void> {
+    const index = this.cards.findIndex((card) => card.id === id);
+    if (index >= 0) {
+      this.cards[index] = this.cards[index].clone({ archivedAt: null });
+    }
+  }
+
+  async findAllArchivedByBoardId(boardId: string): Promise<Card[]> {
+    return this.cards.filter(
+      (card) =>
+        card.archivedAt !== null &&
+        this.boardIdByListId.get(card.listId) === boardId,
+    );
   }
 }

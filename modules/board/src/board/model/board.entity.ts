@@ -25,6 +25,7 @@ export interface BoardState extends EntityState {
   name: string;
   ownerId: string;
   color?: string | null;
+  archivedAt?: Date | null;
 }
 
 export class Board extends Entity<BoardState> {
@@ -42,6 +43,10 @@ export class Board extends Entity<BoardState> {
 
   get color(): string | null {
     return this.props.color ?? null;
+  }
+
+  get archivedAt(): Date | null {
+    return this.props.archivedAt ?? null;
   }
 
   public validate(): void {

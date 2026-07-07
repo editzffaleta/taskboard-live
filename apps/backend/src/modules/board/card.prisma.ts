@@ -10,6 +10,7 @@ type PersistedCard = {
   position: number;
   dueDate: Date | null;
   createdAt: Date;
+  archivedAt: Date | null;
 };
 
 @Injectable()
@@ -32,7 +33,7 @@ export class PrismaCardRepository implements CardRepository {
 
   async findAllByListId(listId: string): Promise<Card[]> {
     const found = await this.prisma.card.findMany({
-      where: { listId },
+      where: { listId, archivedAt: null },
       orderBy: { position: 'asc' },
     });
 
@@ -70,6 +71,26 @@ export class PrismaCardRepository implements CardRepository {
     await this.prisma.card.delete({ where: { id } });
   }
 
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    await this.prisma.card.update({ where: { id }, data: { archivedAt } });
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.prisma.card.update({
+      where: { id },
+      data: { archivedAt: null },
+    });
+  }
+
+  async findAllArchivedByBoardId(boardId: string): Promise<Card[]> {
+    const found = await this.prisma.card.findMany({
+      where: { archivedAt: { not: null }, list: { boardId } },
+      orderBy: { position: 'asc' },
+    });
+
+    return found.map((item) => this.toDomain(item));
+  }
+
   private toPersistence(card: Card) {
     return {
       id: card.id,
@@ -90,6 +111,7 @@ export class PrismaCardRepository implements CardRepository {
       description: raw.description,
       position: raw.position,
       dueDate: raw.dueDate,
+      archivedAt: raw.archivedAt,
     });
   }
 }

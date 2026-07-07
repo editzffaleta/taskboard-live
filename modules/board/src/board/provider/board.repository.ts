@@ -19,4 +19,7 @@ export interface BoardRepository extends FindByIdRepository<Board> {
   update(entity: Board): Promise<Board>;
   delete(id: string): Promise<void>;
   findManyByIds(ids: string[]): Promise<Board[]>;
+  archive(id: string, archivedAt: Date): Promise<void>;
+  restore(id: string): Promise<void>;
+  findAllArchivedByOwnerId(ownerId: string): Promise<Board[]>;
 }

@@ -296,3 +296,65 @@ export function unassignLabel(
     method: 'DELETE',
   });
 }
+
+/** Arquiva/restaura (soft-delete reversível, `022`) um cartão, uma lista ou um quadro. */
+export function archiveCard(token: string, boardId: string, cardId: string): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/cards/${cardId}/archive`, { method: 'POST' });
+}
+
+export function restoreCard(token: string, boardId: string, cardId: string): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/cards/${cardId}/restore`, { method: 'POST' });
+}
+
+export function archiveList(token: string, listId: string): Promise<void> {
+  return request<void>(token, `/lists/${listId}/archive`, { method: 'POST' });
+}
+
+export function restoreList(token: string, listId: string): Promise<void> {
+  return request<void>(token, `/lists/${listId}/restore`, { method: 'POST' });
+}
+
+export function archiveBoard(token: string, boardId: string): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/archive`, { method: 'POST' });
+}
+
+export function restoreBoard(token: string, boardId: string): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/restore`, { method: 'POST' });
+}
+
+export type ArchivedCardItem = {
+  id: string;
+  title: string;
+  archivedAt: string;
+  boardId: string;
+  boardName: string;
+  listId: string;
+  listTitle: string;
+};
+
+export type ArchivedListItem = {
+  id: string;
+  title: string;
+  archivedAt: string;
+  boardId: string;
+  boardName: string;
+  cardCount: number;
+};
+
+export type ArchivedBoardItem = {
+  id: string;
+  name: string;
+  archivedAt: string;
+  listCount: number;
+  cardCount: number;
+};
+
+export type ArchivedItems = {
+  cards: ArchivedCardItem[];
+  lists: ArchivedListItem[];
+  boards: ArchivedBoardItem[];
+};
+
+export function listArchivedItems(token: string): Promise<ArchivedItems> {
+  return request<ArchivedItems>(token, '/archived', { method: 'GET' });
+}

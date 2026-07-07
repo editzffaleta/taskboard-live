@@ -17,6 +17,7 @@ export interface CardState extends EntityState {
   description?: string | null;
   position: number;
   dueDate?: Date | null;
+  archivedAt?: Date | null;
 }
 
 export class Card extends Entity<CardState> {
@@ -42,6 +43,10 @@ export class Card extends Entity<CardState> {
 
   get dueDate(): Date | null {
     return this.props.dueDate ?? null;
+  }
+
+  get archivedAt(): Date | null {
+    return this.props.archivedAt ?? null;
   }
 
   public validate(): void {

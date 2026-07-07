@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DbModule } from '../../db/db.module';
 import { AuthModule } from '../auth/auth.module';
 import { BoardController } from './board.controller';
+import { ArchivedController } from './archived.controller';
 import { ListController } from './list.controller';
 import { CardController } from './card.controller';
 import { MembersController } from './members.controller';
@@ -34,6 +35,7 @@ import { PrismaCommentRepository } from './comment.prisma';
   imports: [DbModule, ConfigModule, forwardRef(() => AuthModule)],
   controllers: [
     BoardController,
+    ArchivedController,
     ListController,
     CardController,
     MembersController,

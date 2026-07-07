@@ -15,6 +15,7 @@ type PersistedBoard = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  archivedAt: Date | null;
 };
 
 type PersistedMembership = {
@@ -78,7 +79,26 @@ export class PrismaBoardRepository implements BoardRepository {
 
   async findManyByIds(ids: string[]): Promise<Board[]> {
     const found = await this.prisma.board.findMany({
-      where: { id: { in: ids } },
+      where: { id: { in: ids }, archivedAt: null },
+    });
+
+    return found.map((item) => this.boardToDomain(item));
+  }
+
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    await this.prisma.board.update({ where: { id }, data: { archivedAt } });
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.prisma.board.update({
+      where: { id },
+      data: { archivedAt: null },
+    });
+  }
+
+  async findAllArchivedByOwnerId(ownerId: string): Promise<Board[]> {
+    const found = await this.prisma.board.findMany({
+      where: { ownerId, archivedAt: { not: null } },
     });
 
     return found.map((item) => this.boardToDomain(item));
@@ -110,6 +130,7 @@ export class PrismaBoardRepository implements BoardRepository {
       name: raw.name,
       ownerId: raw.ownerId,
       color: raw.color,
+      archivedAt: raw.archivedAt,
     });
   }
 

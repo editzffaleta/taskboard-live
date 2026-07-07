@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
-import { Plus, Trash2 } from 'lucide-react';
+import { Archive, Plus, Trash2 } from 'lucide-react';
 import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { KanbanCard } from '@/modules/boards/components/kanban-card.component';
 import type { LabelColor, LabelState, ListState } from '@/modules/boards/types/board-state.type';
+import { getMessage } from '@/shared/i18n';
 
 type KanbanColumnProps = {
   list: ListState;
@@ -18,6 +19,7 @@ type KanbanColumnProps = {
   visibleCardIds?: Set<string>;
   onRenameList: (listId: string, title: string) => void;
   onDeleteList: (listId: string) => void;
+  onArchiveList: (listId: string) => void;
   onCreateCard: (listId: string, title: string) => void;
   onRenameCard: (cardId: string, title: string) => void;
   onDeleteCard: (cardId: string) => void;
@@ -38,6 +40,7 @@ export function KanbanColumn({
   visibleCardIds,
   onRenameList,
   onDeleteList,
+  onArchiveList,
   onCreateCard,
   onRenameCard,
   onDeleteCard,
@@ -67,6 +70,12 @@ export function KanbanColumn({
   function handleDeleteList() {
     if (window.confirm(`Excluir a lista "${list.title}" e todos os seus cartões?`)) {
       onDeleteList(list.id);
+    }
+  }
+
+  function handleArchiveList() {
+    if (window.confirm(getMessage('kanbanColumn.archiveConfirm', { params: { title: list.title } }))) {
+      onArchiveList(list.id);
     }
   }
 
@@ -130,6 +139,16 @@ export function KanbanColumn({
             </span>
 
             <div className="flex-1" />
+
+            <button
+              type="button"
+              aria-label={getMessage('kanbanColumn.archiveButton')}
+              onClick={handleArchiveList}
+              className="text-muted-foreground opacity-0 transition-opacity hover:text-primary group-hover:opacity-100"
+              data-testid="kanban-column-archive-button"
+            >
+              <Archive className="size-4" />
+            </button>
 
             <button
               type="button"

@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogTitle } from '@/shared/components/ui/dialo
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { Input } from '@/shared/components/ui/input';
+import { Button } from '@/shared/components/ui/button';
+import { Archive } from 'lucide-react';
 import { LabelChip } from '@/modules/boards/components/label-chip.component';
 import { LabelPopover } from '@/modules/boards/components/label-popover.component';
 import { CardDetailDueDate } from '@/modules/boards/components/card-detail-due-date.component';
@@ -44,6 +46,7 @@ type CardDetailModalProps = {
   onDeleteChecklistItem: (cardId: string, itemId: string) => void;
   onReorderChecklistItems: (cardId: string, itemIds: string[]) => void;
   onCommentsCountHydrated: (cardId: string, total: number) => void;
+  onArchiveCard: (cardId: string) => void;
 };
 
 /**
@@ -75,6 +78,7 @@ export function CardDetailModal({
   onDeleteChecklistItem,
   onReorderChecklistItems,
   onCommentsCountHydrated,
+  onArchiveCard,
 }: CardDetailModalProps) {
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description ?? '');
@@ -211,6 +215,18 @@ export function CardDetailModal({
             />
 
             <CardDetailDueDate dueDate={card.dueDate} onChange={(dueDate) => onSetDueDate(card.id, dueDate)} />
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-auto justify-start gap-2 text-muted-foreground"
+              onClick={() => onArchiveCard(card.id)}
+              data-testid="card-detail-archive-button"
+            >
+              <Archive className="size-4" />
+              {getMessage('cardDetail.archive.button')}
+            </Button>
           </div>
         </div>
       </DialogContent>

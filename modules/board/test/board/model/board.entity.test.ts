@@ -124,4 +124,29 @@ describe("Board", () => {
       expect(board.color).toBeNull();
     });
   });
+
+  describe("archivedAt", () => {
+    it("archivedAt ausente retorna null", () => {
+      const board = new Board(buildProps());
+
+      expect(board.archivedAt).toBeNull();
+    });
+
+    it("archivedAt presente e preservado", () => {
+      const archivedAt = new Date("2026-08-01T00:00:00.000Z");
+      const board = new Board(buildProps({ archivedAt }));
+
+      expect(board.archivedAt).toEqual(archivedAt);
+    });
+
+    it("clone permite arquivar e restaurar (archivedAt: null)", () => {
+      const board = new Board(buildProps());
+
+      const archived = board.clone({ archivedAt: new Date() });
+      expect(archived.archivedAt).not.toBeNull();
+
+      const restored = archived.clone({ archivedAt: null });
+      expect(restored.archivedAt).toBeNull();
+    });
+  });
 });

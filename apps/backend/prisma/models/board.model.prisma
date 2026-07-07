@@ -6,6 +6,7 @@ model Board {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  archivedAt DateTime?
 
   owner      User          @relation("BoardOwner", fields: [ownerId], references: [id])
   members    BoardMember[]
@@ -33,11 +34,12 @@ model BoardMember {
 }
 
 model List {
-  id        String   @id @default(uuid())
-  boardId   String
-  title     String
-  position  Int
-  createdAt DateTime @default(now())
+  id         String    @id @default(uuid())
+  boardId    String
+  title      String
+  position   Int
+  createdAt  DateTime  @default(now())
+  archivedAt DateTime?
 
   board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   cards Card[]
@@ -54,6 +56,7 @@ model Card {
   position    Int
   dueDate     DateTime?
   createdAt   DateTime  @default(now())
+  archivedAt  DateTime?
 
   list      List             @relation(fields: [listId], references: [id], onDelete: Cascade)
   labels    CardLabel[]

@@ -4,3 +4,6 @@ export * from "./delete-board.usecase";
 export * from "./list-my-boards.usecase";
 export * from "./get-board.usecase";
 export * from "./get-board-detail.usecase";
+export * from "./archive-board.usecase";
+export * from "./restore-board.usecase";
+export * from "./list-archived-items.usecase";

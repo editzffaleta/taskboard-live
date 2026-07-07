@@ -8,6 +8,7 @@ type PersistedList = {
   title: string;
   position: number;
   createdAt: Date;
+  archivedAt: Date | null;
 };
 
 @Injectable()
@@ -30,7 +31,7 @@ export class PrismaListRepository implements ListRepository {
 
   async findAllByBoardId(boardId: string): Promise<List[]> {
     const found = await this.prisma.list.findMany({
-      where: { boardId },
+      where: { boardId, archivedAt: null },
       orderBy: { position: 'asc' },
     });
 
@@ -63,6 +64,26 @@ export class PrismaListRepository implements ListRepository {
     await this.prisma.list.delete({ where: { id } });
   }
 
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    await this.prisma.list.update({ where: { id }, data: { archivedAt } });
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.prisma.list.update({
+      where: { id },
+      data: { archivedAt: null },
+    });
+  }
+
+  async findAllArchivedByBoardId(boardId: string): Promise<List[]> {
+    const found = await this.prisma.list.findMany({
+      where: { boardId, archivedAt: { not: null } },
+      orderBy: { position: 'asc' },
+    });
+
+    return found.map((item) => this.toDomain(item));
+  }
+
   private toPersistence(list: List) {
     return {
       id: list.id,
@@ -79,6 +100,7 @@ export class PrismaListRepository implements ListRepository {
       boardId: raw.boardId,
       title: raw.title,
       position: raw.position,
+      archivedAt: raw.archivedAt,
     });
   }
 }

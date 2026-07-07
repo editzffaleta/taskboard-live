@@ -1,9 +1,10 @@
-import { LayoutGrid, Settings } from 'lucide-react';
+import { Archive, LayoutGrid, Settings } from 'lucide-react';
 import type { ModuleNavigationEntry } from '@/shared/components/ui/sidebar-menu.component';
 
 // ── Rotas ─────────────────────────────────────────────────────────────────────
 
 export const BOARDS_ROUTE = '/boards';
+export const ARCHIVED_ROUTE = '/archived';
 export const ACCOUNT_ROUTE = '/account';
 
 // ── Estrutura de navegação ─────────────────────────────────────────────────────
@@ -37,6 +38,16 @@ export const APP_NAVIGATION_SECTIONS: ModuleNavigationEntry[] = [
             icon: LayoutGrid,
             match: 'exact',
             // roles: ['owner', 'member'], // 006: gating por papel de BoardMember
+          },
+          {
+            id: 'archived',
+            // Label estático (mesmo padrão hardcoded já usado pelos demais itens deste
+            // arquivo, avaliado uma única vez no import do módulo — `getMessage` depende de
+            // `document`/`navigator` e não é reativo aqui). `022`.
+            label: 'Arquivados',
+            href: ARCHIVED_ROUTE,
+            icon: Archive,
+            match: 'prefix',
           },
         ],
       },

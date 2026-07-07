@@ -12,6 +12,7 @@ model User {
   activities       Activity[]
   cardAssignments  CardAssignee[]
   comments         Comment[]
+  notifications    Notification[]
 
   @@map("users")
 }

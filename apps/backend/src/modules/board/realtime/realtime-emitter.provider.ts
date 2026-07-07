@@ -9,4 +9,8 @@ export class RealtimeEmitterImpl implements RealtimeEmitter {
   emitToBoard(boardId: string, event: string, payload: unknown): void {
     this.gateway.server.to(`board:${boardId}`).emit(event, payload);
   }
+
+  emitToUser(userId: string, event: string, payload: unknown): void {
+    this.gateway.server.to(`user:${userId}`).emit(event, payload);
+  }
 }

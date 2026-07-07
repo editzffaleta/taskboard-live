@@ -86,6 +86,9 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
         name: typeof payload.name === 'string' ? payload.name : undefined,
       };
       socket.data.user = user;
+      // Sala individual do usuário autenticado (change 024, canal de
+      // notificações): sem checagem de membership, pois a sala é dele mesmo.
+      void socket.join(`user:${user.id}`);
     } catch {
       this.logger.warn(`Conexão recusada (token inválido): ${socket.id}`);
       socket.disconnect(true);

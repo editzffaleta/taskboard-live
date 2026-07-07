@@ -6,9 +6,11 @@ import { App } from 'supertest/types';
 import { ApiExceptionFilter } from '../../shared/errors/api-exception.filter';
 import { MembersController } from './members.controller';
 import { PrismaMembershipRepository } from './membership.prisma';
+import { PrismaBoardRepository } from './board.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
+import { NotificationRecorderImpl } from './notification-recorder.provider';
 
 /**
  * Middleware de teste que simula o JwtAuthGuard: le o header
@@ -41,6 +43,7 @@ describe('MembersController (integração HTTP)', () => {
   let memberships: FakeMembership[];
   let emitToBoard: jest.Mock;
   let recordActivity: jest.Mock;
+  let recordNotification: jest.Mock;
 
   function membershipRepositoryMock() {
     return {
@@ -110,6 +113,7 @@ describe('MembersController (integração HTTP)', () => {
     ];
     emitToBoard = jest.fn();
     recordActivity = jest.fn().mockResolvedValue(undefined);
+    recordNotification = jest.fn().mockResolvedValue(undefined);
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [MembersController],
@@ -118,9 +122,21 @@ describe('MembersController (integração HTTP)', () => {
           provide: PrismaMembershipRepository,
           useValue: membershipRepositoryMock(),
         },
+        {
+          provide: PrismaBoardRepository,
+          useValue: {
+            findById: jest.fn(() =>
+              Promise.resolve({ id: BOARD_ID, name: 'Quadro Teste' }),
+            ),
+          },
+        },
         { provide: MemberDirectoryAdapter, useValue: memberDirectoryMock() },
         { provide: RealtimeEmitterImpl, useValue: { emitToBoard } },
         { provide: ActivityRecorderImpl, useValue: { record: recordActivity } },
+        {
+          provide: NotificationRecorderImpl,
+          useValue: { record: recordNotification },
+        },
       ],
     }).compile();
 
@@ -176,6 +192,14 @@ describe('MembersController (integração HTTP)', () => {
       OWNER_ID,
       'member.added',
       { memberId: NEW_USER_ID, name: 'Novo Usuario' },
+    );
+    expect(recordNotification).toHaveBeenCalledWith(
+      NEW_USER_ID,
+      'member.added.you',
+      expect.objectContaining({
+        boardId: BOARD_ID,
+        boardName: 'Quadro Teste',
+      }),
     );
   });
 

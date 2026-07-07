@@ -30,6 +30,7 @@ type BoardErrorPayload = {
 describe('BoardGateway (integração)', () => {
   let app: INestApplication;
   let membershipRepository: { findByBoardAndUser: jest.Mock };
+  let realtimeEmitter: RealtimeEmitterImpl;
   let port: number;
 
   beforeAll(async () => {
@@ -53,6 +54,7 @@ describe('BoardGateway (integração)', () => {
     }).compile();
 
     app = moduleRef.createNestApplication();
+    realtimeEmitter = moduleRef.get(RealtimeEmitterImpl);
     await app.listen(0);
     const address = (
       app.getHttpServer() as { address(): AddressInfo }
@@ -233,4 +235,21 @@ describe('BoardGateway (integração)', () => {
       clientB.close();
     });
   }, 10000);
+
+  it('entra automaticamente na sala user:{userId} e recebe emitToUser (change 024)', (done) => {
+    const token = signToken('user-notificacoes');
+    const client = connect(token);
+
+    client.on('connect', () => {
+      realtimeEmitter.emitToUser('user-notificacoes', 'evento.teste', {
+        ok: true,
+      });
+    });
+
+    client.on('evento.teste', (payload: { ok: boolean }) => {
+      expect(payload).toEqual({ ok: true });
+      client.close();
+      done();
+    });
+  });
 });

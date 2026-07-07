@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import {
@@ -30,7 +30,17 @@ import {
   type CommentDto,
 } from '@/modules/boards/api/card-detail.api';
 import type { LabelColor } from '@/modules/boards/types/board-state.type';
-import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
+import { BoardViewKanban } from '@/modules/boards/components/board-view-kanban.component';
+import { BoardViewList } from '@/modules/boards/components/board-view-list.component';
+import { BoardViewCalendar } from '@/modules/boards/components/board-view-calendar.component';
+import { BoardFilterBar } from '@/modules/boards/components/board-filter-bar.component';
+import { BoardViewSwitcher } from '@/modules/boards/components/board-view-switcher.component';
+import { useBoardFilters } from '@/modules/boards/hooks/use-board-filters.hook';
+import {
+  loadBoardViewPreference,
+  saveBoardViewPreference,
+} from '@/modules/boards/util/board-view-preference.util';
+import type { BoardFilterState, BoardViewMode } from '@/modules/boards/types/board-filter.type';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
 import { BoardReconnectBanner } from '@/modules/boards/components/board-reconnect-banner.component';
 import { CardDetailModal } from '@/modules/boards/components/card-detail-modal.component';
@@ -94,6 +104,20 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   const [commentEvent, setCommentEvent] = useState<CommentEvent>(null);
   const snapshotRef = useRef<BoardState | null>(null);
   const isOwner = user?.id === board.ownerId;
+
+  // Filtro/visão são preferência de sessão de navegador, hidratados do `localStorage` na
+  // primeira renderização (não em `useEffect`, para não haver flash do padrão) e persistidos
+  // por quadro a cada mudança (`019`).
+  const [filters, setFilters] = useState<BoardFilterState>(
+    () => loadBoardViewPreference(initialBoard.id).filters,
+  );
+  const [activeView, setActiveView] = useState<BoardViewMode>(
+    () => loadBoardViewPreference(initialBoard.id).activeView,
+  );
+
+  useEffect(() => {
+    saveBoardViewPreference(board.id, { filters, activeView });
+  }, [board.id, filters, activeView]);
 
   // Deriva o cartão aberto diretamente de `board.lists[].cards[]` a cada render (mesmo
   // objeto de estado do quadro, sem cópia buscada à parte). Se o cartão for excluído
@@ -167,6 +191,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   });
 
   const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
+  const { visibleCardIds, filteredCards } = useBoardFilters(board, filters);
 
   function takeSnapshot() {
     snapshotRef.current = cloneBoard(board);
@@ -613,38 +638,42 @@ export function BoardView({ initialBoard }: BoardViewProps) {
         }
       />
 
-      <div className="min-h-0 flex-1 overflow-x-auto">
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="board" direction="horizontal" type="LIST">
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="flex h-full items-start gap-3.5 pb-2"
-              >
-                {sortedLists.map((list, index) => (
-                  <KanbanColumn
-                    key={list.id}
-                    list={list}
-                    index={index}
-                    onRenameList={handleRenameList}
-                    onDeleteList={handleDeleteList}
-                    onCreateCard={handleCreateCard}
-                    onRenameCard={handleRenameCard}
-                    onDeleteCard={handleDeleteCard}
-                    boardLabels={board.labels}
-                    onCreateLabel={handleCreateLabel}
-                    onToggleLabel={handleToggleLabel}
-                    onOpenCard={setSelectedCardId}
-                    commentsCountByCardId={board.commentsCountByCardId}
-                  />
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-background px-3 py-2">
+        <BoardViewSwitcher activeView={activeView} onChange={setActiveView} />
+        <div className="h-[22px] w-px bg-border" />
+        <BoardFilterBar
+          filters={filters}
+          onChange={setFilters}
+          boardLabels={board.labels}
+          members={members}
+        />
       </div>
+
+      {activeView === 'kanban' ? (
+        <BoardViewKanban
+          sortedLists={sortedLists}
+          visibleCardIds={visibleCardIds}
+          onDragEnd={handleDragEnd}
+          onRenameList={handleRenameList}
+          onDeleteList={handleDeleteList}
+          onCreateCard={handleCreateCard}
+          onRenameCard={handleRenameCard}
+          onDeleteCard={handleDeleteCard}
+          boardLabels={board.labels}
+          onCreateLabel={handleCreateLabel}
+          onToggleLabel={handleToggleLabel}
+          onOpenCard={setSelectedCardId}
+          commentsCountByCardId={board.commentsCountByCardId}
+        />
+      ) : null}
+
+      {activeView === 'lista' ? (
+        <BoardViewList filteredCards={filteredCards} onOpenCard={setSelectedCardId} />
+      ) : null}
+
+      {activeView === 'calendario' ? (
+        <BoardViewCalendar filteredCards={filteredCards} onOpenCard={setSelectedCardId} />
+      ) : null}
 
       {selectedCard ? (
         <CardDetailModal

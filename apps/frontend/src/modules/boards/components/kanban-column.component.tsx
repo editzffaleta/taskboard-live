@@ -11,6 +11,11 @@ import type { LabelColor, LabelState, ListState } from '@/modules/boards/types/b
 type KanbanColumnProps = {
   list: ListState;
   index: number;
+  /**
+   * Ids dos cartões que satisfazem o filtro ativo (`019`). Quando omitido, todos os cartões
+   * são considerados visíveis (comportamento anterior a esta change).
+   */
+  visibleCardIds?: Set<string>;
   onRenameList: (listId: string, title: string) => void;
   onDeleteList: (listId: string) => void;
   onCreateCard: (listId: string, title: string) => void;
@@ -30,6 +35,7 @@ type KanbanColumnProps = {
 export function KanbanColumn({
   list,
   index,
+  visibleCardIds,
   onRenameList,
   onDeleteList,
   onCreateCard,
@@ -75,6 +81,9 @@ export function KanbanColumn({
   }
 
   const sortedCards = [...list.cards].sort((a, b) => a.position - b.position);
+  const visibleCount = visibleCardIds
+    ? sortedCards.filter((card) => visibleCardIds.has(card.id)).length
+    : sortedCards.length;
 
   return (
     <Draggable draggableId={list.id} index={index}>
@@ -117,7 +126,7 @@ export function KanbanColumn({
             )}
 
             <span className="rounded-full bg-background px-2 text-xs font-semibold text-muted-foreground">
-              {sortedCards.length}
+              {visibleCount}
             </span>
 
             <div className="flex-1" />
@@ -153,6 +162,7 @@ export function KanbanColumn({
                     onToggleLabel={onToggleLabel}
                     onOpen={onOpenCard}
                     commentsCount={commentsCountByCardId[card.id] ?? 0}
+                    isFilteredOut={visibleCardIds ? !visibleCardIds.has(card.id) : false}
                   />
                 ))}
                 {dropProvided.placeholder}

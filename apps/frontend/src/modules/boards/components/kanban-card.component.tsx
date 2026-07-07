@@ -20,6 +20,8 @@ type KanbanCardProps = {
   onToggleLabel: (cardId: string, labelId: string, assigned: boolean) => void;
   onOpen: (cardId: string) => void;
   commentsCount: number;
+  /** Cartão fora do filtro ativo (`019`): permanece no DOM/`Droppable`, mas atenuado. */
+  isFilteredOut?: boolean;
 };
 
 /**
@@ -38,6 +40,7 @@ export function KanbanCard({
   onToggleLabel,
   onOpen,
   commentsCount,
+  isFilteredOut = false,
 }: KanbanCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(card.title);
@@ -76,10 +79,11 @@ export function KanbanCard({
           }}
           className={`group flex flex-col gap-1.5 rounded-xl border border-border/70 bg-background px-3 py-2.5 text-[13.5px] shadow-[0_1px_2px_rgba(15,23,42,0.07)] transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md ${
             snapshot.isDragging ? 'shadow-lg ring-2 ring-primary' : ''
-          }`}
+          } ${isFilteredOut ? 'pointer-events-none opacity-40' : ''}`}
           data-testid="kanban-card"
           data-card-id={card.id}
           data-card-title={card.title}
+          data-filtered-out={isFilteredOut ? 'true' : 'false'}
         >
           {card.labels.length > 0 ? (
             <div className="flex flex-wrap gap-1.5" data-testid="kanban-card-labels">

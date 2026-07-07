@@ -1,18 +1,19 @@
 model Board {
-  id        String    @id @default(uuid())
-  name      String
-  ownerId   String
-  color     String    @default("blue")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id         String    @id @default(uuid())
+  name       String
+  ownerId    String
+  color      String    @default("blue")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
   archivedAt DateTime?
 
-  owner      User          @relation("BoardOwner", fields: [ownerId], references: [id])
-  members    BoardMember[]
-  lists      List[]
-  activities Activity[]
-  labels     Label[]
+  owner       User          @relation("BoardOwner", fields: [ownerId], references: [id])
+  members     BoardMember[]
+  lists       List[]
+  activities  Activity[]
+  labels      Label[]
+  invitations Invitation[]
 
   @@map("boards")
 }
@@ -58,7 +59,7 @@ model Card {
   createdAt   DateTime  @default(now())
   archivedAt  DateTime?
 
-  list      List             @relation(fields: [listId], references: [id], onDelete: Cascade)
+  list      List            @relation(fields: [listId], references: [id], onDelete: Cascade)
   labels    CardLabel[]
   checklist ChecklistItem[]
   assignees CardAssignee[]
@@ -163,4 +164,21 @@ model Notification {
   @@index([userId, createdAt])
   @@index([userId, readAt])
   @@map("notifications")
+}
+
+model Invitation {
+  id          String   @id @default(uuid())
+  boardId     String
+  email       String
+  token       String   @unique
+  role        String   @default("member")
+  status      String   @default("pending")
+  invitedById String
+  createdAt   DateTime @default(now())
+
+  board     Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  invitedBy User  @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([boardId, email])
+  @@map("invitations")
 }

@@ -6,6 +6,8 @@ export * from "./board";
 
 export * from "./membership";
 
+export * from "./invitation";
+
 export * from "./list";
 
 export * from "./card";

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { UserPlus, X } from 'lucide-react';
+import { Copy, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -10,12 +10,8 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { StandardDialogContent } from '@/shared/components/ui/standard-dialog-content';
 import { getMessage } from '@/shared/i18n';
-import {
-  addMember,
-  listMembers,
-  removeMember,
-  type BoardMember,
-} from '@/modules/boards/api/members.api';
+import { listMembers, removeMember, type BoardMember } from '@/modules/boards/api/members.api';
+import { createInvitation, type CreatedInvitation } from '@/modules/boards/api/invitations.api';
 import { BoardsApiError } from '@/modules/boards/api/boards.api';
 
 type MembersPanelProps = {
@@ -56,6 +52,7 @@ export function MembersPanel({
   const [email, setEmail] = useState('');
   const [inviting, setInviting] = useState(false);
   const [removingUserId, setRemovingUserId] = useState<string | null>(null);
+  const [pendingInvitation, setPendingInvitation] = useState<CreatedInvitation | null>(null);
 
   useEffect(() => {
     if (!open || !token) return;
@@ -95,14 +92,25 @@ export function MembersPanel({
     setInviting(true);
 
     try {
-      const created = await addMember(token, boardId, trimmed);
-      onMembersLoaded([...members.filter((member) => member.userId !== created.userId), created]);
+      const created = await createInvitation(token, boardId, trimmed);
+      setPendingInvitation(created);
       setEmail('');
       toast.success(getMessage('membersPanel.inviteSuccess'));
     } catch (error) {
       reportError(error);
     } finally {
       setInviting(false);
+    }
+  }
+
+  async function handleCopyLink() {
+    if (!pendingInvitation) return;
+
+    try {
+      await navigator.clipboard.writeText(pendingInvitation.link);
+      toast.success(getMessage('membersPanel.inviteLink.copied'));
+    } catch {
+      reportError(null);
     }
   }
 
@@ -162,6 +170,39 @@ export function MembersPanel({
               {getMessage('membersPanel.inviteButton')}
             </Button>
           </form>
+        ) : null}
+
+        {isOwner && pendingInvitation ? (
+          <div
+            className="flex flex-col gap-2 rounded-md border border-border/70 bg-muted/40 p-3"
+            data-testid="members-panel-invite-link"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <Badge variant="secondary">{getMessage('membersPanel.inviteLink.pendingLabel')}</Badge>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {getMessage('membersPanel.inviteLink.description')}
+            </p>
+            <div className="flex items-center gap-2">
+              <Input
+                readOnly
+                value={pendingInvitation.link}
+                data-testid="members-panel-invite-link-value"
+                className="flex-1 font-mono text-xs"
+                onFocus={(event) => event.currentTarget.select()}
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleCopyLink}
+                data-testid="members-panel-invite-link-copy"
+              >
+                <Copy className="size-4" />
+                {getMessage('membersPanel.inviteLink.copy')}
+              </Button>
+            </div>
+          </div>
         ) : null}
 
         <ul className="space-y-2" aria-busy={loading}>

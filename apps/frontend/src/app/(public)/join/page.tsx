@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { AppLogo } from '@/shared/components/branding/app-logo.component';
@@ -13,8 +13,39 @@ import { ThemeToggle } from '@/shared/components/theme/theme-toggle.component';
 import { getMessage } from '@/shared/i18n';
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 import { useAuth } from '@/modules/auth/context/auth.context';
+import { acceptInvitation } from '@/modules/boards/api/invitations.api';
+import { BoardsApiError } from '@/modules/boards/api/boards.api';
 
 const PRIVATE_HOME_ROUTE = '/boards';
+
+/**
+ * Completa o aceite de um convite (`026`, `?convite=:token`) após login/registro bem
+ * -sucedidos. Em `invitation.email.mismatch`, mostra o erro e mantém na página (não
+ * redireciona silenciosamente para o quadro de outra pessoa).
+ */
+async function completeInviteIfPresent(
+  authToken: string,
+  inviteToken: string | null,
+  router: ReturnType<typeof useRouter>,
+): Promise<boolean> {
+  if (!inviteToken) {
+    router.push(PRIVATE_HOME_ROUTE);
+    return true;
+  }
+
+  try {
+    const result = await acceptInvitation(authToken, inviteToken);
+    router.push(`/boards/${result.boardId}`);
+    return true;
+  } catch (error) {
+    if (error instanceof BoardsApiError) {
+      error.errors.forEach((code) => toast.error(getMessage(code)));
+      return false;
+    }
+    toast.error(getMessage('DEFAULT_API_ERROR'));
+    return false;
+  }
+}
 
 type JoinMode = 'register' | 'login';
 
@@ -201,7 +232,7 @@ function isLoginSuccessResponse(value: unknown): value is LoginSuccessResponse {
   );
 }
 
-function LoginForm() {
+function LoginForm({ inviteToken }: { inviteToken: string | null }) {
   const [form, setForm] = useState<LoginFormState>(INITIAL_LOGIN_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
@@ -227,7 +258,7 @@ function LoginForm() {
 
       if (response.status === 200 && isLoginSuccessResponse(body)) {
         login(body.token);
-        router.push(PRIVATE_HOME_ROUTE);
+        await completeInviteIfPresent(body.token, inviteToken, router);
         return;
       }
 
@@ -285,10 +316,12 @@ function LoginForm() {
   );
 }
 
-export default function JoinPage() {
+function JoinPageContent() {
   const [mode, setMode] = useState<JoinMode>('register');
   const { status } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get('convite');
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -388,7 +421,11 @@ export default function JoinPage() {
               </button>
             </div>
 
-            {isRegister ? <RegisterForm key="register" /> : <LoginForm key="login" />}
+            {isRegister ? (
+              <RegisterForm key="register" />
+            ) : (
+              <LoginForm key="login" inviteToken={inviteToken} />
+            )}
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
               {isRegister ? 'Já tem uma conta?' : 'Novo no TaskBoard Live?'}{' '}
@@ -411,5 +448,17 @@ export default function JoinPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// `JoinPageContent` lê `useSearchParams()` (preserva `?convite=:token`, `026`) — exige um
+// limite `Suspense`, mesmo padrão usado em `board-view.component.tsx` (`023`).
+export default function JoinPage() {
+  return (
+    <Suspense
+      fallback={<div aria-busy="true" className="flex min-h-screen items-center justify-center bg-background" />}
+    >
+      <JoinPageContent />
+    </Suspense>
   );
 }

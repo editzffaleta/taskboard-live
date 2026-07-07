@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Kanban, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { Card } from '@/shared/components/ui/card';
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import { DeleteConfirmationDialog } from '@/shared/components/ui/delete-confirma
 import { getMessage } from '@/shared/i18n';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import { BoardsApiError, deleteBoard, renameBoard, type Board } from '@/modules/boards/api/boards.api';
+import { getBoardAccentColor } from '@/modules/boards/util/board-color.util';
 
 type BoardCardProps = {
   board: Board;
@@ -31,6 +32,7 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
   const { token, user } = useAuth();
   const router = useRouter();
   const isOwner = user?.id === board.ownerId;
+  const accent = getBoardAccentColor(board.id);
 
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -80,7 +82,7 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
 
   return (
     <Card
-      className="group relative flex flex-col justify-between gap-4 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/60"
+      className="group relative flex flex-col gap-0 overflow-hidden p-0 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
       data-testid="board-card"
       data-board-id={board.id}
       data-board-name={board.name}
@@ -92,17 +94,24 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
         onKeyDown={(event) => {
           if (event.key === 'Enter') router.push(`/boards/${board.id}`);
         }}
-        className="flex cursor-pointer flex-col gap-3"
+        className="flex cursor-pointer flex-col"
         data-testid="board-card-open"
       >
-        <div className="flex size-10 items-center justify-center rounded-xl border border-border/70 bg-background/70 text-primary">
-          <Kanban className="size-5" />
+        <div
+          className={`flex h-20 items-end gap-1.5 bg-gradient-to-br ${accent.gradient} px-3.5 pt-3.5`}
+          aria-hidden
+        >
+          <span className="h-13 w-8.5 rounded-t-md bg-white/90" />
+          <span className="h-10 w-8.5 rounded-t-md bg-white/60" />
+          <span className="h-15 w-8.5 rounded-t-md bg-white/40" />
         </div>
-        <h3 className="text-base font-semibold tracking-tight">{board.name}</h3>
+        <div className="flex flex-col gap-1 p-4">
+          <h3 className="text-[14.5px] font-bold tracking-tight">{board.name}</h3>
+        </div>
       </div>
 
       {isOwner ? (
-        <div className="absolute right-3 top-3">
+        <div className="absolute right-3 top-24">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button

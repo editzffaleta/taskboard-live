@@ -73,8 +73,8 @@ export function AdminShell({
           </SheetContent>
         </Sheet>
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
-          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:px-6">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-muted/20">
+          <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border bg-card px-4 md:px-6">
             <div className="flex min-w-0 items-center gap-3">
               <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Alternar menu lateral">
                 <Menu className="size-5" />
@@ -85,7 +85,7 @@ export function AdminShell({
               <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-auto gap-2 px-2.5 py-1.5" data-testid="user-menu-trigger">
+                  <Button variant="ghost" className="h-auto gap-2 rounded-lg px-2.5 py-1.5" data-testid="user-menu-trigger">
                     {resolvedAvatarUrl ? (
                       <Image
                         src={resolvedAvatarUrl}

@@ -5,3 +5,5 @@ export * from "./fake-list.repository";
 export * from "./fake-card.repository";
 export * from "./fake-activity.repository";
 export * from "./fake-activity-recorder";
+export * from "./fake-label.repository";
+export * from "./fake-card-label.repository";

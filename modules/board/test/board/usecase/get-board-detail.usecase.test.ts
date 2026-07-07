@@ -1,6 +1,7 @@
 import { NotFoundError } from "@taskboard/shared";
 import { List } from "../../../src/list/model";
 import { Card } from "../../../src/card/model";
+import { Label } from "../../../src/label/model";
 import { Membership } from "../../../src/membership/model";
 import { GetBoardDetail } from "../../../src/board/usecase/get-board-detail.usecase";
 import {
@@ -8,6 +9,8 @@ import {
   FakeMembershipRepository,
   FakeListRepository,
   FakeCardRepository,
+  FakeCardLabelRepository,
+  FakeLabelRepository,
 } from "../../mock";
 
 const OWNER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
@@ -19,17 +22,23 @@ function setup() {
   const membershipRepository = new FakeMembershipRepository(memberships);
   const listRepository = new FakeListRepository();
   const cardRepository = new FakeCardRepository();
+  const cardLabelRepository = new FakeCardLabelRepository();
+  const labelRepository = new FakeLabelRepository();
   const useCase = new GetBoardDetail(
     boardRepository,
     membershipRepository,
     listRepository,
     cardRepository,
+    cardLabelRepository,
+    labelRepository,
   );
   return {
     boardRepository,
     membershipRepository,
     listRepository,
     cardRepository,
+    cardLabelRepository,
+    labelRepository,
     useCase,
   };
 }
@@ -83,6 +92,40 @@ describe("GetBoardDetail", () => {
       "Cartao B",
     ]);
     expect(detail.lists[1].cards).toEqual([]);
+  });
+
+  it("inclui as labels do cartao no detalhe do quadro", async () => {
+    const {
+      boardRepository,
+      listRepository,
+      cardRepository,
+      cardLabelRepository,
+      labelRepository,
+      useCase,
+    } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Quadro",
+      ownerId: OWNER_ID,
+    });
+    const list = await listRepository.create(
+      new List({ boardId: board.id, title: "Lista", position: 0 }),
+    );
+    const card = await cardRepository.create(
+      new Card({ listId: list.id, title: "Cartao", position: 0 }),
+    );
+    const label = await labelRepository.create(
+      new Label({ boardId: board.id, name: "Backend", color: "blue" }),
+    );
+    await cardLabelRepository.assign(card.id, label.id);
+
+    const { board: detail } = await useCase.execute({
+      boardId: board.id,
+      requesterId: OWNER_ID,
+    });
+
+    expect(detail.lists[0].cards[0].labels).toEqual([
+      { id: label.id, name: "Backend", color: "blue" },
+    ]);
   });
 
   it("permite um member ver o detalhe do quadro", async () => {

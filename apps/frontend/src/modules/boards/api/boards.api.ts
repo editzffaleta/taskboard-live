@@ -1,4 +1,5 @@
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
+import type { LabelColor } from '@/modules/boards/types/board-state.type';
 
 export type Board = {
   id: string;
@@ -7,12 +8,19 @@ export type Board = {
   createdAt: string;
 };
 
+export type LabelDto = {
+  id: string;
+  name: string;
+  color: LabelColor;
+};
+
 export type BoardDetailCard = {
   id: string;
   listId: string;
   title: string;
   description: string | null;
   position: number;
+  labels: LabelDto[];
 };
 
 export type BoardDetailList = {
@@ -121,6 +129,7 @@ export type CardDto = {
   description: string | null;
   position: number;
   createdAt: string;
+  labels: LabelDto[];
 };
 
 export type CardMoveResult = {
@@ -194,5 +203,59 @@ export function moveCard(
   return request<CardMoveResult>(token, `/boards/${boardId}/cards/${cardId}/move`, {
     method: 'PATCH',
     body: JSON.stringify({ toListId, position }),
+  });
+}
+
+export function listLabels(token: string, boardId: string): Promise<LabelDto[]> {
+  return request<LabelDto[]>(token, `/boards/${boardId}/labels`, { method: 'GET' });
+}
+
+export function createLabel(
+  token: string,
+  boardId: string,
+  name: string,
+  color: LabelColor,
+): Promise<LabelDto> {
+  return request<LabelDto>(token, `/boards/${boardId}/labels`, {
+    method: 'POST',
+    body: JSON.stringify({ name, color }),
+  });
+}
+
+export function updateLabel(
+  token: string,
+  boardId: string,
+  labelId: string,
+  changes: { name?: string; color?: LabelColor },
+): Promise<LabelDto> {
+  return request<LabelDto>(token, `/boards/${boardId}/labels/${labelId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(changes),
+  });
+}
+
+export function deleteLabel(token: string, boardId: string, labelId: string): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/labels/${labelId}`, { method: 'DELETE' });
+}
+
+export function assignLabel(
+  token: string,
+  boardId: string,
+  cardId: string,
+  labelId: string,
+): Promise<CardDto> {
+  return request<CardDto>(token, `/boards/${boardId}/cards/${cardId}/labels/${labelId}`, {
+    method: 'PUT',
+  });
+}
+
+export function unassignLabel(
+  token: string,
+  boardId: string,
+  cardId: string,
+  labelId: string,
+): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/cards/${cardId}/labels/${labelId}`, {
+    method: 'DELETE',
   });
 }

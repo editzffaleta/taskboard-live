@@ -11,3 +11,4 @@ export * from "./fake-checklist-item.repository";
 export * from "./fake-card-assignee.repository";
 export * from "./fake-comment.repository";
 export * from "./fake-notification.repository";
+export * from "./fake-invitation.repository";

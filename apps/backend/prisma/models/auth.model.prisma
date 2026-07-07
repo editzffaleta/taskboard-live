@@ -7,12 +7,13 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  ownedBoards      Board[]       @relation("BoardOwner")
+  ownedBoards      Board[]        @relation("BoardOwner")
   boardMemberships BoardMember[]
   activities       Activity[]
   cardAssignments  CardAssignee[]
   comments         Comment[]
   notifications    Notification[]
+  sentInvitations  Invitation[]
 
   @@map("users")
 }

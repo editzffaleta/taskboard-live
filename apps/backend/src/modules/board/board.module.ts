@@ -9,6 +9,7 @@ import { SearchController } from './search.controller';
 import { ListController } from './list.controller';
 import { CardController } from './card.controller';
 import { MembersController } from './members.controller';
+import { InvitationsController } from './invitations.controller';
 import { ActivityController } from './activity.controller';
 import { LabelController } from './label.controller';
 import { CardLabelController } from './card-label.controller';
@@ -23,6 +24,7 @@ import { PrismaBoardRepository } from './board.prisma';
 import { PrismaListRepository } from './list.prisma';
 import { PrismaCardRepository } from './card.prisma';
 import { PrismaMembershipRepository } from './membership.prisma';
+import { PrismaInvitationRepository } from './invitation.prisma';
 import { PrismaActivityRepository } from './activity.prisma';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
 import { MemberDirectoryAdapter } from './member-directory.provider';
@@ -46,6 +48,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     ListController,
     CardController,
     MembersController,
+    InvitationsController,
     ActivityController,
     LabelController,
     CardLabelController,
@@ -59,6 +62,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     PrismaListRepository,
     PrismaCardRepository,
     PrismaMembershipRepository,
+    PrismaInvitationRepository,
     PrismaActivityRepository,
     PrismaLabelRepository,
     PrismaCardLabelRepository,
@@ -78,6 +82,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     PrismaListRepository,
     PrismaCardRepository,
     PrismaMembershipRepository,
+    PrismaInvitationRepository,
     PrismaActivityRepository,
     PrismaLabelRepository,
     PrismaCardLabelRepository,

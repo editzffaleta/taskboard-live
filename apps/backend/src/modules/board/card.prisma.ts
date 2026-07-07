@@ -8,6 +8,7 @@ type PersistedCard = {
   title: string;
   description: string | null;
   position: number;
+  dueDate: Date | null;
   createdAt: Date;
 };
 
@@ -45,6 +46,7 @@ export class PrismaCardRepository implements CardRepository {
         title: card.title,
         description: card.description,
         position: card.position,
+        dueDate: card.dueDate,
       },
     });
 
@@ -75,6 +77,7 @@ export class PrismaCardRepository implements CardRepository {
       title: card.title,
       description: card.description,
       position: card.position,
+      dueDate: card.dueDate,
     };
   }
 
@@ -86,6 +89,7 @@ export class PrismaCardRepository implements CardRepository {
       title: raw.title,
       description: raw.description,
       position: raw.position,
+      dueDate: raw.dueDate,
     });
   }
 }

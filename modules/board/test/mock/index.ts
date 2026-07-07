@@ -7,3 +7,6 @@ export * from "./fake-activity.repository";
 export * from "./fake-activity-recorder";
 export * from "./fake-label.repository";
 export * from "./fake-card-label.repository";
+export * from "./fake-checklist-item.repository";
+export * from "./fake-card-assignee.repository";
+export * from "./fake-comment.repository";

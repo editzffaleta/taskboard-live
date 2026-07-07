@@ -12,6 +12,7 @@ import {
   DeleteCard,
   EditCard,
   MoveCard,
+  SetCardDueDate,
   type Card,
 } from '@taskboard/board';
 import { CurrentUser } from '../../shared/decorators';
@@ -22,6 +23,9 @@ import {
   PrismaCardLabelRepository,
   PrismaLabelRepository,
 } from './label.prisma';
+import { PrismaChecklistItemRepository } from './checklist-item.prisma';
+import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
+import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 import { ActivityRecorderImpl } from './activity-recorder.provider';
 import { buildCardResponse, type CardResponse } from './card-response.util';
@@ -34,6 +38,9 @@ export class CardController {
     private readonly membershipRepository: PrismaMembershipRepository,
     private readonly cardLabelRepository: PrismaCardLabelRepository,
     private readonly labelRepository: PrismaLabelRepository,
+    private readonly checklistItemRepository: PrismaChecklistItemRepository,
+    private readonly cardAssigneeRepository: PrismaCardAssigneeRepository,
+    private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
     private readonly activityRecorder: ActivityRecorderImpl,
   ) {}
@@ -104,6 +111,35 @@ export class CardController {
       cardId: card.id,
       listId: card.listId,
       title: card.title,
+    });
+
+    return response;
+  }
+
+  @Patch(':id/due')
+  async setDueDate(
+    @Param('boardId') boardId: string,
+    @Param('id') cardId: string,
+    @Body() body: { dueDate: string | null },
+    @CurrentUser('id') requesterId: string,
+  ): Promise<CardResponse> {
+    const useCase = new SetCardDueDate(
+      this.cardRepository,
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { card } = await useCase.execute({
+      boardId,
+      cardId,
+      requesterId,
+      dueDate: body.dueDate === null ? null : new Date(body.dueDate),
+    });
+
+    const response = await this.toResponse(card);
+
+    this.realtimeEmitter.emitToBoard(boardId, 'card.updated', {
+      card: response,
     });
 
     return response;
@@ -189,6 +225,9 @@ export class CardController {
       card,
       this.cardLabelRepository,
       this.labelRepository,
+      this.checklistItemRepository,
+      this.cardAssigneeRepository,
+      this.memberDirectory,
     );
   }
 }

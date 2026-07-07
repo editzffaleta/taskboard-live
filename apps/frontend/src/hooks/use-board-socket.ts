@@ -87,6 +87,14 @@ export type BoardSocketHandlers = {
 
 export type UseBoardSocketResult = {
   connected: boolean;
+  /**
+   * `true` quando o socket já conectou ao menos uma vez e em seguida caiu (aguardando a
+   * reconexão automática do `socket.io-client`). Distinto de "nunca conectou ainda"
+   * (que só mostra `connected: false`, sem banner de reconexão).
+   */
+  reconnecting: boolean;
+  /** Número da tentativa de reconexão em andamento, vindo nativamente do `socket.io-client`. */
+  reconnectAttempt: number;
 };
 
 /**
@@ -100,7 +108,10 @@ export function useBoardSocket(
   handlers: BoardSocketHandlers,
 ): UseBoardSocketResult {
   const [connected, setConnected] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
+  const [reconnectAttempt, setReconnectAttempt] = useState(0);
   const handlersRef = useRef(handlers);
+  const hasConnectedOnceRef = useRef(false);
 
   useEffect(() => {
     handlersRef.current = handlers;
@@ -121,16 +132,27 @@ export function useBoardSocket(
     };
 
     socket.on('connect', () => {
+      hasConnectedOnceRef.current = true;
       setConnected(true);
+      setReconnecting(false);
+      setReconnectAttempt(0);
       joinBoard();
     });
 
     socket.on('disconnect', () => {
       setConnected(false);
+      if (hasConnectedOnceRef.current) {
+        setReconnecting(true);
+      }
     });
 
     socket.on('connect_error', () => {
       setConnected(false);
+    });
+
+    socket.io.on('reconnect_attempt', (attempt: number) => {
+      setReconnecting(true);
+      setReconnectAttempt(attempt);
     });
 
     socket.on('card.created', (payload: CardEventPayload) => {
@@ -171,8 +193,11 @@ export function useBoardSocket(
       socket.emit('board:leave', { boardId });
       socket.disconnect();
       setConnected(false);
+      setReconnecting(false);
+      setReconnectAttempt(0);
+      hasConnectedOnceRef.current = false;
     };
   }, [boardId, token]);
 
-  return { connected };
+  return { connected, reconnecting, reconnectAttempt };
 }

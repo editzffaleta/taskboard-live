@@ -8,6 +8,9 @@ import {
   PrismaCardLabelRepository,
   PrismaLabelRepository,
 } from './label.prisma';
+import { PrismaChecklistItemRepository } from './checklist-item.prisma';
+import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
+import { MemberDirectoryAdapter } from './member-directory.provider';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 import { buildCardResponse, type CardResponse } from './card-response.util';
 
@@ -19,6 +22,9 @@ export class CardLabelController {
     private readonly cardRepository: PrismaCardRepository,
     private readonly listRepository: PrismaListRepository,
     private readonly membershipRepository: PrismaMembershipRepository,
+    private readonly checklistItemRepository: PrismaChecklistItemRepository,
+    private readonly cardAssigneeRepository: PrismaCardAssigneeRepository,
+    private readonly memberDirectory: MemberDirectoryAdapter,
     private readonly realtimeEmitter: RealtimeEmitterImpl,
   ) {}
 
@@ -48,6 +54,9 @@ export class CardLabelController {
       card,
       this.cardLabelRepository,
       this.labelRepository,
+      this.checklistItemRepository,
+      this.cardAssigneeRepository,
+      this.memberDirectory,
     );
 
     this.realtimeEmitter.emitToBoard(boardId, 'card.updated', {
@@ -84,6 +93,9 @@ export class CardLabelController {
       card,
       this.cardLabelRepository,
       this.labelRepository,
+      this.checklistItemRepository,
+      this.cardAssigneeRepository,
+      this.memberDirectory,
     );
 
     this.realtimeEmitter.emitToBoard(boardId, 'card.updated', {

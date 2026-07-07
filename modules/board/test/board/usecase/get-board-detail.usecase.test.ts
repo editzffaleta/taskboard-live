@@ -2,6 +2,7 @@ import { NotFoundError } from "@taskboard/shared";
 import { List } from "../../../src/list/model";
 import { Card } from "../../../src/card/model";
 import { Label } from "../../../src/label/model";
+import { ChecklistItem } from "../../../src/checklist-item/model";
 import { Membership } from "../../../src/membership/model";
 import { GetBoardDetail } from "../../../src/board/usecase/get-board-detail.usecase";
 import {
@@ -11,6 +12,9 @@ import {
   FakeCardRepository,
   FakeCardLabelRepository,
   FakeLabelRepository,
+  FakeChecklistItemRepository,
+  FakeCardAssigneeRepository,
+  FakeMemberDirectory,
 } from "../../mock";
 
 const OWNER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
@@ -24,6 +28,9 @@ function setup() {
   const cardRepository = new FakeCardRepository();
   const cardLabelRepository = new FakeCardLabelRepository();
   const labelRepository = new FakeLabelRepository();
+  const checklistItemRepository = new FakeChecklistItemRepository();
+  const cardAssigneeRepository = new FakeCardAssigneeRepository();
+  const memberDirectory = new FakeMemberDirectory();
   const useCase = new GetBoardDetail(
     boardRepository,
     membershipRepository,
@@ -31,6 +38,9 @@ function setup() {
     cardRepository,
     cardLabelRepository,
     labelRepository,
+    checklistItemRepository,
+    cardAssigneeRepository,
+    memberDirectory,
   );
   return {
     boardRepository,
@@ -39,6 +49,9 @@ function setup() {
     cardRepository,
     cardLabelRepository,
     labelRepository,
+    checklistItemRepository,
+    cardAssigneeRepository,
+    memberDirectory,
     useCase,
   };
 }
@@ -125,6 +138,52 @@ describe("GetBoardDetail", () => {
 
     expect(detail.lists[0].cards[0].labels).toEqual([
       { id: label.id, name: "Backend", color: "blue" },
+    ]);
+  });
+
+  it("inclui dueDate, assignees e checklist do cartao no detalhe do quadro", async () => {
+    const {
+      boardRepository,
+      listRepository,
+      cardRepository,
+      checklistItemRepository,
+      cardAssigneeRepository,
+      memberDirectory,
+      useCase,
+    } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Quadro",
+      ownerId: OWNER_ID,
+    });
+    const list = await listRepository.create(
+      new List({ boardId: board.id, title: "Lista", position: 0 }),
+    );
+    const dueDate = new Date("2026-08-01T00:00:00.000Z");
+    const card = await cardRepository.create(
+      new Card({ listId: list.id, title: "Cartao", position: 0, dueDate }),
+    );
+    memberDirectory.users.push({
+      id: OTHER_USER_ID,
+      name: "Fulano",
+      email: "fulano@example.com",
+    });
+    await cardAssigneeRepository.assign(card.id, OTHER_USER_ID);
+    await checklistItemRepository.create(
+      new ChecklistItem({ cardId: card.id, text: "Item", position: 0 }),
+    );
+
+    const { board: detail } = await useCase.execute({
+      boardId: board.id,
+      requesterId: OWNER_ID,
+    });
+
+    const cardDetail = detail.lists[0].cards[0];
+    expect(cardDetail.dueDate).toBe(dueDate.toISOString());
+    expect(cardDetail.assignees).toEqual([
+      { id: OTHER_USER_ID, name: "Fulano" },
+    ]);
+    expect(cardDetail.checklist).toEqual([
+      { id: expect.any(String), text: "Item", done: false, position: 0 },
     ]);
   });
 

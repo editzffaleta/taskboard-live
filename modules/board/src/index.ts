@@ -13,3 +13,9 @@ export * from "./card";
 export * from "./activity";
 
 export * from "./label";
+
+export * from "./checklist-item";
+
+export * from "./card-assignee";
+
+export * from "./comment";

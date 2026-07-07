@@ -1,4 +1,5 @@
 import {
+  DateRule,
   Entity,
   EntityState,
   IntegerRule,
@@ -15,6 +16,7 @@ export interface CardState extends EntityState {
   title: string;
   description?: string | null;
   position: number;
+  dueDate?: Date | null;
 }
 
 export class Card extends Entity<CardState> {
@@ -38,6 +40,10 @@ export class Card extends Entity<CardState> {
     return this.props.position;
   }
 
+  get dueDate(): Date | null {
+    return this.props.dueDate ?? null;
+  }
+
   public validate(): void {
     Validator.validate([
       {
@@ -59,6 +65,11 @@ export class Card extends Entity<CardState> {
         code: "card.position",
         value: this.position,
         rules: [new RequiredRule(), new IntegerRule(), new MinValueRule(0)],
+      },
+      {
+        code: "card.dueDate",
+        value: this.dueDate,
+        rules: this.dueDate === null ? [] : [new DateRule()],
       },
     ]);
   }

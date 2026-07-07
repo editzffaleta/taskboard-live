@@ -71,6 +71,10 @@ export const errorMessagesPt = {
   'createBoard.name.max.length': 'O nome do quadro deve ter no máximo 120 caracteres.',
   'createBoard.ownerId.required': 'Proprietário do quadro não informado.',
   'createBoard.ownerId.uuid': 'Proprietário do quadro inválido.',
+  'boardTemplate.not.found': 'Modelo de quadro não encontrado.',
+  'createBoardFromTemplate.templateId.required': 'Selecione um modelo de quadro.',
+  'createBoardFromTemplate.ownerId.required': 'Proprietário do quadro não informado.',
+  'createBoardFromTemplate.ownerId.uuid': 'Proprietário do quadro inválido.',
   'renameBoard.boardId.required': 'Quadro não informado.',
   'renameBoard.boardId.uuid': 'Quadro inválido.',
   'renameBoard.requesterId.required': 'Usuário solicitante não informado.',
@@ -339,6 +343,19 @@ export const errorMessagesPt = {
   'archived.time.weeks': '{{count}} semanas',
   'archived.time.oneWeek': '1 semana',
   'archived.nav.item': 'Arquivados',
+
+  // 025 — Galeria de modelos
+  'templates.nav.item': 'Modelos',
+  'templates.title': 'Comece com um modelo',
+  'templates.subtitle':
+    'Quadros pré-configurados com listas e cartões de exemplo. Escolha um e comece em segundos.',
+  'templates.category.all': 'Todos',
+  'templates.use': 'Usar modelo',
+  'templates.using': 'Criando...',
+  'templates.useSuccess': 'Quadro criado a partir do modelo.',
+  'templates.empty': 'Nenhum modelo encontrado para esta categoria.',
+  'templates.error': 'Não foi possível carregar os modelos. Tente novamente.',
+
   'search.title': 'Buscar',
   'search.placeholder': 'Buscar quadros e cartões…',
   'search.filter.all': 'Tudo',

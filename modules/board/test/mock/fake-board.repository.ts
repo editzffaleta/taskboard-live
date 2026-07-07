@@ -1,12 +1,17 @@
 import { Board } from "../../src/board/model";
 import {
   BoardRepository,
+  CreateBoardFromTemplateInput,
   CreateBoardWithOwnerInput,
 } from "../../src/board/provider";
 import { Membership } from "../../src/membership/model";
+import { List } from "../../src/list/model";
+import { Card } from "../../src/card/model";
 
 export class FakeBoardRepository implements BoardRepository {
   readonly boards: Board[] = [];
+  readonly lists: List[] = [];
+  readonly cards: Card[] = [];
 
   constructor(private readonly memberships: Membership[] = []) {}
 
@@ -27,6 +32,55 @@ export class FakeBoardRepository implements BoardRepository {
     this.memberships.push(membership);
 
     return { board, membership };
+  }
+
+  async createFromTemplate(
+    input: CreateBoardFromTemplateInput,
+  ): Promise<{
+    board: Board;
+    membership: Membership;
+    lists: List[];
+    cards: Card[];
+  }> {
+    const board = new Board({ name: input.name, ownerId: input.ownerId });
+    board.validate();
+
+    const membership = new Membership({
+      boardId: board.id,
+      userId: input.ownerId,
+      role: "owner",
+    });
+    membership.validate();
+
+    const createdLists: List[] = [];
+    const createdCards: Card[] = [];
+
+    input.lists.forEach((listInput, listIndex) => {
+      const list = new List({
+        boardId: board.id,
+        title: listInput.title,
+        position: listIndex,
+      });
+      list.validate();
+      createdLists.push(list);
+
+      listInput.cards.forEach((cardInput, cardIndex) => {
+        const card = new Card({
+          listId: list.id,
+          title: cardInput.title,
+          position: cardIndex,
+        });
+        card.validate();
+        createdCards.push(card);
+      });
+    });
+
+    this.boards.push(board);
+    this.memberships.push(membership);
+    this.lists.push(...createdLists);
+    this.cards.push(...createdCards);
+
+    return { board, membership, lists: createdLists, cards: createdCards };
   }
 
   async update(entity: Board): Promise<Board> {

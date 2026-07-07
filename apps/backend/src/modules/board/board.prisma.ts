@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import {
   Board,
   BoardRepository,
+  Card,
+  CreateBoardFromTemplateInput,
   CreateBoardWithOwnerInput,
+  List,
   Membership,
 } from '@taskboard/board';
 import { PrismaService } from '../../db/prisma.service';
@@ -26,6 +29,26 @@ type PersistedMembership = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+};
+
+type PersistedList = {
+  id: string;
+  boardId: string;
+  title: string;
+  position: number;
+  createdAt: Date;
+  archivedAt: Date | null;
+};
+
+type PersistedCard = {
+  id: string;
+  listId: string;
+  title: string;
+  description: string | null;
+  position: number;
+  dueDate: Date | null;
+  createdAt: Date;
+  archivedAt: Date | null;
 };
 
 @Injectable()
@@ -55,6 +78,70 @@ export class PrismaBoardRepository implements BoardRepository {
     return {
       board: this.boardToDomain(createdBoard),
       membership: this.membershipToDomain(createdMembership),
+    };
+  }
+
+  async createFromTemplate(input: CreateBoardFromTemplateInput): Promise<{
+    board: Board;
+    membership: Membership;
+    lists: List[];
+    cards: Card[];
+  }> {
+    const board = new Board({ name: input.name, ownerId: input.ownerId });
+    board.validate();
+
+    const membership = new Membership({
+      boardId: board.id,
+      userId: input.ownerId,
+      role: 'owner',
+    });
+    membership.validate();
+
+    const lists: List[] = [];
+    const cards: Card[] = [];
+
+    input.lists.forEach((listInput, listIndex) => {
+      const list = new List({
+        boardId: board.id,
+        title: listInput.title,
+        position: listIndex,
+      });
+      list.validate();
+      lists.push(list);
+
+      listInput.cards.forEach((cardInput, cardIndex) => {
+        const card = new Card({
+          listId: list.id,
+          title: cardInput.title,
+          position: cardIndex,
+        });
+        card.validate();
+        cards.push(card);
+      });
+    });
+
+    const [createdBoard, createdMembership, ...createdRest] =
+      await this.prisma.$transaction([
+        this.prisma.board.create({ data: this.boardToPersistence(board) }),
+        this.prisma.boardMember.create({
+          data: this.membershipToPersistence(membership),
+        }),
+        ...lists.map((list) =>
+          this.prisma.list.create({ data: this.listToPersistence(list) }),
+        ),
+        ...cards.map((card) =>
+          this.prisma.card.create({ data: this.cardToPersistence(card) }),
+        ),
+      ]);
+
+    const createdLists = createdRest.slice(0, lists.length) as PersistedList[];
+    const createdCards = createdRest.slice(lists.length) as PersistedCard[];
+
+    return {
+      board: this.boardToDomain(createdBoard),
+      membership: this.membershipToDomain(createdMembership),
+      lists: createdLists.map((item) => this.listToDomain(item)),
+      cards: createdCards.map((item) => this.cardToDomain(item)),
     };
   }
 
@@ -161,6 +248,50 @@ export class PrismaBoardRepository implements BoardRepository {
       boardId: raw.boardId,
       userId: raw.userId,
       role: raw.role as 'owner' | 'member',
+    });
+  }
+
+  private listToPersistence(list: List) {
+    return {
+      id: list.id,
+      boardId: list.boardId,
+      title: list.title,
+      position: list.position,
+    };
+  }
+
+  private listToDomain(raw: PersistedList): List {
+    return new List({
+      id: raw.id,
+      createdAt: raw.createdAt,
+      boardId: raw.boardId,
+      title: raw.title,
+      position: raw.position,
+      archivedAt: raw.archivedAt,
+    });
+  }
+
+  private cardToPersistence(card: Card) {
+    return {
+      id: card.id,
+      listId: card.listId,
+      title: card.title,
+      description: card.description,
+      position: card.position,
+      dueDate: card.dueDate,
+    };
+  }
+
+  private cardToDomain(raw: PersistedCard): Card {
+    return new Card({
+      id: raw.id,
+      createdAt: raw.createdAt,
+      listId: raw.listId,
+      title: raw.title,
+      description: raw.description,
+      position: raw.position,
+      dueDate: raw.dueDate,
+      archivedAt: raw.archivedAt,
     });
   }
 }

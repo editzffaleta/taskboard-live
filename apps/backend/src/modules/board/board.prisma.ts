@@ -104,6 +104,24 @@ export class PrismaBoardRepository implements BoardRepository {
     return found.map((item) => this.boardToDomain(item));
   }
 
+  async searchByIds(
+    ids: string[],
+    query: string,
+    limit: number,
+  ): Promise<Board[]> {
+    const found = await this.prisma.board.findMany({
+      where: {
+        id: { in: ids },
+        archivedAt: null,
+        name: { contains: query, mode: 'insensitive' },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return found.map((item) => this.boardToDomain(item));
+  }
+
   private boardToPersistence(board: Board) {
     return {
       id: board.id,

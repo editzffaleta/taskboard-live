@@ -10,9 +10,25 @@ export class FakeCardRepository implements CardRepository {
    * metodo devem popular via `registerListBoard`.
    */
   private readonly boardIdByListId = new Map<string, string>();
+  /**
+   * Detalhes (`boardName`/`listTitle`) usados apenas por `searchByBoardIds`,
+   * que hidrata contexto do resultado sem depender de outro repositório
+   * (change `023`).
+   */
+  private readonly listDetailsByListId = new Map<
+    string,
+    { boardName: string; listTitle: string }
+  >();
 
-  registerListBoard(listId: string, boardId: string): void {
+  registerListBoard(
+    listId: string,
+    boardId: string,
+    listDetails?: { boardName: string; listTitle: string },
+  ): void {
     this.boardIdByListId.set(listId, boardId);
+    if (listDetails) {
+      this.listDetailsByListId.set(listId, listDetails);
+    }
   }
 
   async create(card: Card): Promise<Card> {
@@ -79,5 +95,42 @@ export class FakeCardRepository implements CardRepository {
         card.archivedAt !== null &&
         this.boardIdByListId.get(card.listId) === boardId,
     );
+  }
+
+  async searchByBoardIds(
+    boardIds: string[],
+    query: string,
+    limit: number,
+  ): Promise<
+    { card: Card; boardId: string; boardName: string; listTitle: string }[]
+  > {
+    const normalizedQuery = query.toLowerCase();
+
+    return this.cards
+      .filter((card) => {
+        const boardId = this.boardIdByListId.get(card.listId);
+        if (!boardId || card.archivedAt !== null) {
+          return false;
+        }
+        if (!boardIds.includes(boardId)) {
+          return false;
+        }
+        const titleMatch = card.title.toLowerCase().includes(normalizedQuery);
+        const descriptionMatch = (card.description ?? "")
+          .toLowerCase()
+          .includes(normalizedQuery);
+        return titleMatch || descriptionMatch;
+      })
+      .slice(0, limit)
+      .map((card) => {
+        const boardId = this.boardIdByListId.get(card.listId)!;
+        const details = this.listDetailsByListId.get(card.listId);
+        return {
+          card,
+          boardId,
+          boardName: details?.boardName ?? "",
+          listTitle: details?.listTitle ?? "",
+        };
+      });
   }
 }

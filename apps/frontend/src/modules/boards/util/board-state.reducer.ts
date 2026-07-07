@@ -1,5 +1,6 @@
 import type { BoardState, CardState, ListState } from '@/modules/boards/types/board-state.type';
 import type {
+  BoardUpdatedPayload,
   CardDeletedPayload,
   CardEventPayload,
   CardMovedPayload,
@@ -15,6 +16,14 @@ import type {
  * o mesmo evento (originado localmente de forma otimista, ou de volta pelo socket) nunca
  * duplica cartões/listas nem produz um estado inconsistente.
  */
+
+/**
+ * Reconcilia `board.updated` (`020`): nome e cor do quadro são atualizados ao vivo para
+ * qualquer cliente com o quadro aberto, sem recarregar a página.
+ */
+export function applyBoardUpdated(state: BoardState, payload: BoardUpdatedPayload): BoardState {
+  return { ...state, name: payload.board.name, color: payload.board.color };
+}
 
 export function applyCardCreated(state: BoardState, payload: CardEventPayload): BoardState {
   const { card } = payload;

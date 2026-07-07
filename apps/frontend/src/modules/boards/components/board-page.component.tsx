@@ -20,6 +20,7 @@ function toBoardState(detail: BoardDetail, labels: LabelDto[]): BoardState {
     id: detail.id,
     name: detail.name,
     ownerId: detail.ownerId,
+    color: detail.color,
     lists: detail.lists.map(toListState),
     labels,
     commentsCountByCardId: {},

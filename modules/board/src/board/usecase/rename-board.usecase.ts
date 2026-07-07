@@ -1,5 +1,6 @@
 import {
   DomainError,
+  InRule,
   MaxLengthRule,
   MinLengthRule,
   NotFoundError,
@@ -8,14 +9,15 @@ import {
   UuidRule,
   Validator,
 } from "@taskboard/shared";
-import { Board } from "../model";
+import { Board, BOARD_COLORS } from "../model";
 import { BoardRepository } from "../provider";
 import { MembershipRepository } from "../../membership/provider";
 
 export interface RenameBoardIn {
   boardId: string;
   requesterId: string;
-  name: string;
+  name?: string;
+  color?: string;
 }
 
 export interface RenameBoardOut {
@@ -29,6 +31,10 @@ export class RenameBoard implements UseCase<RenameBoardIn, RenameBoardOut> {
   ) {}
 
   async execute(input: RenameBoardIn): Promise<RenameBoardOut> {
+    if (input.name === undefined && input.color === undefined) {
+      throw new DomainError("renameBoard.nothing.to.update", 400);
+    }
+
     Validator.validate([
       {
         code: "renameBoard.boardId",
@@ -40,11 +46,24 @@ export class RenameBoard implements UseCase<RenameBoardIn, RenameBoardOut> {
         value: input.requesterId,
         rules: [new RequiredRule(), new UuidRule()],
       },
-      {
-        code: "renameBoard.name",
-        value: input.name,
-        rules: [new RequiredRule(), new MinLengthRule(1), new MaxLengthRule(120)],
-      },
+      ...(input.name !== undefined
+        ? [
+            {
+              code: "renameBoard.name",
+              value: input.name,
+              rules: [new RequiredRule(), new MinLengthRule(1), new MaxLengthRule(120)],
+            },
+          ]
+        : []),
+      ...(input.color !== undefined
+        ? [
+            {
+              code: "board.color",
+              value: input.color,
+              rules: [new RequiredRule(), new InRule(BOARD_COLORS)],
+            },
+          ]
+        : []),
     ]);
 
     const board = await this.boardRepository.findById(input.boardId);
@@ -62,7 +81,10 @@ export class RenameBoard implements UseCase<RenameBoardIn, RenameBoardOut> {
       throw new DomainError("board.owner.required", 403);
     }
 
-    const renamed = board.clone({ name: input.name });
+    const renamed = board.clone({
+      ...(input.name !== undefined ? { name: input.name } : {}),
+      ...(input.color !== undefined ? { color: input.color } : {}),
+    });
     renamed.validate();
 
     const updated = await this.boardRepository.update(renamed);

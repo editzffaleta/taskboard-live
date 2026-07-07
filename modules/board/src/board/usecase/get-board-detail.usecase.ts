@@ -64,6 +64,7 @@ export interface BoardDetail {
   id: string;
   name: string;
   ownerId: string;
+  color: string | null;
   createdAt: Date;
   lists: BoardDetailList[];
 }
@@ -128,6 +129,7 @@ export class GetBoardDetail
         id: board.id,
         name: board.name,
         ownerId: board.ownerId,
+        color: board.color,
         createdAt: board.createdAt,
         lists: listsWithCards,
       },

@@ -20,7 +20,7 @@ import { DeleteConfirmationDialog } from '@/shared/components/ui/delete-confirma
 import { getMessage } from '@/shared/i18n';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import { BoardsApiError, deleteBoard, renameBoard, type Board } from '@/modules/boards/api/boards.api';
-import { getBoardAccentColor } from '@/modules/boards/util/board-color.util';
+import { resolveBoardColor } from '@/modules/boards/util/board-color.util';
 
 type BoardCardProps = {
   board: Board;
@@ -32,7 +32,7 @@ export function BoardCard({ board, onRenamed, onDeleted }: BoardCardProps) {
   const { token, user } = useAuth();
   const router = useRouter();
   const isOwner = user?.id === board.ownerId;
-  const accent = getBoardAccentColor(board.id);
+  const accent = resolveBoardColor(board);
 
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

@@ -29,11 +29,13 @@ import {
 import { PrismaChecklistItemRepository } from './checklist-item.prisma';
 import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
 import { MemberDirectoryAdapter } from './member-directory.provider';
+import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
 
 type BoardResponse = {
   id: string;
   name: string;
   ownerId: string;
+  color: string | null;
   createdAt: Date;
 };
 
@@ -51,6 +53,7 @@ export class BoardController {
     private readonly checklistItemRepository: PrismaChecklistItemRepository,
     private readonly cardAssigneeRepository: PrismaCardAssigneeRepository,
     private readonly memberDirectory: MemberDirectoryAdapter,
+    private readonly realtimeEmitter: RealtimeEmitterImpl,
   ) {}
 
   @Post()
@@ -106,7 +109,7 @@ export class BoardController {
   @Patch(':id')
   async rename(
     @Param('id') boardId: string,
-    @Body() body: { name: string },
+    @Body() body: { name?: string; color?: string },
     @CurrentUser('id') requesterId: string,
   ): Promise<BoardResponse> {
     const useCase = new RenameBoard(
@@ -118,9 +121,16 @@ export class BoardController {
       boardId,
       requesterId,
       name: body.name,
+      color: body.color,
     });
 
-    return this.toResponse(board);
+    const response = this.toResponse(board);
+
+    this.realtimeEmitter.emitToBoard(boardId, 'board.updated', {
+      board: response,
+    });
+
+    return response;
   }
 
   @Delete(':id')
@@ -142,6 +152,7 @@ export class BoardController {
       id: board.id,
       name: board.name,
       ownerId: board.ownerId,
+      color: board.color,
       createdAt: board.createdAt,
     };
   }

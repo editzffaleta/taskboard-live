@@ -81,4 +81,77 @@ describe("RenameBoard", () => {
       useCase.execute({ boardId: board.id, requesterId: OWNER_ID, name: "" }),
     ).rejects.toBeInstanceOf(ValidationException);
   });
+
+  it("permite o owner alterar apenas a cor", async () => {
+    const { boardRepository, useCase } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Nome antigo",
+      ownerId: OWNER_ID,
+    });
+
+    const { board: updated } = await useCase.execute({
+      boardId: board.id,
+      requesterId: OWNER_ID,
+      color: "purple",
+    });
+
+    expect(updated.color).toBe("purple");
+    expect(updated.name).toBe("Nome antigo");
+  });
+
+  it("permite o owner alterar nome e cor juntos", async () => {
+    const { boardRepository, useCase } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Nome antigo",
+      ownerId: OWNER_ID,
+    });
+
+    const { board: updated } = await useCase.execute({
+      boardId: board.id,
+      requesterId: OWNER_ID,
+      name: "Nome novo",
+      color: "green",
+    });
+
+    expect(updated.name).toBe("Nome novo");
+    expect(updated.color).toBe("green");
+  });
+
+  it("rejeita cor fora da paleta sem persistir", async () => {
+    const { boardRepository, useCase } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Nome antigo",
+      ownerId: OWNER_ID,
+    });
+
+    await expect(
+      useCase.execute({
+        boardId: board.id,
+        requesterId: OWNER_ID,
+        color: "magenta",
+      }),
+    ).rejects.toBeInstanceOf(ValidationException);
+
+    const persisted = await boardRepository.findById(board.id);
+    expect(persisted?.color).toBeNull();
+  });
+
+  it("rejeita quando o requester nao e owner ao alterar cor", async () => {
+    const { boardRepository, useCase } = setup();
+    const { board } = await boardRepository.createWithOwnerMembership({
+      name: "Nome antigo",
+      ownerId: OWNER_ID,
+    });
+
+    await expect(
+      useCase.execute({
+        boardId: board.id,
+        requesterId: OTHER_USER_ID,
+        color: "green",
+      }),
+    ).rejects.toMatchObject({
+      message: "board.owner.required",
+      statusCode: 403,
+    });
+  });
 });

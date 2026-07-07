@@ -1,11 +1,13 @@
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
-import type { LabelColor } from '@/modules/boards/types/board-state.type';
+import type { BoardColor, LabelColor } from '@/modules/boards/types/board-state.type';
 
 export type Board = {
   id: string;
   name: string;
   ownerId: string;
   createdAt: string;
+  /** Cor/realce do quadro (`020`); `null` só é possível em quadros anteriores à migration. */
+  color: BoardColor | null;
 };
 
 export type LabelDto = {
@@ -51,6 +53,7 @@ export type BoardDetail = {
   name: string;
   ownerId: string;
   createdAt: string;
+  color: BoardColor | null;
   lists: BoardDetailList[];
 };
 
@@ -122,6 +125,22 @@ export function renameBoard(token: string, id: string, name: string): Promise<Bo
   return request<Board>(token, `/boards/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ name }),
+  });
+}
+
+/**
+ * Atualiza nome e/ou cor do quadro (`020`), reaproveitando o mesmo `PATCH /boards/:id` de
+ * `renameBoard` — só o owner pode chamar; o backend valida `color` contra a paleta fechada
+ * (`BOARD_COLORS`) e emite `board.updated` na sala do quadro após o sucesso.
+ */
+export function updateBoard(
+  token: string,
+  id: string,
+  changes: { name?: string; color?: BoardColor },
+): Promise<Board> {
+  return request<Board>(token, `/boards/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(changes),
   });
 }
 

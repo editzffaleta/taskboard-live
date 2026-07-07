@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, WifiOff } from 'lucide-react';
+import Link from 'next/link';
+import { Plus, Settings, WifiOff } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { BoardPresence } from '@/modules/boards/components/board-presence.component';
@@ -10,12 +11,16 @@ import { ActivityPanel } from '@/modules/boards/components/activity-panel.compon
 import type { BoardMember } from '@/modules/boards/api/members.api';
 import type { Activity } from '@/modules/boards/api/activity.api';
 import type { PresenceUser } from '@/hooks/use-board-socket';
+import type { BoardColor } from '@/modules/boards/types/board-state.type';
+import { resolveBoardColor } from '@/modules/boards/util/board-color.util';
+import { getMessage } from '@/shared/i18n';
 
 type ActivityPageResult = { items: Activity[]; hasMore: boolean };
 
 type BoardToolbarProps = {
   boardId: string;
   boardName: string;
+  boardColor: BoardColor | null;
   connected: boolean;
   presenceUsers: PresenceUser[];
   onCreateList: (title: string) => void;
@@ -31,12 +36,14 @@ type BoardToolbarProps = {
 };
 
 /**
- * Cabeçalho do quadro: nome, criação de nova lista, presença, painel de membros e
- * indicador discreto de conexão do socket.
+ * Cabeçalho do quadro: nome, indicador de cor/realce (`020`), criação de nova lista,
+ * presença, painel de membros, atalho para "Configurações" (só owner) e indicador discreto
+ * de conexão do socket.
  */
 export function BoardToolbar({
   boardId,
   boardName,
+  boardColor,
   connected,
   presenceUsers,
   onCreateList,
@@ -50,6 +57,7 @@ export function BoardToolbar({
   onActivitiesLoaded,
   onActivitiesLoadMore,
 }: BoardToolbarProps) {
+  const accent = resolveBoardColor({ id: boardId, color: boardColor });
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
 
@@ -66,6 +74,7 @@ export function BoardToolbar({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
       <div className="flex items-center gap-3">
+        <span className={`size-2.5 shrink-0 rounded-full ${accent.dot}`} aria-hidden data-testid="board-color-dot" />
         <h1 className="text-xl font-black tracking-tight">{boardName}</h1>
         {connected ? (
           <span
@@ -110,6 +119,14 @@ export function BoardToolbar({
           onActivitiesLoaded={onActivitiesLoaded}
           onLoadMore={onActivitiesLoadMore}
         />
+
+        {isOwner ? (
+          <Button type="button" size="icon" variant="outline" asChild data-testid="board-settings-link">
+            <Link href={`/boards/${boardId}/settings`} aria-label={getMessage('boardSettings.trigger')}>
+              <Settings className="size-4" />
+            </Link>
+          </Button>
+        ) : null}
 
         {isCreating ? (
           <form onSubmit={handleSubmit} className="flex items-center gap-2">

@@ -100,7 +100,7 @@ model Comment {
   createdAt DateTime @default(now())
 
   card   Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  author User @relation(fields: [authorId], references: [id])
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([cardId, createdAt])
   @@map("comments")
@@ -142,7 +142,7 @@ model Activity {
   createdAt DateTime @default(now())
 
   board Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  actor User  @relation(fields: [actorId], references: [id])
+  actor User  @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@index([boardId, createdAt])
   @@map("activities")

@@ -18,6 +18,8 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { ApiExceptionFilter } from '../../shared/errors/api-exception.filter';
 import { ThrottlerI18nFilter } from '../../shared/http';
+import { PrismaBoardRepository } from '../board/board.prisma';
+import { PrismaMembershipRepository } from '../board/membership.prisma';
 import { AuthController } from './auth.controller';
 import { BcryptCryptoProvider } from './bcrypt.crypto';
 import { PrismaUserRepository } from './user.prisma';
@@ -46,6 +48,8 @@ describe('AuthController — rate limit estrito (integração)', () => {
       providers: [
         { provide: PrismaUserRepository, useValue: userRepository },
         BcryptCryptoProvider,
+        { provide: PrismaBoardRepository, useValue: {} },
+        { provide: PrismaMembershipRepository, useValue: {} },
         { provide: APP_FILTER, useClass: ApiExceptionFilter },
         { provide: APP_FILTER, useClass: ThrottlerI18nFilter },
         { provide: APP_GUARD, useClass: ThrottlerGuard },

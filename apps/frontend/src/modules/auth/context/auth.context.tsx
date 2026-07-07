@@ -32,6 +32,13 @@ type AuthState = {
 type AuthContextValue = AuthState & {
   login: (token: string) => void;
   logout: () => void;
+  /**
+   * Atualiza `user.name` só em memória (`021` — Configurações da Conta / aba Perfil),
+   * sem tocar no cookie/JWT: o token continua com o `name` antigo até expirar ou até
+   * novo login (reemitir token exigiria endpoint de refresh, fora de escopo), mas a UI
+   * reflete o nome novo imediatamente porque o estado React é a fonte usada pelo shell.
+   */
+  updateUserName: (name: string) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -105,9 +112,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ user: null, token: null, status: 'unauthenticated' });
   }, []);
 
+  const updateUserName = useCallback((name: string) => {
+    setState((current) => (current.user ? { ...current, user: { ...current.user, name } } : current));
+  }, []);
+
   const value = useMemo<AuthContextValue>(
-    () => ({ ...state, login, logout }),
-    [state, login, logout],
+    () => ({ ...state, login, logout, updateUserName }),
+    [state, login, logout, updateUserName],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

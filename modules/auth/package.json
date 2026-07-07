@@ -23,6 +23,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@taskboard/shared": "*"
+    "@taskboard/shared": "*",
+    "@taskboard/board": "*"
   }
 }

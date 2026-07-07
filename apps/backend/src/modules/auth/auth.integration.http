@@ -94,3 +94,85 @@ Content-Type: application/json
 {
   "email": "jose.silva.{{scenarioVersion}}@example.com"
 }
+
+### === 021-config-conta: PATCH /auth/me, PATCH /auth/me/password, DELETE /auth/me ===
+### Todos os cenarios abaixo usam {{meToken}}, obtido fazendo login com o usuario
+### "jose.silva.{{scenarioVersion}}@example.com" registrado acima e colando o
+### `token` retornado (a extensao REST Client permite `@name` + `{{req.response.body.token}}`,
+### aqui documentado manualmente para quem rodar via curl/Postman).
+
+### PATCH /auth/me sem token -> 401 (guard padrao)
+PATCH {{baseUrl}}/auth/me
+Content-Type: application/json
+
+{
+  "name": "Novo Nome"
+}
+
+### PATCH /auth/me com nome valido -> 200 com { id, name, email } atualizado
+PATCH {{baseUrl}}/auth/me
+Content-Type: application/json
+Authorization: Bearer {{meToken}}
+
+{
+  "name": "Jose Atualizado"
+}
+
+### PATCH /auth/me com nome invalido (muito curto) -> 422, nome anterior mantido
+PATCH {{baseUrl}}/auth/me
+Content-Type: application/json
+Authorization: Bearer {{meToken}}
+
+{
+  "name": "ab"
+}
+
+### PATCH /auth/me/password com senha atual incorreta -> 401 (user.password.current.invalid)
+PATCH {{baseUrl}}/auth/me/password
+Content-Type: application/json
+Authorization: Bearer {{meToken}}
+
+{
+  "currentPassword": "SenhaErrada!123",
+  "newPassword": "N0v@SenhaForte!"
+}
+
+### PATCH /auth/me/password com nova senha fraca -> 422, sem comparar a atual
+PATCH {{baseUrl}}/auth/me/password
+Content-Type: application/json
+Authorization: Bearer {{meToken}}
+
+{
+  "currentPassword": "Str0ng!Passw0rd",
+  "newPassword": "123456"
+}
+
+### PATCH /auth/me/password com senha atual correta e nova forte -> 204
+### (login subsequente com a nova senha deve funcionar)
+PATCH {{baseUrl}}/auth/me/password
+Content-Type: application/json
+Authorization: Bearer {{meToken}}
+
+{
+  "currentPassword": "Str0ng!Passw0rd",
+  "newPassword": "N0v@SenhaForte!"
+}
+
+### Login apos a troca de senha, com a nova senha -> 200
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "jose.silva.{{scenarioVersion}}@example.com",
+  "password": "N0v@SenhaForte!"
+}
+
+### DELETE /auth/me sem quadro-owner com outros membros -> 204
+### (quadros-owner solo excluidos em cascata; memberships de terceiros removidas)
+DELETE {{baseUrl}}/auth/me
+Authorization: Bearer {{meToken}}
+
+### DELETE /auth/me sendo owner de quadro com outro membro -> 409
+### (account.delete.owner.boards.blocked), nada e excluido
+DELETE {{baseUrl}}/auth/me
+Authorization: Bearer {{ownerComOutroMembroToken}}

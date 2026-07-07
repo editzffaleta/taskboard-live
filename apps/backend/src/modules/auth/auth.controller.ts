@@ -1,13 +1,28 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import {
+  ChangePassword,
+  DeleteAccount,
   LoginUser,
   RegisterUser,
+  UpdateProfile,
+  type ChangePasswordIn,
   type LoginUserIn,
   type RegisterUserIn,
+  type UpdateProfileIn,
 } from '@taskboard/auth';
-import { Public } from '../../shared/decorators';
+import { PrismaBoardRepository } from '../board/board.prisma';
+import { PrismaMembershipRepository } from '../board/membership.prisma';
+import { CurrentUser, Public } from '../../shared/decorators';
+import type { AuthenticatedUser } from '../../shared/types/current-user.type';
 import { BcryptCryptoProvider } from './bcrypt.crypto';
 import { signUserToken } from './jwt.util';
 import { PrismaUserRepository } from './user.prisma';
@@ -21,6 +36,8 @@ export class AuthController {
     private readonly userRepository: PrismaUserRepository,
     private readonly cryptoProvider: BcryptCryptoProvider,
     private readonly configService: ConfigService,
+    private readonly boardRepository: PrismaBoardRepository,
+    private readonly membershipRepository: PrismaMembershipRepository,
   ) {}
 
   @Public()
@@ -52,5 +69,45 @@ export class AuthController {
     const token = signUserToken(user, secret);
 
     return { token, user };
+  }
+
+  @Patch('me')
+  async updateProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: Pick<UpdateProfileIn, 'name'>,
+  ): Promise<{ id: string; name: string; email: string }> {
+    const useCase = new UpdateProfile(this.userRepository);
+
+    return useCase.execute({ userId: user.id, name: body.name });
+  }
+
+  @Patch('me/password')
+  @HttpCode(204)
+  async changePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: Pick<ChangePasswordIn, 'currentPassword' | 'newPassword'>,
+  ): Promise<void> {
+    const useCase = new ChangePassword(
+      this.userRepository,
+      this.cryptoProvider,
+    );
+
+    await useCase.execute({
+      userId: user.id,
+      currentPassword: body.currentPassword,
+      newPassword: body.newPassword,
+    });
+  }
+
+  @Delete('me')
+  @HttpCode(204)
+  async deleteAccount(@CurrentUser() user: AuthenticatedUser): Promise<void> {
+    const useCase = new DeleteAccount(
+      this.userRepository,
+      this.boardRepository,
+      this.membershipRepository,
+    );
+
+    await useCase.execute({ userId: user.id });
   }
 }

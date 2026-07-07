@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DbModule } from '../../db/db.module';
 import { AuthModule } from '../auth/auth.module';
@@ -31,7 +31,7 @@ import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
 import { PrismaCommentRepository } from './comment.prisma';
 
 @Module({
-  imports: [DbModule, ConfigModule, AuthModule],
+  imports: [DbModule, ConfigModule, forwardRef(() => AuthModule)],
   controllers: [
     BoardController,
     ListController,

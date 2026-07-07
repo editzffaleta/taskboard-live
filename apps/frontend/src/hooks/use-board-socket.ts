@@ -11,6 +11,18 @@ export type LabelDto = {
   color: LabelColor;
 };
 
+export type AssigneeDto = {
+  id: string;
+  name: string;
+};
+
+export type ChecklistItemDto = {
+  id: string;
+  text: string;
+  done: boolean;
+  position: number;
+};
+
 export type CardEventPayload = {
   card: {
     id: string;
@@ -20,6 +32,9 @@ export type CardEventPayload = {
     position: number;
     createdAt: string;
     labels: LabelDto[];
+    dueDate: string | null;
+    assignees: AssigneeDto[];
+    checklist: ChecklistItemDto[];
   };
 };
 
@@ -88,6 +103,24 @@ export type LabelDeletedPayload = {
   labelId: string;
 };
 
+export type CommentDto = {
+  id: string;
+  cardId: string;
+  authorId: string;
+  authorName: string;
+  text: string;
+  createdAt: string;
+};
+
+export type CommentCreatedPayload = {
+  comment: CommentDto;
+};
+
+export type CommentDeletedPayload = {
+  commentId: string;
+  cardId: string;
+};
+
 export type BoardSocketHandlers = {
   onCardCreated?: (payload: CardEventPayload) => void;
   onCardUpdated?: (payload: CardEventPayload) => void;
@@ -103,6 +136,8 @@ export type BoardSocketHandlers = {
   onLabelCreated?: (payload: LabelEventPayload) => void;
   onLabelUpdated?: (payload: LabelEventPayload) => void;
   onLabelDeleted?: (payload: LabelDeletedPayload) => void;
+  onCommentCreated?: (payload: CommentCreatedPayload) => void;
+  onCommentDeleted?: (payload: CommentDeletedPayload) => void;
 };
 
 export type UseBoardSocketResult = {
@@ -216,6 +251,12 @@ export function useBoardSocket(
     });
     socket.on('label.deleted', (payload: LabelDeletedPayload) => {
       handlersRef.current.onLabelDeleted?.(payload);
+    });
+    socket.on('comment.created', (payload: CommentCreatedPayload) => {
+      handlersRef.current.onCommentCreated?.(payload);
+    });
+    socket.on('comment.deleted', (payload: CommentDeletedPayload) => {
+      handlersRef.current.onCommentDeleted?.(payload);
     });
 
     return () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DragDropContext, Droppable, type DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAuth } from '@/modules/auth/context/auth.context';
@@ -18,11 +18,23 @@ import {
   renameList,
   unassignLabel,
 } from '@/modules/boards/api/boards.api';
+import {
+  addChecklistItem,
+  assignUser,
+  deleteChecklistItem,
+  editChecklistItem,
+  reorderChecklistItems,
+  setCardDueDate,
+  toggleChecklistItem,
+  unassignUser,
+  type CommentDto,
+} from '@/modules/boards/api/card-detail.api';
 import type { LabelColor } from '@/modules/boards/types/board-state.type';
 import { KanbanColumn } from '@/modules/boards/components/kanban-column.component';
 import { BoardToolbar } from '@/modules/boards/components/board-toolbar.component';
 import { BoardReconnectBanner } from '@/modules/boards/components/board-reconnect-banner.component';
-import type { BoardMember } from '@/modules/boards/api/members.api';
+import { CardDetailModal } from '@/modules/boards/components/card-detail-modal.component';
+import { listMembers, type BoardMember } from '@/modules/boards/api/members.api';
 import type { Activity } from '@/modules/boards/api/activity.api';
 import type { BoardState } from '@/modules/boards/types/board-state.type';
 import {
@@ -30,6 +42,8 @@ import {
   applyCardDeleted,
   applyCardMoved,
   applyCardUpdated,
+  applyCommentCreated,
+  applyCommentDeleted,
   applyLabelCreated,
   applyLabelDeleted,
   applyLabelUpdated,
@@ -40,6 +54,11 @@ import {
 } from '@/modules/boards/util/board-state.reducer';
 import { useBoardSocket, type PresenceUser } from '@/hooks/use-board-socket';
 import { getMessage } from '@/shared/i18n';
+
+type CommentEvent =
+  | { type: 'created'; comment: CommentDto }
+  | { type: 'deleted'; commentId: string; cardId: string }
+  | null;
 
 type BoardViewProps = {
   initialBoard: BoardState;
@@ -71,8 +90,40 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   const [presenceUsers, setPresenceUsers] = useState<PresenceUser[]>([]);
   const [members, setMembers] = useState<BoardMember[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [commentEvent, setCommentEvent] = useState<CommentEvent>(null);
   const snapshotRef = useRef<BoardState | null>(null);
   const isOwner = user?.id === board.ownerId;
+
+  // Deriva o cartão aberto diretamente de `board.lists[].cards[]` a cada render (mesmo
+  // objeto de estado do quadro, sem cópia buscada à parte). Se o cartão for excluído
+  // (localmente ou via `card.deleted` de outro membro) enquanto o modal está aberto,
+  // `selectedCard` vira `null` no próximo render e o modal fecha sozinho — não é preciso
+  // um efeito dedicado para "zerar" `selectedCardId` (o render já não exibe mais nada).
+  const selectedCard =
+    board.lists.flatMap((list) => list.cards).find((card) => card.id === selectedCardId) ?? null;
+
+  // Carrega os membros do quadro uma vez ao montar, para que o popover de responsáveis do
+  // modal de detalhe já tenha a lista mesmo que o painel "Compartilhar" nunca tenha sido
+  // aberto nesta sessão (`design.md`: reaproveita `BoardView.members`, sem nova busca ao
+  // abrir o modal).
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+
+    listMembers(token, board.id)
+      .then((result) => {
+        if (cancelled) return;
+        setMembers(result);
+      })
+      .catch(() => {
+        // Silencioso: o painel "Compartilhar" já reporta erros ao tentar carregar de novo.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token, board.id]);
 
   function mergeActivitiesById(current: Activity[], incoming: Activity[]): Activity[] {
     const byId = new Map(current.map((activity) => [activity.id, activity]));
@@ -105,6 +156,14 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     onLabelCreated: (payload) => setBoard((current) => applyLabelCreated(current, payload)),
     onLabelUpdated: (payload) => setBoard((current) => applyLabelUpdated(current, payload)),
     onLabelDeleted: (payload) => setBoard((current) => applyLabelDeleted(current, payload)),
+    onCommentCreated: (payload) => {
+      setBoard((current) => applyCommentCreated(current, payload));
+      setCommentEvent({ type: 'created', comment: payload.comment });
+    },
+    onCommentDeleted: (payload) => {
+      setBoard((current) => applyCommentDeleted(current, payload));
+      setCommentEvent({ type: 'deleted', commentId: payload.commentId, cardId: payload.cardId });
+    },
   });
 
   const sortedLists = [...board.lists].sort((a, b) => a.position - b.position);
@@ -261,7 +320,17 @@ export function BoardView({ initialBoard }: BoardViewProps) {
               ...list,
               cards: [
                 ...list.cards,
-                { id: tempId, listId, title, description: null, position: list.cards.length, labels: [] },
+                {
+                  id: tempId,
+                  listId,
+                  title,
+                  description: null,
+                  position: list.cards.length,
+                  labels: [],
+                  dueDate: null,
+                  assignees: [],
+                  checklist: [],
+                },
               ],
             }
           : list,
@@ -302,6 +371,9 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                           description: created.description,
                           position: created.position,
                           labels: created.labels,
+                          dueDate: created.dueDate,
+                          assignees: created.assignees,
+                          checklist: created.checklist,
                         }
                       : card,
                   ),
@@ -380,6 +452,143 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     }
   }
 
+  async function handleEditDescription(cardId: string, description: string) {
+    if (!token) return;
+
+    const currentCard = board.lists.flatMap((list) => list.cards).find((card) => card.id === cardId);
+    if (!currentCard) return;
+
+    takeSnapshot();
+    setBoard((current) => ({
+      ...current,
+      lists: current.lists.map((list) => ({
+        ...list,
+        cards: list.cards.map((card) => (card.id === cardId ? { ...card, description } : card)),
+      })),
+    }));
+
+    try {
+      await renameCard(token, board.id, cardId, currentCard.title, description);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
+  async function handleSetDueDate(cardId: string, dueDate: string | null) {
+    if (!token) return;
+
+    takeSnapshot();
+    setBoard((current) => ({
+      ...current,
+      lists: current.lists.map((list) => ({
+        ...list,
+        cards: list.cards.map((card) => (card.id === cardId ? { ...card, dueDate } : card)),
+      })),
+    }));
+
+    try {
+      await setCardDueDate(token, board.id, cardId, dueDate);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
+  async function handleAssignUser(cardId: string, userId: string) {
+    if (!token) return;
+
+    try {
+      await assignUser(token, board.id, cardId, userId);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleUnassignUser(cardId: string, userId: string) {
+    if (!token) return;
+
+    try {
+      await unassignUser(token, board.id, cardId, userId);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleAddChecklistItem(cardId: string, text: string) {
+    if (!token) return;
+
+    try {
+      await addChecklistItem(token, board.id, cardId, text);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleEditChecklistItem(cardId: string, itemId: string, text: string) {
+    if (!token) return;
+
+    try {
+      await editChecklistItem(token, board.id, cardId, itemId, text);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleDeleteChecklistItem(cardId: string, itemId: string) {
+    if (!token) return;
+
+    try {
+      await deleteChecklistItem(token, board.id, cardId, itemId);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleReorderChecklistItems(cardId: string, itemIds: string[]) {
+    if (!token) return;
+
+    try {
+      await reorderChecklistItems(token, board.id, cardId, itemIds);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleToggleChecklistItem(cardId: string, itemId: string, done: boolean) {
+    if (!token) return;
+
+    takeSnapshot();
+    setBoard((current) => ({
+      ...current,
+      lists: current.lists.map((list) => ({
+        ...list,
+        cards: list.cards.map((card) =>
+          card.id === cardId
+            ? {
+                ...card,
+                checklist: card.checklist.map((item) => (item.id === itemId ? { ...item, done } : item)),
+              }
+            : card,
+        ),
+      })),
+    }));
+
+    try {
+      await toggleChecklistItem(token, board.id, cardId, itemId, done);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
+  function handleCommentsCountHydrated(cardId: string, total: number) {
+    setBoard((current) => ({
+      ...current,
+      commentsCountByCardId: { ...current.commentsCountByCardId, [cardId]: total },
+    }));
+  }
+
   return (
     <div className="-m-4 flex h-[calc(100vh-3.5rem)] flex-col gap-4 bg-muted/30 p-4 md:-m-6 md:p-6">
       {reconnecting ? <BoardReconnectBanner attempt={reconnectAttempt} /> : null}
@@ -426,6 +635,8 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                     boardLabels={board.labels}
                     onCreateLabel={handleCreateLabel}
                     onToggleLabel={handleToggleLabel}
+                    onOpenCard={setSelectedCardId}
+                    commentsCountByCardId={board.commentsCountByCardId}
                   />
                 ))}
                 {provided.placeholder}
@@ -434,6 +645,33 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           </Droppable>
         </DragDropContext>
       </div>
+
+      {selectedCard ? (
+        <CardDetailModal
+          card={selectedCard}
+          boardId={board.id}
+          token={token ?? ''}
+          boardLabels={board.labels}
+          members={members}
+          currentUserId={user?.id ?? null}
+          currentUserName={user?.name ?? ''}
+          commentEvent={commentEvent}
+          onClose={() => setSelectedCardId(null)}
+          onRenameTitle={handleRenameCard}
+          onEditDescription={handleEditDescription}
+          onCreateLabel={handleCreateLabel}
+          onToggleLabel={handleToggleLabel}
+          onSetDueDate={handleSetDueDate}
+          onAssignUser={handleAssignUser}
+          onUnassignUser={handleUnassignUser}
+          onAddChecklistItem={handleAddChecklistItem}
+          onToggleChecklistItem={handleToggleChecklistItem}
+          onEditChecklistItem={handleEditChecklistItem}
+          onDeleteChecklistItem={handleDeleteChecklistItem}
+          onReorderChecklistItems={handleReorderChecklistItems}
+          onCommentsCountHydrated={handleCommentsCountHydrated}
+        />
+      ) : null}
     </div>
   );
 }

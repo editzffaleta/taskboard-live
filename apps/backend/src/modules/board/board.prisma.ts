@@ -11,6 +11,7 @@ type PersistedBoard = {
   id: string;
   name: string;
   ownerId: string;
+  color: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
@@ -59,7 +60,7 @@ export class PrismaBoardRepository implements BoardRepository {
   async update(entity: Board): Promise<Board> {
     const updated = await this.prisma.board.update({
       where: { id: entity.id },
-      data: { name: entity.name },
+      data: { name: entity.name, color: entity.color ?? undefined },
     });
 
     return this.boardToDomain(updated);
@@ -108,6 +109,7 @@ export class PrismaBoardRepository implements BoardRepository {
       deletedAt: raw.deletedAt,
       name: raw.name,
       ownerId: raw.ownerId,
+      color: raw.color,
     });
   }
 

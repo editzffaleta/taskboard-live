@@ -76,6 +76,18 @@ export type PresencePayload = {
   users: PresenceUser[];
 };
 
+export type BoardColor = 'blue' | 'purple' | 'green' | 'red' | 'amber' | 'cyan' | 'slate';
+
+export type BoardUpdatedPayload = {
+  board: {
+    id: string;
+    name: string;
+    ownerId: string;
+    color: BoardColor | null;
+    createdAt: string;
+  };
+};
+
 export type MemberAddedPayload = {
   boardId: string;
   user: {
@@ -122,6 +134,7 @@ export type CommentDeletedPayload = {
 };
 
 export type BoardSocketHandlers = {
+  onBoardUpdated?: (payload: BoardUpdatedPayload) => void;
   onCardCreated?: (payload: CardEventPayload) => void;
   onCardUpdated?: (payload: CardEventPayload) => void;
   onCardMoved?: (payload: CardMovedPayload) => void;
@@ -210,6 +223,9 @@ export function useBoardSocket(
       setReconnectAttempt(attempt);
     });
 
+    socket.on('board.updated', (payload: BoardUpdatedPayload) => {
+      handlersRef.current.onBoardUpdated?.(payload);
+    });
     socket.on('card.created', (payload: CardEventPayload) => {
       handlersRef.current.onCardCreated?.(payload);
     });

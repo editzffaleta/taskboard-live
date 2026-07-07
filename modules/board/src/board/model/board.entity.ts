@@ -1,6 +1,7 @@
 import {
   Entity,
   EntityState,
+  InRule,
   MaxLengthRule,
   MinLengthRule,
   RequiredRule,
@@ -8,9 +9,22 @@ import {
   Validator,
 } from "@taskboard/shared";
 
+export const BOARD_COLORS = [
+  "blue",
+  "purple",
+  "green",
+  "red",
+  "amber",
+  "cyan",
+  "slate",
+] as const;
+
+export type BoardColor = (typeof BOARD_COLORS)[number];
+
 export interface BoardState extends EntityState {
   name: string;
   ownerId: string;
+  color?: string | null;
 }
 
 export class Board extends Entity<BoardState> {
@@ -26,6 +40,10 @@ export class Board extends Entity<BoardState> {
     return this.props.ownerId;
   }
 
+  get color(): string | null {
+    return this.props.color ?? null;
+  }
+
   public validate(): void {
     Validator.validate([
       {
@@ -38,6 +56,15 @@ export class Board extends Entity<BoardState> {
         value: this.ownerId,
         rules: [new RequiredRule(), new UuidRule()],
       },
+      ...(this.props.color != null
+        ? [
+            {
+              code: "board.color",
+              value: this.props.color,
+              rules: [new InRule(BOARD_COLORS)],
+            },
+          ]
+        : []),
     ]);
   }
 }

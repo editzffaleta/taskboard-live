@@ -101,4 +101,27 @@ describe("Board", () => {
       expect.arrayContaining(["board.name.required", "board.ownerId.uuid"]),
     );
   });
+
+  describe("color", () => {
+    it("aceita cor valida da paleta", () => {
+      const board = new Board(buildProps({ color: "purple" }));
+
+      expect(() => board.validate()).not.toThrow();
+      expect(board.color).toBe("purple");
+    });
+
+    it("rejeita cor fora da paleta", () => {
+      const board = new Board(buildProps({ color: "magenta" }));
+      const messages = getValidationMessages(() => board.validate());
+
+      expect(messages).toContain("board.color.in");
+    });
+
+    it("nao quebra a validacao quando cor esta ausente", () => {
+      const board = new Board(buildProps());
+
+      expect(() => board.validate()).not.toThrow();
+      expect(board.color).toBeNull();
+    });
+  });
 });

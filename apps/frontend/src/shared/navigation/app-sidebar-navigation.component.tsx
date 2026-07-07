@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { SidebarMenu, type ModuleNavigationEntry } from '@/shared/components/ui/sidebar-menu.component';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import { listMyBoards, type Board } from '@/modules/boards/api/boards.api';
-import { getBoardAccentColor } from '@/modules/boards/util/board-color.util';
+import { resolveBoardColor } from '@/modules/boards/util/board-color.util';
 
 type Props = {
   modules: ModuleNavigationEntry[];
@@ -16,7 +16,8 @@ type Props = {
 /**
  * Navegação principal do shell privado + seção "Seus quadros" com os quadros reais do
  * usuário logado (mesma `listMyBoards` usada pelo dashboard), no estilo do mockup: item com
- * indicador de cor determinístico (`getBoardAccentColor`), sem nomes fictícios.
+ * indicador de cor do quadro (`resolveBoardColor`, prioriza `board.color` da `020` com
+ * fallback determinístico), sem nomes fictícios.
  */
 export function AppSidebarNavigation({ modules, defaultModuleId }: Props) {
   const pathname = usePathname();
@@ -64,7 +65,7 @@ export function AppSidebarNavigation({ modules, defaultModuleId }: Props) {
             Seus quadros
           </p>
           {boards.map((board) => {
-            const accent = getBoardAccentColor(board.id);
+            const accent = resolveBoardColor(board);
             const isActive = pathname === `/boards/${board.id}`;
             return (
               <Link

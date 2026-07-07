@@ -48,6 +48,7 @@ import { listMembers, type BoardMember } from '@/modules/boards/api/members.api'
 import type { Activity } from '@/modules/boards/api/activity.api';
 import type { BoardState } from '@/modules/boards/types/board-state.type';
 import {
+  applyBoardUpdated,
   applyCardCreated,
   applyCardDeleted,
   applyCardMoved,
@@ -158,6 +159,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   }
 
   const { connected, reconnecting, reconnectAttempt } = useBoardSocket(board.id, token, {
+    onBoardUpdated: (payload) => setBoard((current) => applyBoardUpdated(current, payload)),
     onCardCreated: (payload) => setBoard((current) => applyCardCreated(current, payload)),
     onCardUpdated: (payload) => setBoard((current) => applyCardUpdated(current, payload)),
     onCardMoved: (payload) => setBoard((current) => applyCardMoved(current, payload)),
@@ -620,6 +622,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
       <BoardToolbar
         boardId={board.id}
         boardName={board.name}
+        boardColor={board.color}
         connected={connected}
         presenceUsers={presenceUsers}
         onCreateList={handleCreateList}

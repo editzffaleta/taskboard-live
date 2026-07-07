@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { History } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/shared/components/ui/button';
 import { Dialog, DialogTrigger } from '@/shared/components/ui/dialog';
@@ -114,7 +114,7 @@ export function ActivityPanel({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button type="button" size="sm" variant="outline">
-          <History className="size-4" />
+          <Zap className="size-4" />
           {getMessage('activityPanel.trigger')}
         </Button>
       </DialogTrigger>
@@ -130,12 +130,15 @@ export function ActivityPanel({
             activities.map((activity) => (
               <li
                 key={activity.id}
-                className="rounded-md border border-border/70 px-3 py-2 text-sm"
+                className="flex items-start gap-2.5 rounded-md border border-border/70 px-3 py-2 text-sm"
               >
-                <p>{formatActivityLabel(activity, members)}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {formatRelativeTime(activity.createdAt, locale)}
-                </p>
+                <span className="mt-1 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+                <div className="min-w-0">
+                  <p>{formatActivityLabel(activity, members)}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {formatRelativeTime(activity.createdAt, locale)}
+                  </p>
+                </div>
               </li>
             ))
           )}

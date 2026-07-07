@@ -46,8 +46,8 @@ export function KanbanCard({ card, index, onRename, onDelete }: KanbanCardProps)
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className={`group flex items-start justify-between gap-2 rounded-md border border-border/70 bg-background px-3 py-2 text-sm shadow-sm ${
-            snapshot.isDragging ? 'ring-2 ring-primary' : ''
+          className={`group flex items-start justify-between gap-2 rounded-xl border border-border/70 bg-background px-3 py-2.5 text-[13.5px] shadow-[0_1px_2px_rgba(15,23,42,0.07)] transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md ${
+            snapshot.isDragging ? 'shadow-lg ring-2 ring-primary' : ''
           }`}
           data-testid="kanban-card"
           data-card-id={card.id}

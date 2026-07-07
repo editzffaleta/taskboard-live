@@ -31,10 +31,14 @@ export function BoardPresence({ users }: BoardPresenceProps) {
         <div
           key={user.id}
           title={user.name ?? user.id}
-          className="flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary text-xs font-semibold text-primary-foreground"
+          className="relative flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary text-xs font-semibold text-primary-foreground"
           style={{ marginLeft: index === 0 ? 0 : -8, zIndex: MAX_VISIBLE_USERS - index }}
         >
           {getInitials(user.name)}
+          <span
+            className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-background bg-emerald-500"
+            aria-hidden
+          />
         </div>
       ))}
       {hiddenCount > 0 ? (

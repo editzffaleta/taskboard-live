@@ -56,12 +56,12 @@ export function BoardsDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-6" data-testid="boards-dashboard">
-      <div className="flex items-center justify-between gap-4">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6" data-testid="boards-dashboard">
+      <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight">Meus quadros</h1>
+          <h1 className="text-[26px] font-extrabold tracking-tight">Meus quadros</h1>
           <p className="text-sm text-muted-foreground">
-            Crie um quadro e convide colegas para colaborar em tempo real.
+            {status === 'ready' ? `${boards.length} ${boards.length === 1 ? 'quadro' : 'quadros'}` : 'Carregando…'}
           </p>
         </div>
         <CreateBoardDialog onCreated={handleCreated} />
@@ -84,7 +84,10 @@ export function BoardsDashboard() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" data-testid="boards-list">
+        <div
+          className="grid grid-cols-[repeat(auto-fill,minmax(258px,1fr))] gap-4"
+          data-testid="boards-list"
+        >
           {boards.map((board) => (
             <BoardCard key={board.id} board={board} onRenamed={handleRenamed} onDeleted={handleDeleted} />
           ))}

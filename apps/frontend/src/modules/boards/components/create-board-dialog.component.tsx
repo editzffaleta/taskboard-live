@@ -69,6 +69,14 @@ export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
           </>
         }
       >
+        <div
+          className="mb-4 flex h-24 items-end justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-blue-700 pt-4"
+          aria-hidden
+        >
+          <span className="h-11 w-11 rounded-t-md bg-white/90" />
+          <span className="h-11 w-11 rounded-t-md bg-white/65" />
+          <span className="h-11 w-11 rounded-t-md bg-white/40" />
+        </div>
         <form id="create-board-form" className="flex flex-col gap-1.5" onSubmit={handleSubmit}>
           <Label htmlFor="board-name">Nome do quadro</Label>
           <Input

@@ -343,7 +343,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="-m-4 flex h-[calc(100vh-3.5rem)] flex-col gap-4 bg-muted/30 p-4 md:-m-6 md:p-6">
       {reconnecting ? <BoardReconnectBanner attempt={reconnectAttempt} /> : null}
       <BoardToolbar
         boardId={board.id}
@@ -366,11 +366,15 @@ export function BoardView({ initialBoard }: BoardViewProps) {
         }
       />
 
-      <div className="flex gap-4">
+      <div className="min-h-0 flex-1 overflow-x-auto">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="board" direction="horizontal" type="LIST">
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps} className="flex gap-4 overflow-x-auto pb-4">
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="flex h-full items-start gap-3.5 pb-2"
+              >
                 {sortedLists.map((list, index) => (
                   <KanbanColumn
                     key={list.id}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Wifi, WifiOff } from 'lucide-react';
+import { Plus, WifiOff } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { BoardPresence } from '@/modules/boards/components/board-presence.component';
@@ -67,13 +67,26 @@ export function BoardToolbar({
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-4">
       <div className="flex items-center gap-3">
         <h1 className="text-xl font-black tracking-tight">{boardName}</h1>
-        <span
-          title={connected ? 'Conectado em tempo real' : 'Reconectando...'}
-          className="flex items-center gap-1 rounded-full border border-border/70 px-2 py-0.5 text-xs text-muted-foreground"
-        >
-          {connected ? <Wifi className="size-3.5" /> : <WifiOff className="size-3.5" />}
-          {connected ? 'ao vivo' : 'reconectando...'}
-        </span>
+        {connected ? (
+          <span
+            title="Conectado em tempo real"
+            className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400"
+          >
+            <span className="relative flex size-1.5">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-70" />
+              <span className="relative inline-flex size-1.5 rounded-full bg-emerald-500" />
+            </span>
+            ao vivo
+          </span>
+        ) : (
+          <span
+            title="Reconectando..."
+            className="flex items-center gap-1 rounded-full border border-border/70 px-2 py-0.5 text-xs text-muted-foreground"
+          >
+            <WifiOff className="size-3.5" />
+            reconectando...
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-3">

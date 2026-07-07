@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, X } from 'lucide-react';
+import { UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -130,8 +130,8 @@ export function MembersPanel({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size="sm" variant="outline" data-testid="members-panel-trigger">
-          <Users className="size-4" />
+        <Button type="button" size="sm" data-testid="members-panel-trigger">
+          <UserPlus className="size-4" />
           {getMessage('membersPanel.trigger')}
         </Button>
       </DialogTrigger>
@@ -178,9 +178,20 @@ export function MembersPanel({
                   data-testid="members-panel-member"
                   data-member-email={member.email}
                 >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{member.name}</p>
-                    <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                      {member.name
+                        .trim()
+                        .split(/\s+/)
+                        .slice(0, 2)
+                        .map((part) => part[0])
+                        .join('')
+                        .toUpperCase()}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{member.name}</p>
+                      <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+                    </div>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { Toaster } from "@/shared/components/ui/toaster";
 import { ThemeProvider, THEME_ANTI_FLASH_SCRIPT } from "@/shared/context/theme.context";
 import { AuthProvider } from "@/modules/auth/context/auth.context";
+import { LocaleBootstrap } from "@/shared/i18n/locale-bootstrap.component";
 import "./globals.css";
 
 const inter = Inter({
@@ -39,8 +40,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider>
           <AuthProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-            <Toaster />
+            <LocaleBootstrap>
+              <TooltipProvider>{children}</TooltipProvider>
+              <Toaster />
+            </LocaleBootstrap>
           </AuthProvider>
         </ThemeProvider>
       </body>

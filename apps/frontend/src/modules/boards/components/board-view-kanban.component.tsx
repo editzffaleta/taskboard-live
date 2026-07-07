@@ -10,6 +10,7 @@ type BoardViewKanbanProps = {
   onDragEnd: (result: DropResult) => void;
   onRenameList: (listId: string, title: string) => void;
   onDeleteList: (listId: string) => void;
+  onArchiveList: (listId: string) => void;
   onCreateCard: (listId: string, title: string) => void;
   onRenameCard: (cardId: string, title: string) => void;
   onDeleteCard: (cardId: string) => void;
@@ -32,6 +33,7 @@ export function BoardViewKanban({
   onDragEnd,
   onRenameList,
   onDeleteList,
+  onArchiveList,
   onCreateCard,
   onRenameCard,
   onDeleteCard,
@@ -59,6 +61,7 @@ export function BoardViewKanban({
                   visibleCardIds={visibleCardIds}
                   onRenameList={onRenameList}
                   onDeleteList={onDeleteList}
+                  onArchiveList={onArchiveList}
                   onCreateCard={onCreateCard}
                   onRenameCard={onRenameCard}
                   onDeleteCard={onDeleteCard}

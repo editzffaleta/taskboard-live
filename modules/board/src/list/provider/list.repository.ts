@@ -18,4 +18,7 @@ export interface ListRepository {
    * `Card.listId`, definida pela change 008) — nao e feita aqui.
    */
   delete(id: string): Promise<void>;
+  archive(id: string, archivedAt: Date): Promise<void>;
+  restore(id: string): Promise<void>;
+  findAllArchivedByBoardId(boardId: string): Promise<List[]>;
 }

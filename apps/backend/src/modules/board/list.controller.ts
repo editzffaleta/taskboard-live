@@ -8,10 +8,12 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ArchiveList,
   CreateList,
   DeleteList,
   MoveList,
   RenameList,
+  RestoreList,
   type List,
 } from '@taskboard/board';
 import { CurrentUser } from '../../shared/decorators';
@@ -125,6 +127,47 @@ export class ListController {
     await this.activityRecorder.record(boardId, requesterId, 'list.deleted', {
       listId: deletedListId,
     });
+  }
+
+  @Post('lists/:id/archive')
+  @HttpCode(204)
+  async archive(
+    @Param('id') listId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new ArchiveList(
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { boardId, listId: archivedListId } = await useCase.execute({
+      listId,
+      requesterId,
+    });
+
+    this.realtimeEmitter.emitToBoard(boardId, 'list.deleted', {
+      listId: archivedListId,
+    });
+  }
+
+  @Post('lists/:id/restore')
+  @HttpCode(204)
+  async restore(
+    @Param('id') listId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new RestoreList(
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { list } = await useCase.execute({ listId, requesterId });
+
+    this.realtimeEmitter.emitToBoard(
+      list.boardId,
+      'list.created',
+      this.toResponse(list),
+    );
   }
 
   @Patch('lists/:id/move')

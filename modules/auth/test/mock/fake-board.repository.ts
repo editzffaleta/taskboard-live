@@ -36,4 +36,22 @@ export class FakeBoardRepository implements BoardRepository {
   async findManyByIds(ids: string[]): Promise<Board[]> {
     return this.boards.filter((board) => ids.includes(board.id));
   }
+
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    const index = this.boards.findIndex((board) => board.id === id);
+    if (index >= 0) {
+      this.boards[index] = this.boards[index].clone({ archivedAt });
+    }
+  }
+
+  async restore(id: string): Promise<void> {
+    const index = this.boards.findIndex((board) => board.id === id);
+    if (index >= 0) {
+      this.boards[index] = this.boards[index].clone({ archivedAt: null });
+    }
+  }
+
+  async findAllArchivedByOwnerId(_ownerId: string): Promise<Board[]> {
+    return [];
+  }
 }

@@ -12,6 +12,7 @@ import { DeleteConfirmationDialog } from '@/shared/components/ui/delete-confirma
 import { getMessage } from '@/shared/i18n';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import {
+  archiveBoard,
   BoardsApiError,
   deleteBoard,
   getBoard,
@@ -61,6 +62,8 @@ export function BoardSettings({ boardId }: BoardSettingsProps) {
   const [members, setMembers] = useState<BoardMember[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const [archiving, setArchiving] = useState(false);
 
   useEffect(() => {
     if (!token || !user) return;
@@ -143,6 +146,21 @@ export function BoardSettings({ boardId }: BoardSettingsProps) {
       reportError(error);
     } finally {
       setSavingColor(null);
+    }
+  }
+
+  async function handleArchiveBoard() {
+    if (!token) return;
+
+    setArchiving(true);
+    try {
+      await archiveBoard(token, boardId);
+      toast.success(getMessage('boardSettings.dangerZone.archiveSuccess'));
+      router.replace('/boards');
+    } catch (error) {
+      reportError(error);
+    } finally {
+      setArchiving(false);
     }
   }
 
@@ -260,8 +278,13 @@ export function BoardSettings({ boardId }: BoardSettingsProps) {
             <p className="text-sm font-semibold">{getMessage('boardSettings.dangerZone.archiveTitle')}</p>
             <p className="text-xs text-muted-foreground">{getMessage('boardSettings.dangerZone.archiveDescription')}</p>
           </div>
-          <Button type="button" variant="outline" disabled data-testid="board-settings-archive-button">
-            {getMessage('boardSettings.dangerZone.archiveComingSoon')}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setArchiveOpen(true)}
+            data-testid="board-settings-archive-button"
+          >
+            {getMessage('boardSettings.dangerZone.archiveButton')}
           </Button>
         </div>
 
@@ -281,6 +304,19 @@ export function BoardSettings({ boardId }: BoardSettingsProps) {
           </Button>
         </div>
       </section>
+
+      <DeleteConfirmationDialog
+        open={archiveOpen}
+        onOpenChange={setArchiveOpen}
+        onConfirm={handleArchiveBoard}
+        title={getMessage('boardSettings.dangerZone.archiveTitle')}
+        description={getMessage('boardSettings.dangerZone.archiveDescription')}
+        itemLabel={getMessage('boardSettings.dangerZone.deleteItemLabel')}
+        itemValue={board.name}
+        confirmWord={getMessage('boardSettings.dangerZone.archiveConfirmWord')}
+        confirmLabel={getMessage('boardSettings.dangerZone.archiveButton')}
+        isConfirming={archiving}
+      />
 
       <DeleteConfirmationDialog
         open={deleteOpen}

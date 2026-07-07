@@ -8,10 +8,12 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ArchiveCard,
   CreateCard,
   DeleteCard,
   EditCard,
   MoveCard,
+  RestoreCard,
   SetCardDueDate,
   type Card,
 } from '@taskboard/board';
@@ -172,6 +174,57 @@ export class CardController {
     await this.activityRecorder.record(boardId, requesterId, 'card.deleted', {
       cardId: deletedCardId,
       listId,
+    });
+  }
+
+  @Post(':id/archive')
+  @HttpCode(204)
+  async archive(
+    @Param('boardId') boardId: string,
+    @Param('id') cardId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new ArchiveCard(
+      this.cardRepository,
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { listId, cardId: archivedCardId } = await useCase.execute({
+      boardId,
+      cardId,
+      requesterId,
+    });
+
+    this.realtimeEmitter.emitToBoard(boardId, 'card.deleted', {
+      cardId: archivedCardId,
+      listId,
+    });
+  }
+
+  @Post(':id/restore')
+  @HttpCode(204)
+  async restore(
+    @Param('boardId') boardId: string,
+    @Param('id') cardId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new RestoreCard(
+      this.cardRepository,
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { card } = await useCase.execute({
+      boardId,
+      cardId,
+      requesterId,
+    });
+
+    const response = await this.toResponse(card);
+
+    this.realtimeEmitter.emitToBoard(boardId, 'card.created', {
+      card: response,
     });
   }
 

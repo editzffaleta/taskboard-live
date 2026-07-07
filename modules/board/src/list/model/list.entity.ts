@@ -14,6 +14,7 @@ export interface ListState extends EntityState {
   boardId: string;
   title: string;
   position: number;
+  archivedAt?: Date | null;
 }
 
 export class List extends Entity<ListState> {
@@ -31,6 +32,10 @@ export class List extends Entity<ListState> {
 
   get position(): number {
     return this.props.position;
+  }
+
+  get archivedAt(): Date | null {
+    return this.props.archivedAt ?? null;
   }
 
   public validate(): void {

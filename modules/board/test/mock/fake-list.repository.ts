@@ -15,7 +15,7 @@ export class FakeListRepository implements ListRepository {
 
   async findAllByBoardId(boardId: string): Promise<List[]> {
     return this.lists
-      .filter((list) => list.boardId === boardId)
+      .filter((list) => list.boardId === boardId && list.archivedAt === null)
       .sort((a, b) => a.position - b.position);
   }
 
@@ -45,5 +45,25 @@ export class FakeListRepository implements ListRepository {
     if (index >= 0) {
       this.lists.splice(index, 1);
     }
+  }
+
+  async archive(id: string, archivedAt: Date): Promise<void> {
+    const index = this.lists.findIndex((list) => list.id === id);
+    if (index >= 0) {
+      this.lists[index] = this.lists[index].clone({ archivedAt });
+    }
+  }
+
+  async restore(id: string): Promise<void> {
+    const index = this.lists.findIndex((list) => list.id === id);
+    if (index >= 0) {
+      this.lists[index] = this.lists[index].clone({ archivedAt: null });
+    }
+  }
+
+  async findAllArchivedByBoardId(boardId: string): Promise<List[]> {
+    return this.lists.filter(
+      (list) => list.archivedAt !== null && list.boardId === boardId,
+    );
   }
 }

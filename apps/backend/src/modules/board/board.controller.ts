@@ -9,11 +9,13 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ArchiveBoard,
   CreateBoard,
   DeleteBoard,
   GetBoardDetail,
   ListMyBoards,
   RenameBoard,
+  RestoreBoard,
   type Board,
   type BoardDetail,
 } from '@taskboard/board';
@@ -140,6 +142,34 @@ export class BoardController {
     @CurrentUser('id') requesterId: string,
   ): Promise<void> {
     const useCase = new DeleteBoard(
+      this.boardRepository,
+      this.membershipRepository,
+    );
+
+    await useCase.execute({ boardId, requesterId });
+  }
+
+  @Post(':id/archive')
+  @HttpCode(204)
+  async archive(
+    @Param('id') boardId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new ArchiveBoard(
+      this.boardRepository,
+      this.membershipRepository,
+    );
+
+    await useCase.execute({ boardId, requesterId });
+  }
+
+  @Post(':id/restore')
+  @HttpCode(204)
+  async restore(
+    @Param('id') boardId: string,
+    @CurrentUser('id') requesterId: string,
+  ): Promise<void> {
+    const useCase = new RestoreBoard(
       this.boardRepository,
       this.membershipRepository,
     );

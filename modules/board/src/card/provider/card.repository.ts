@@ -13,4 +13,7 @@ export interface CardRepository {
     updates: { id: string; listId: string; position: number }[],
   ): Promise<void>;
   delete(id: string): Promise<void>;
+  archive(id: string, archivedAt: Date): Promise<void>;
+  restore(id: string): Promise<void>;
+  findAllArchivedByBoardId(boardId: string): Promise<Card[]>;
 }

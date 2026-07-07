@@ -5,6 +5,8 @@ import type { DropResult } from '@hello-pangea/dnd';
 import { toast } from 'sonner';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import {
+  archiveCard,
+  archiveList,
   assignLabel,
   BoardsApiError,
   createCard,
@@ -333,6 +335,20 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     }
   }
 
+  async function handleArchiveList(listId: string) {
+    if (!token) return;
+
+    takeSnapshot();
+    setBoard((current) => ({ ...current, lists: current.lists.filter((list) => list.id !== listId) }));
+
+    try {
+      await archiveList(token, listId);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
   async function handleCreateCard(listId: string, title: string) {
     if (!token) return;
 
@@ -449,6 +465,27 @@ export function BoardView({ initialBoard }: BoardViewProps) {
 
     try {
       await deleteCard(token, board.id, cardId);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
+  async function handleArchiveCard(cardId: string) {
+    if (!token) return;
+
+    takeSnapshot();
+    setBoard((current) => ({
+      ...current,
+      lists: current.lists.map((list) => ({
+        ...list,
+        cards: list.cards.filter((card) => card.id !== cardId),
+      })),
+    }));
+    setSelectedCardId(null);
+
+    try {
+      await archiveCard(token, board.id, cardId);
     } catch (error) {
       revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
       reportError(error);
@@ -659,6 +696,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           onDragEnd={handleDragEnd}
           onRenameList={handleRenameList}
           onDeleteList={handleDeleteList}
+          onArchiveList={handleArchiveList}
           onCreateCard={handleCreateCard}
           onRenameCard={handleRenameCard}
           onDeleteCard={handleDeleteCard}
@@ -700,6 +738,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           onToggleChecklistItem={handleToggleChecklistItem}
           onEditChecklistItem={handleEditChecklistItem}
           onDeleteChecklistItem={handleDeleteChecklistItem}
+          onArchiveCard={handleArchiveCard}
           onReorderChecklistItems={handleReorderChecklistItems}
           onCommentsCountHydrated={handleCommentsCountHydrated}
         />

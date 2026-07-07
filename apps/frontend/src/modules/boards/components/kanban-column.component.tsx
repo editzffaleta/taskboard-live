@@ -19,6 +19,8 @@ type KanbanColumnProps = {
   boardLabels: LabelState[];
   onCreateLabel: (name: string, color: LabelColor) => void;
   onToggleLabel: (cardId: string, labelId: string, assigned: boolean) => void;
+  onOpenCard: (cardId: string) => void;
+  commentsCountByCardId: Record<string, number>;
 };
 
 /**
@@ -36,6 +38,8 @@ export function KanbanColumn({
   boardLabels,
   onCreateLabel,
   onToggleLabel,
+  onOpenCard,
+  commentsCountByCardId,
 }: KanbanColumnProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(list.title);
@@ -147,6 +151,8 @@ export function KanbanColumn({
                     boardLabels={boardLabels}
                     onCreateLabel={onCreateLabel}
                     onToggleLabel={onToggleLabel}
+                    onOpen={onOpenCard}
+                    commentsCount={commentsCountByCardId[card.id] ?? 0}
                   />
                 ))}
                 {dropProvided.placeholder}

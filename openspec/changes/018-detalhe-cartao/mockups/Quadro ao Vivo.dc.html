@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<style>
+:root{
+--bg-app:#EEF2F8;--bg-board:#E9EEF5;--bg-subtle:#F5F8FC;--bg-surface:#FFFFFF;--bg-hover:#F1F5F9;--bg-sunken:#E6ECF3;
+--border:#E4E9F0;--border-strong:#CFD8E3;
+--text-primary:#0F172A;--text-secondary:#4A5568;--text-muted:#94A3B8;
+--primary:#2563EB;--primary-hover:#1D4ED8;--primary-fg:#FFFFFF;--primary-subtle:#EFF5FF;--primary-border:#BFD5FE;
+--success:#16A34A;--success-bg:#DCFCE7;--success-fg:#15803D;
+--warning:#D97706;--warning-bg:#FEF3C7;--warning-fg:#B45309;
+--danger:#DC2626;--danger-bg:#FEE2E2;--danger-fg:#B91C1C;
+--live:#10B981;
+--lbl-red-bg:#FEE2E2;--lbl-red-fg:#B91C1C;--lbl-amber-bg:#FEF3C7;--lbl-amber-fg:#B45309;--lbl-green-bg:#DCFCE7;--lbl-green-fg:#15803D;--lbl-blue-bg:#DBEAFE;--lbl-blue-fg:#1D4ED8;--lbl-purple-bg:#F3E8FF;--lbl-purple-fg:#7E22CE;--lbl-teal-bg:#CCFBF1;--lbl-teal-fg:#0F766E;--lbl-pink-bg:#FCE7F3;--lbl-pink-fg:#BE185D;
+--shadow-sm:0 1px 2px rgba(15,23,42,.06),0 1px 1px rgba(15,23,42,.04);
+--shadow-md:0 2px 4px rgba(15,23,42,.06),0 6px 16px rgba(15,23,42,.08);
+--shadow-lg:0 12px 28px rgba(15,23,42,.14),0 6px 12px rgba(15,23,42,.07);
+--shadow-card:0 1px 2px rgba(15,23,42,.07);
+--shadow-drag:0 18px 34px rgba(37,99,235,.24),0 6px 12px rgba(15,23,42,.14);
+}
+[data-theme="dark"]{
+--bg-app:#0B1220;--bg-board:#0B1220;--bg-subtle:#111A2B;--bg-surface:#162033;--bg-hover:#1C2942;--bg-sunken:#0E1626;
+--border:#233149;--border-strong:#32445F;
+--text-primary:#ECF1F8;--text-secondary:#A3B2C7;--text-muted:#64748B;
+--primary:#3B82F6;--primary-hover:#60A5FA;--primary-fg:#FFFFFF;--primary-subtle:rgba(59,130,246,.14);--primary-border:rgba(59,130,246,.4);
+--success:#22C55E;--success-bg:rgba(34,197,94,.16);--success-fg:#4ADE80;
+--warning:#F59E0B;--warning-bg:rgba(245,158,11,.16);--warning-fg:#FBBF24;
+--danger:#EF4444;--danger-bg:rgba(239,68,68,.16);--danger-fg:#F87171;
+--live:#34D399;
+--lbl-red-bg:rgba(239,68,68,.18);--lbl-red-fg:#FCA5A5;--lbl-amber-bg:rgba(245,158,11,.18);--lbl-amber-fg:#FCD34D;--lbl-green-bg:rgba(34,197,94,.18);--lbl-green-fg:#86EFAC;--lbl-blue-bg:rgba(59,130,246,.22);--lbl-blue-fg:#93C5FD;--lbl-purple-bg:rgba(168,85,247,.22);--lbl-purple-fg:#D8B4FE;--lbl-teal-bg:rgba(20,184,166,.22);--lbl-teal-fg:#5EEAD4;--lbl-pink-bg:rgba(236,72,153,.22);--lbl-pink-fg:#F9A8D4;
+--shadow-sm:0 1px 2px rgba(0,0,0,.3);--shadow-md:0 4px 14px rgba(0,0,0,.4);--shadow-lg:0 18px 44px rgba(0,0,0,.55);--shadow-card:0 1px 2px rgba(0,0,0,.35);--shadow-drag:0 22px 44px rgba(0,0,0,.6),0 0 0 1px rgba(59,130,246,.45);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+a{color:var(--primary);text-decoration:none;}a:hover{color:var(--primary-hover);}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;user-select:none;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.tbl-scroll::-webkit-scrollbar{height:12px;width:10px;}
+.tbl-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:20px;border:3px solid transparent;background-clip:content-box;}
+.tbl-scroll::-webkit-scrollbar-thumb:hover{background:var(--text-muted);background-clip:content-box;}
+.tbl-scroll::-webkit-scrollbar-track{background:transparent;}
+@keyframes ping{0%{transform:scale(1);opacity:.7;}75%,100%{transform:scale(2.4);opacity:0;}}
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+@keyframes modalin{from{opacity:0;transform:translateY(10px) scale(.985);}to{opacity:1;transform:none;}}
+@keyframes drawerin{from{transform:translateX(100%);}to{transform:none;}}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-theme="{{ theme }}" style="height:100vh;overflow:hidden;display:flex;background:var(--bg-app);color:var(--text-primary);font-family:'Inter',system-ui,sans-serif;font-size:14px;">
+
+  <aside style="width:250px;flex:0 0 250px;background:var(--bg-surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 12px;gap:3px;">
+    <div style="display:flex;align-items:center;gap:11px;padding:6px 8px 14px;">
+      <span style="display:inline-flex;gap:3px;align-items:flex-end;height:24px;">
+        <span style="width:5px;height:15px;background:var(--primary);border-radius:2px;"></span>
+        <span style="width:5px;height:24px;background:var(--primary);border-radius:2px;"></span>
+        <span style="width:5px;height:11px;background:#60A5FA;border-radius:2px;"></span>
+      </span>
+      <span style="font-size:15.5px;font-weight:700;letter-spacing:-.02em;">TaskBoard <span style="color:var(--primary);">Live</span></span>
+    </div>
+
+    <button style="display:flex;align-items:center;gap:9px;width:100%;height:38px;padding:0 11px;margin-bottom:6px;border:1px solid var(--border);border-radius:9px;background:var(--bg-subtle);color:var(--text-muted);font-size:13px;cursor:pointer;text-align:left;" style-hover="border-color:var(--border-strong);color:var(--text-secondary);">
+      <span class="ms" style="font-size:19px;">search</span>
+      <span style="flex:1;">Buscar…</span>
+      <span class="mono" style="font-size:11px;background:var(--bg-sunken);color:var(--text-muted);padding:2px 6px;border-radius:5px;">⌘K</span>
+    </button>
+
+    <a href="#" style="display:flex;align-items:center;gap:11px;height:38px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:20px;">grid_view</span>Meus quadros</a>
+    <a href="#" style="display:flex;align-items:center;gap:11px;height:38px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:20px;">dashboard_customize</span>Modelos</a>
+    <a href="#" style="display:flex;align-items:center;gap:11px;height:38px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:20px;">notifications</span>Notificações<span style="margin-left:auto;background:var(--danger);color:#fff;font-size:10.5px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center;">3</span></a>
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--text-muted);text-transform:uppercase;padding:16px 11px 6px;">Seus quadros</div>
+    <a href="#" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 11px;border-radius:9px;background:var(--primary-subtle);color:var(--primary);font-size:13.5px;font-weight:600;"><span style="width:9px;height:9px;border-radius:3px;background:var(--primary);flex:0 0 auto;"></span>Sprint 42 · Produto</a>
+    <a href="#" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span style="width:9px;height:9px;border-radius:3px;background:#7C3AED;flex:0 0 auto;"></span>Roadmap 2026</a>
+    <a href="#" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span style="width:9px;height:9px;border-radius:3px;background:#E11D48;flex:0 0 auto;"></span>Bugs &amp; Correções</a>
+    <a href="#" style="display:flex;align-items:center;gap:10px;height:36px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span style="width:9px;height:9px;border-radius:3px;background:#0891B2;flex:0 0 auto;"></span>Marketing Q3</a>
+
+    <div style="flex:1;"></div>
+
+    <a href="#" style="display:flex;align-items:center;gap:11px;height:36px;padding:0 11px;border-radius:9px;color:var(--text-secondary);font-size:13.5px;font-weight:500;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:20px;">inventory_2</span>Arquivados</a>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px;margin-top:6px;border-top:1px solid var(--border);">
+      <span style="width:32px;height:32px;border-radius:50%;background:#7C3AED;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span>
+      <div style="min-width:0;flex:1;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ana Beatriz Costa</div>
+        <div style="font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ana.costa@empresa.com</div>
+      </div>
+      <button style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:19px;">settings</span></button>
+    </div>
+  </aside>
+
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;">
+
+    <header style="height:57px;flex:0 0 57px;display:flex;align-items:center;gap:12px;padding:0 18px;background:var(--bg-surface);border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:9px;min-width:0;">
+        <span style="font-size:16px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;">Sprint 42 · Produto</span>
+        <button style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--warning);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;"><span class="ms" style="font-size:19px;font-variation-settings:'FILL' 1;">star</span></button>
+        <span style="display:inline-flex;align-items:center;gap:6px;background:var(--success-bg);color:var(--success-fg);font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:20px;">
+          <span style="position:relative;display:inline-flex;width:7px;height:7px;">
+            <span style="position:absolute;inset:0;border-radius:50%;background:var(--live);animation:ping 1.7s cubic-bezier(0,0,.2,1) infinite;"></span>
+            <span style="position:relative;width:7px;height:7px;border-radius:50%;background:var(--live);"></span>
+          </span>ao vivo</span>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <div style="display:flex;align-items:center;">
+        <span title="Ana Beatriz Costa" style="position:relative;width:30px;height:30px;border-radius:50%;background:#7C3AED;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg-surface);">AC<span style="position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--live);border:2px solid var(--bg-surface);"></span></span>
+        <span title="Rafael Oliveira" style="position:relative;width:30px;height:30px;border-radius:50%;background:#059669;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg-surface);margin-left:-8px;">RO<span style="position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--live);border:2px solid var(--bg-surface);"></span></span>
+        <span title="Mariana Silva" style="position:relative;width:30px;height:30px;border-radius:50%;background:#E11D48;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg-surface);margin-left:-8px;">MS<span style="position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--live);border:2px solid var(--bg-surface);"></span></span>
+        <span title="Lucas Ferreira" style="position:relative;width:30px;height:30px;border-radius:50%;background:#4F46E5;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg-surface);margin-left:-8px;">LF<span style="position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--live);border:2px solid var(--bg-surface);"></span></span>
+        <span style="width:30px;height:30px;border-radius:50%;background:var(--bg-sunken);color:var(--text-secondary);font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg-surface);margin-left:-8px;">+2</span>
+      </div>
+
+      <div style="width:1px;height:26px;background:var(--border);margin:0 6px;"></div>
+
+      <button onClick="{{ openActivity }}" style="display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:18px;">bolt</span>Atividade</button>
+      <button onClick="{{ openShare }}" style="display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 15px;margin-left:8px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-sm);" style-hover="background:var(--primary-hover);"><span class="ms" style="font-size:18px;">person_add</span>Compartilhar</button>
+
+      <div style="width:1px;height:26px;background:var(--border);margin:0 6px;"></div>
+
+      <button onClick="{{ toggleTheme }}" title="Alternar tema" style="width:36px;height:36px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">{{ themeIcon }}</span></button>
+      <button style="position:relative;width:36px;height:36px;margin-left:6px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">notifications</span><span style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--danger);border:1.5px solid var(--bg-surface);"></span></button>
+    </header>
+
+    <div style="height:49px;flex:0 0 49px;display:flex;align-items:center;gap:12px;padding:0 18px;background:var(--bg-surface);border-bottom:1px solid var(--border);">
+      <div style="display:inline-flex;background:var(--bg-subtle);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;">
+        <button onClick="{{ viewKanban }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border:none;border-radius:6px;background:{{ kanBg }};color:{{ kanFg }};font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:{{ kanSh }};"><span class="ms" style="font-size:16px;">view_kanban</span>Kanban</button>
+        <button onClick="{{ viewTabela }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border:none;border-radius:6px;background:{{ tabBg }};color:{{ tabFg }};font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:{{ tabSh }};"><span class="ms" style="font-size:16px;">table_rows</span>Tabela</button>
+        <button onClick="{{ viewCalendario }}" style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border:none;border-radius:6px;background:{{ calBg }};color:{{ calFg }};font-size:12.5px;font-weight:600;cursor:pointer;box-shadow:{{ calSh }};"><span class="ms" style="font-size:16px;">calendar_month</span>Calendário</button>
+      </div>
+
+      <div style="width:1px;height:22px;background:var(--border);"></div>
+
+      <span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 6px 0 10px;border:1px solid var(--primary-border);border-radius:20px;background:var(--primary-subtle);color:var(--primary);font-size:12.5px;font-weight:600;"><span class="ms" style="font-size:15px;">person</span>Responsável: Você<span class="ms" style="font-size:16px;cursor:pointer;">close</span></span>
+      <button style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px dashed var(--border-strong);border-radius:20px;background:transparent;color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="border-color:var(--primary);color:var(--primary);"><span class="ms" style="font-size:16px;">filter_list</span>Filtrar</button>
+
+      <div style="flex:1;"></div>
+
+      <span style="font-size:12px;color:var(--text-muted);display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto;"><span class="ms" style="font-size:15px;flex:0 0 auto;">drag_indicator</span>arraste os cartões</span>
+      <button onClick="{{ newList }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:17px;">add</span>Nova lista</button>
+    </div>
+
+    <sc-if value="{{ isKanban }}" hint-placeholder-val="{{ true }}">
+    <div class="tbl-scroll" style="flex:1;min-height:0;overflow-x:auto;overflow-y:hidden;background:var(--bg-board);padding:16px 18px;">
+      <div style="display:flex;gap:14px;height:100%;align-items:flex-start;min-width:min-content;">
+
+        <sc-for list="{{ columns }}" as="col" hint-placeholder-count="4">
+          <div onDragOver="{{ col.onListOver }}" onDrop="{{ col.onDrop }}" style="{{ col.wrapStyle }}">
+            <div style="display:flex;align-items:center;gap:8px;padding:12px 14px 8px;">
+              <span style="font-size:13.5px;font-weight:700;">{{ col.title }}</span>
+              <span style="{{ col.countStyle }}">{{ col.count }}</span>
+              <div style="flex:1;"></div>
+              <button onClick="{{ newCard }}" style="width:28px;height:28px;border:none;border-radius:7px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:18px;">add</span></button>
+              <button style="width:28px;height:28px;border:none;border-radius:7px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:18px;">more_horiz</span></button>
+            </div>
+            <div onDragOver="{{ col.onListOver }}" onDrop="{{ col.onDrop }}" class="tbl-scroll" style="display:flex;flex-direction:column;gap:9px;padding:4px 10px 8px;overflow-y:auto;min-height:40px;">
+              <sc-for list="{{ col.cards }}" as="card" hint-placeholder-count="3">
+                <sc-if value="{{ card.phBefore }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:2px dashed var(--primary);border-radius:11px;background:var(--primary-subtle);height:64px;flex:0 0 auto;"></div>
+                </sc-if>
+                <div draggable="true" onDragStart="{{ card.onDragStart }}" onDragEnd="{{ onDragEnd }}" onDragOver="{{ card.onCardOver }}" onClick="{{ openCard }}" style="{{ card.style }}" style-hover="transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:var(--border-strong);">
+                  <sc-if value="{{ card.hasLabels }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                      <sc-for list="{{ card.labels }}" as="lbl" hint-placeholder-count="1"><span style="{{ lbl.style }}">{{ lbl.txt }}</span></sc-for>
+                    </div>
+                  </sc-if>
+                  <div style="{{ card.titleStyle }}">{{ card.title }}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:9px;color:var(--text-muted);font-size:12px;flex-wrap:wrap;">
+                      <sc-if value="{{ card.dueLate }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--danger-bg);color:var(--danger-fg);font-weight:600;padding:2px 7px;border-radius:6px;"><span class="ms" style="font-size:14px;">error_outline</span>{{ card.dueTxt }}</span></sc-if>
+                      <sc-if value="{{ card.dueToday }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;background:var(--warning-bg);color:var(--warning-fg);font-weight:600;padding:2px 7px;border-radius:6px;"><span class="ms" style="font-size:14px;">schedule</span>{{ card.dueTxt }}</span></sc-if>
+                      <sc-if value="{{ card.dueNormal }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:3px;"><span class="ms" style="font-size:15px;">schedule</span>{{ card.dueTxt }}</span></sc-if>
+                      <sc-if value="{{ card.checkDone }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:3px;color:var(--success-fg);"><span class="ms" style="font-size:15px;">check_circle</span>{{ card.checkTxt }}</span></sc-if>
+                      <sc-if value="{{ card.checkNormal }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:3px;"><span class="ms" style="font-size:15px;">checklist</span>{{ card.checkTxt }}</span></sc-if>
+                      <sc-if value="{{ card.hasComments }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:3px;"><span class="ms" style="font-size:15px;">chat_bubble_outline</span>{{ card.comments }}</span></sc-if>
+                      <sc-if value="{{ card.hasCode }}" hint-placeholder-val="{{ false }}"><span class="mono" style="font-size:11px;color:var(--text-muted);">{{ card.code }}</span></sc-if>
+                      <sc-if value="{{ card.isDone }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;color:var(--success-fg);font-size:12px;font-weight:600;"><span class="ms" style="font-size:16px;font-variation-settings:'FILL' 1;">check_circle</span>Concluído</span></sc-if>
+                    </div>
+                    <div style="display:flex;">
+                      <sc-for list="{{ card.assignees }}" as="asg" hint-placeholder-count="1"><span style="{{ asg.style }}">{{ asg.ini }}</span></sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ col.phEnd }}" hint-placeholder-val="{{ false }}">
+                <div style="border:2px dashed var(--primary);border-radius:11px;background:var(--primary-subtle);height:64px;flex:0 0 auto;"></div>
+              </sc-if>
+            </div>
+            <button onClick="{{ newCard }}" style="display:flex;align-items:center;gap:7px;margin:2px 10px 12px;padding:8px 10px;border:none;border-radius:9px;background:transparent;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;text-align:left;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:18px;">add</span>Adicionar cartão</button>
+          </div>
+        </sc-for>
+
+        <button onClick="{{ newList }}" style="width:280px;flex:0 0 280px;height:46px;display:flex;align-items:center;gap:8px;padding:0 16px;border:1px dashed var(--border-strong);border-radius:13px;background:rgba(148,163,184,.06);color:var(--text-secondary);font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="border-color:var(--primary);color:var(--primary);background:var(--primary-subtle);"><span class="ms" style="font-size:19px;">add</span>Adicionar outra lista</button>
+
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isTabela }}" hint-placeholder-val="{{ false }}">
+      <div class="tbl-scroll" style="flex:1;min-height:0;overflow:auto;background:var(--bg-board);padding:18px;">
+        <div style="border:1px solid var(--border);border-radius:13px;overflow:hidden;background:var(--bg-surface);box-shadow:var(--shadow-card);min-width:760px;">
+          <div style="display:grid;grid-template-columns:2.4fr 1fr 1fr 1.2fr 0.9fr;gap:12px;padding:11px 16px;background:var(--bg-subtle);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--text-muted);"><span>Cartão</span><span>Lista</span><span>Responsáveis</span><span>Etiquetas</span><span>Prazo</span></div>
+          <sc-for list="{{ tableRows }}" as="row" hint-placeholder-count="6">
+            <div onClick="{{ openCard }}" style="display:grid;grid-template-columns:2.4fr 1fr 1fr 1.2fr 0.9fr;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;cursor:pointer;" style-hover="background:var(--bg-hover);">
+              <span style="{{ row.titleStyle }}"><span style="{{ row.dotStyle }}"></span>{{ row.title }}</span>
+              <span style="font-size:12.5px;color:var(--text-secondary);">{{ row.list }}</span>
+              <span style="display:flex;"><sc-for list="{{ row.assignees }}" as="asg" hint-placeholder-count="1"><span style="{{ asg.style }}">{{ asg.ini }}</span></sc-for></span>
+              <span style="display:flex;gap:4px;flex-wrap:wrap;"><sc-for list="{{ row.labels }}" as="lbl" hint-placeholder-count="1"><span style="{{ lbl.style }}">{{ lbl.txt }}</span></sc-for></span>
+              <span style="{{ row.dueStyle }}">{{ row.dueTxt }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCalendario }}" hint-placeholder-val="{{ false }}">
+      <div class="tbl-scroll" style="flex:1;min-height:0;overflow:auto;background:var(--bg-board);padding:18px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><span style="font-size:16px;font-weight:700;">Julho 2026</span><div style="display:flex;gap:4px;"><button style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:18px;">chevron_left</span></button><button style="width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:18px;">chevron_right</span></button></div><button style="height:30px;padding:0 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Hoje</button></div>
+        <div style="border:1px solid var(--border);border-radius:13px;overflow:hidden;background:var(--bg-surface);box-shadow:var(--shadow-card);min-width:760px;">
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);background:var(--bg-subtle);border-bottom:1px solid var(--border);">
+            <div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Dom</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Seg</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Ter</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Qua</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Qui</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Sex</div><div style="padding:8px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Sáb</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:100px;">
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;opacity:.45;">28</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;opacity:.45;">29</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;opacity:.45;">30</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">1</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">2</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">3</span></div>
+            <div style="border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">4</span></div>
+
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">5</span><div onClick="{{ openCard }}" style="margin-top:5px;font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:5px;background:var(--danger-bg);color:var(--danger-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">Cartões duplicam ao arrastar</div></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">6</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;background:var(--primary-subtle);"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;font-size:12px;font-weight:700;">7</span><div onClick="{{ openCard }}" style="margin-top:5px;font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:5px;background:var(--lbl-purple-bg);color:var(--lbl-purple-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">Redesenhar onboarding</div></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">8</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">9</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">10</span></div>
+            <div style="border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">11</span><div onClick="{{ openCard }}" style="margin-top:5px;font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:5px;background:var(--lbl-amber-bg);color:var(--lbl-amber-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">Otimizar carregamento</div></div>
+
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">12</span><div onClick="{{ openCard }}" style="margin-top:5px;font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:5px;background:var(--lbl-red-bg);color:var(--lbl-red-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">Implementar 2FA</div></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">13</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">14</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">15</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">16</span></div>
+            <div style="border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">17</span></div>
+            <div style="border-bottom:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">18</span><div onClick="{{ openCard }}" style="margin-top:5px;font-size:10.5px;font-weight:600;padding:3px 6px;border-radius:5px;background:var(--lbl-blue-bg);color:var(--lbl-blue-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">Filtros e visões</div></div>
+
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">19</span></div>
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">20</span></div>
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">21</span></div>
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">22</span></div>
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">23</span></div>
+            <div style="border-right:1px solid var(--border);padding:6px 7px;"><span style="font-size:12px;font-weight:600;">24</span></div>
+            <div style="padding:6px 7px;"><span style="font-size:12px;font-weight:600;">25</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ cardOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCard }}" style="position:fixed;inset:0;z-index:100;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:40px 24px;overflow-y:auto;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:min(940px,96vw);background:var(--bg-surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column;max-height:88vh;animation:modalin .18s cubic-bezier(.2,.8,.2,1);">
+        <div style="height:6px;background:var(--primary);flex:0 0 6px;"></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex:0 0 auto;">
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);padding:4px 10px;border-radius:8px;"><span class="ms" style="font-size:15px;">view_column</span>Em Progresso</span>
+          <span class="mono" style="font-size:12px;color:var(--text-muted);">TB-142</span>
+          <div style="flex:1;"></div>
+          <button style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">share</span></button>
+          <button style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">more_horiz</span></button>
+          <button onClick="{{ closeCard }}" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--danger-bg);color:var(--danger);"><span class="ms" style="font-size:20px;">close</span></button>
+        </div>
+
+        <div style="display:flex;min-height:0;flex:1;">
+          <div class="tbl-scroll" style="flex:1;min-width:0;overflow-y:auto;padding:20px 24px 28px;">
+            <div style="display:flex;align-items:flex-start;gap:11px;">
+              <span class="ms" style="font-size:24px;color:var(--text-muted);margin-top:2px;">check_box_outline_blank</span>
+              <h2 style="margin:0;font-size:21px;font-weight:700;line-height:1.3;letter-spacing:-.01em;">Implementar autenticação em 2 fatores (2FA)</h2>
+            </div>
+
+            <div style="margin:22px 0 6px;display:flex;align-items:center;gap:8px;">
+              <span class="ms" style="font-size:19px;color:var(--text-muted);">notes</span>
+              <span style="font-size:14.5px;font-weight:700;">Descrição</span>
+              <button style="margin-left:8px;height:26px;padding:0 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg-surface);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Editar</button>
+            </div>
+            <div style="font-size:13.5px;line-height:1.65;color:var(--text-secondary);padding-left:27px;">
+              <p style="margin:0 0 8px;">Adicionar <strong style="color:var(--text-primary);">autenticação em dois fatores</strong> para todas as contas, com suporte a aplicativos autenticadores via TOTP. Requisito de segurança do trimestre.</p>
+              <ul style="margin:0;padding-left:18px;">
+                <li style="margin-bottom:3px;">QR Code para configuração inicial</li>
+                <li style="margin-bottom:3px;">Códigos de backup de recuperação</li>
+                <li>Opção de lembrar o dispositivo por 30 dias</li>
+              </ul>
+            </div>
+
+            <div style="margin:24px 0 10px;display:flex;align-items:center;gap:8px;">
+              <span class="ms" style="font-size:19px;color:var(--text-muted);">checklist</span>
+              <span style="font-size:14.5px;font-weight:700;">Checklist</span>
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">1/5</span>
+              <div style="flex:1;"></div>
+              <button style="height:26px;padding:0 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg-surface);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Ocultar concluídos</button>
+            </div>
+            <div style="padding-left:27px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <span style="font-size:11px;font-weight:600;color:var(--text-muted);width:30px;">20%</span>
+                <div style="flex:1;height:8px;border-radius:20px;background:var(--bg-sunken);overflow:hidden;"><div style="width:20%;height:100%;background:var(--primary);border-radius:20px;"></div></div>
+              </div>
+              <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;" style-hover="background:var(--bg-hover);"><span style="width:19px;height:19px;border-radius:6px;background:var(--primary);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;"><span class="ms" style="font-size:15px;color:#fff;font-variation-settings:'FILL' 1,'wght' 600;">check</span></span><span style="font-size:13.5px;color:var(--text-muted);text-decoration:line-through;">Configurar geração de segredo TOTP</span></label>
+              <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;" style-hover="background:var(--bg-hover);"><span style="width:19px;height:19px;border-radius:6px;border:2px solid var(--border-strong);flex:0 0 auto;"></span><span style="font-size:13.5px;">Tela de leitura do QR Code</span></label>
+              <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;" style-hover="background:var(--bg-hover);"><span style="width:19px;height:19px;border-radius:6px;border:2px solid var(--border-strong);flex:0 0 auto;"></span><span style="font-size:13.5px;">Geração de códigos de backup</span></label>
+              <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;" style-hover="background:var(--bg-hover);"><span style="width:19px;height:19px;border-radius:6px;border:2px solid var(--border-strong);flex:0 0 auto;"></span><span style="font-size:13.5px;">Validação de 2FA no fluxo de login</span></label>
+              <label style="display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;cursor:pointer;" style-hover="background:var(--bg-hover);"><span style="width:19px;height:19px;border-radius:6px;border:2px solid var(--border-strong);flex:0 0 auto;"></span><span style="font-size:13.5px;">Testes de ponta a ponta</span></label>
+              <button style="display:flex;align-items:center;gap:7px;margin-top:6px;padding:7px 9px;border:none;border-radius:8px;background:var(--bg-subtle);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-sunken);"><span class="ms" style="font-size:16px;">add</span>Adicionar item</button>
+            </div>
+
+            <div style="margin:24px 0 10px;display:flex;align-items:center;gap:8px;">
+              <span class="ms" style="font-size:19px;color:var(--text-muted);">attach_file</span>
+              <span style="font-size:14.5px;font-weight:700;">Anexos</span>
+              <span style="font-size:12px;font-weight:600;color:var(--text-muted);">2</span>
+            </div>
+            <div style="padding-left:27px;display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:8px;border:1px solid var(--border);border-radius:10px;" style-hover="background:var(--bg-hover);">
+                <span style="width:52px;height:42px;border-radius:7px;background:var(--danger-bg);color:var(--danger);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;"><span class="ms" style="font-size:22px;">picture_as_pdf</span></span>
+                <div style="min-width:0;flex:1;"><div class="mono" style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">fluxo-2fa-spec.pdf</div><div style="font-size:11.5px;color:var(--text-muted);">1,2 MB · adicionado há 5 h</div></div>
+                <button style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-sunken);color:var(--text-primary);"><span class="ms" style="font-size:18px;">download</span></button>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:8px;border:1px solid var(--border);border-radius:10px;" style-hover="background:var(--bg-hover);">
+                <span style="width:52px;height:42px;border-radius:7px;background:repeating-linear-gradient(45deg,var(--bg-sunken),var(--bg-sunken) 5px,var(--bg-subtle) 5px,var(--bg-subtle) 10px);flex:0 0 auto;"></span>
+                <div style="min-width:0;flex:1;"><div class="mono" style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">wireframe-qrcode.png</div><div style="font-size:11.5px;color:var(--text-muted);">340 KB · adicionado ontem</div></div>
+                <button style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-sunken);color:var(--text-primary);"><span class="ms" style="font-size:18px;">download</span></button>
+              </div>
+            </div>
+
+            <div style="margin:26px 0 12px;display:flex;align-items:center;gap:2px;border-bottom:1px solid var(--border);">
+              <button onClick="{{ tabComments }}" style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border:none;background:transparent;font-size:13.5px;font-weight:600;cursor:pointer;color:{{ commentsColor }};border-bottom:2px solid {{ commentsBorder }};"><span class="ms" style="font-size:17px;">chat_bubble_outline</span>Comentários</button>
+              <button onClick="{{ tabActivity }}" style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border:none;background:transparent;font-size:13.5px;font-weight:600;cursor:pointer;color:{{ activityColor }};border-bottom:2px solid {{ activityBorder }};"><span class="ms" style="font-size:17px;">bolt</span>Atividade</button>
+            </div>
+
+            <sc-if value="{{ showComments }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;gap:10px;margin-bottom:18px;">
+                  <span style="width:30px;height:30px;border-radius:50%;background:#7C3AED;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span>
+                  <div style="flex:1;"><input placeholder="Escreva um comentário…" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg-subtle);color:var(--text-primary);font-size:13px;font-family:'Inter';outline:none;" style-focus="border-color:var(--primary);background:var(--bg-surface);"></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-bottom:16px;">
+                  <span style="width:30px;height:30px;border-radius:50%;background:#E11D48;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">MS</span>
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px;"><span style="font-size:13px;font-weight:600;">Mariana Silva</span><span style="font-size:11.5px;color:var(--text-muted);">há 2 h</span></div><div style="font-size:13.5px;line-height:1.55;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);padding:9px 12px;border-radius:4px 12px 12px 12px;">Já configurei o segredo TOTP no backend, falta o fluxo de recuperação. <span style="color:var(--primary);font-weight:600;">@Rafael</span> consegue revisar o PR?</div></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-bottom:16px;">
+                  <span style="width:30px;height:30px;border-radius:50%;background:#059669;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">RO</span>
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px;"><span style="font-size:13px;font-weight:600;">Rafael Oliveira</span><span style="font-size:11.5px;color:var(--text-muted);">há 1 h</span></div><div style="font-size:13.5px;line-height:1.55;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);padding:9px 12px;border-radius:4px 12px 12px 12px;">Revisado. Sugeri códigos de backup de 10 dígitos — deixei observações no PR. 👍</div></div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <span style="width:30px;height:30px;border-radius:50%;background:#7C3AED;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span>
+                  <div style="flex:1;min-width:0;"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px;"><span style="font-size:13px;font-weight:600;">Ana Beatriz Costa</span><span style="font-size:11.5px;color:var(--text-muted);">há 20 min</span></div><div style="font-size:13.5px;line-height:1.55;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);padding:9px 12px;border-radius:4px 12px 12px 12px;">Perfeito, obrigada! Movi o cartão para <strong style="color:var(--text-primary);">Em Progresso</strong>.</div></div>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ showCardActivity }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:15px;">
+                <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:26px;height:26px;border-radius:50%;background:#059669;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">RO</span><div style="font-size:13px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Rafael Oliveira</strong> moveu este cartão de <strong style="color:var(--text-primary);">A Fazer</strong> para <strong style="color:var(--text-primary);">Em Progresso</strong><div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">há 2 h</div></div></div>
+                <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:26px;height:26px;border-radius:50%;background:#E11D48;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">MS</span><div style="font-size:13px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Mariana Silva</strong> concluiu o item <strong style="color:var(--text-primary);">Configurar geração de segredo TOTP</strong><div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">há 3 h</div></div></div>
+                <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:26px;height:26px;border-radius:50%;background:#7C3AED;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span><div style="font-size:13px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Ana Beatriz Costa</strong> anexou <span class="mono" style="font-size:12px;">fluxo-2fa-spec.pdf</span><div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">há 5 h</div></div></div>
+                <div style="display:flex;gap:11px;align-items:flex-start;"><span style="width:26px;height:26px;border-radius:50%;background:#7C3AED;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span><div style="font-size:13px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Ana Beatriz Costa</strong> criou este cartão<div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">ontem, 14:20</div></div></div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div class="tbl-scroll" style="width:236px;flex:0 0 236px;border-left:1px solid var(--border);background:var(--bg-subtle);overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:20px;">
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Responsáveis</div>
+              <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+                <span title="Rafael Oliveira" style="width:32px;height:32px;border-radius:50%;background:#059669;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;">RO</span>
+                <span title="Mariana Silva" style="width:32px;height:32px;border-radius:50%;background:#E11D48;color:#fff;font-size:11px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;">MS</span>
+                <button style="width:32px;height:32px;border-radius:50%;border:1.5px dashed var(--border-strong);background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="border-color:var(--primary);color:var(--primary);"><span class="ms" style="font-size:18px;">add</span></button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Etiquetas</div>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span style="font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:7px;background:var(--lbl-red-bg);color:var(--lbl-red-fg);">Segurança</span>
+                <span style="font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:7px;background:var(--lbl-teal-bg);color:var(--lbl-teal-fg);">Backend</span>
+                <button style="width:26px;height:26px;border-radius:7px;border:1.5px dashed var(--border-strong);background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="border-color:var(--primary);color:var(--primary);"><span class="ms" style="font-size:16px;">add</span></button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Data de entrega</div>
+              <div style="display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:9px;background:var(--warning-bg);color:var(--warning-fg);font-size:13px;font-weight:600;"><span class="ms" style="font-size:17px;">schedule</span>Hoje · 18:00</div>
+              <div style="font-size:11.5px;color:var(--warning-fg);margin-top:5px;font-weight:500;">Vence hoje</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Adicionar ao cartão</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">checklist</span>Checklist</button>
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">attach_file</span>Anexo</button>
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">image</span>Capa</button>
+              </div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:16px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Ações</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">arrow_forward</span>Mover</button>
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">content_copy</span>Copiar</button>
+                <button style="display:flex;align-items:center;gap:9px;width:100%;height:33px;padding:0 11px;border:none;border-radius:8px;background:var(--bg-sunken);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;" style-hover="background:var(--border);color:var(--text-primary);"><span class="ms" style="font-size:16px;">inventory_2</span>Arquivar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ activityOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeActivity }}" style="position:fixed;inset:0;z-index:95;background:rgba(15,23,42,.4);backdrop-filter:blur(2px);display:flex;justify-content:flex-end;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:410px;max-width:92vw;height:100%;background:var(--bg-surface);border-left:1px solid var(--border);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;animation:drawerin .22s cubic-bezier(.2,.8,.2,1);">
+        <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);flex:0 0 auto;">
+          <span class="ms" style="font-size:21px;color:var(--primary);">bolt</span>
+          <span style="font-size:16px;font-weight:700;">Atividade</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;background:var(--success-bg);color:var(--success-fg);font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;"><span style="position:relative;display:inline-flex;width:6px;height:6px;"><span style="position:absolute;inset:0;border-radius:50%;background:var(--live);animation:ping 1.7s cubic-bezier(0,0,.2,1) infinite;"></span><span style="position:relative;width:6px;height:6px;border-radius:50%;background:var(--live);"></span></span>ao vivo</span>
+          <div style="flex:1;"></div>
+          <button onClick="{{ closeActivity }}" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:20px;">close</span></button>
+        </div>
+        <div class="tbl-scroll" style="flex:1;overflow-y:auto;padding:8px 18px 20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:14px 0 8px;">Hoje</div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;border-radius:10px;background:var(--primary-subtle);border:1px solid var(--primary-border);margin-bottom:4px;"><span style="width:28px;height:28px;border-radius:50%;background:#059669;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">RO</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Rafael</strong> moveu <strong style="color:var(--text-primary);">Servidor de presença</strong> de A Fazer → Em Progresso<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">agora mesmo</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#7C3AED;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Ana</strong> comentou em <strong style="color:var(--text-primary);">Autenticação 2FA</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">há 18 min</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#E11D48;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">MS</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Mariana</strong> concluiu o item <strong style="color:var(--text-primary);">Configurar TOTP</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">há 1 h</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#4F46E5;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">LF</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Lucas</strong> criou o cartão <strong style="color:var(--text-primary);">Otimizar carregamento inicial</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">há 2 h</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#0891B2;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">CS</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Camila</strong> entrou no quadro<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">há 3 h</div></div></div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:16px 0 8px;">Ontem</div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#7C3AED;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Ana</strong> moveu <strong style="color:var(--text-primary);">Migração PostgreSQL 16</strong> para Concluído<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">18:42</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#059669;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">RO</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Rafael</strong> anexou <span class="mono" style="font-size:11.5px;">benchmarks.pdf</span> em <strong style="color:var(--text-primary);">Otimizar carregamento</strong><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">16:10</div></div></div>
+          <div style="display:flex;gap:11px;align-items:flex-start;padding:9px 10px;"><span style="width:28px;height:28px;border-radius:50%;background:#2563EB;color:#fff;font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">GR</span><div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Gustavo</strong> renomeou a lista <strong style="color:var(--text-primary);">Revisão</strong> → Em Revisão<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">11:05</div></div></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeShare }}" style="position:fixed;inset:0;z-index:110;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:60px 24px;overflow-y:auto;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:min(560px,96vw);background:var(--bg-surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalin .18s cubic-bezier(.2,.8,.2,1);">
+        <div style="display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--border);">
+          <span class="ms" style="font-size:22px;color:var(--primary);">group</span>
+          <span style="font-size:16.5px;font-weight:700;">Compartilhar quadro</span>
+          <div style="flex:1;"></div>
+          <button onClick="{{ closeShare }}" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:20px;">close</span></button>
+        </div>
+        <div style="padding:18px 20px;">
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input placeholder="E-mail para convidar…" style="flex:1;height:40px;padding:0 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg-subtle);color:var(--text-primary);font-size:13.5px;font-family:'Inter';outline:none;" style-focus="border-color:var(--primary);background:var(--bg-surface);">
+            <button style="display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 12px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;">Membro<span class="ms" style="font-size:16px;">expand_more</span></button>
+            <button style="height:40px;padding:0 18px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--primary-hover);">Convidar</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:var(--bg-subtle);margin-bottom:20px;">
+            <span style="width:38px;height:38px;border-radius:10px;background:var(--primary-subtle);color:var(--primary);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;"><span class="ms" style="font-size:20px;">link</span></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">Compartilhar por link</div><div style="font-size:12px;color:var(--text-muted);">Qualquer pessoa com o link pode visualizar</div></div>
+            <button style="height:34px;padding:0 13px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:16px;">content_copy</span>Copiar</button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="font-size:12.5px;font-weight:700;">Membros</span><span style="font-size:12px;color:var(--text-muted);">5</span><span style="margin-left:auto;font-size:11.5px;color:var(--text-muted);display:inline-flex;align-items:center;gap:4px;"><span class="ms" style="font-size:14px;">lock</span>Só o proprietário gerencia</span></div>
+
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 4px;">
+            <span style="width:36px;height:36px;border-radius:50%;background:#7C3AED;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">AC</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;">Ana Beatriz Costa <span style="color:var(--text-muted);font-weight:500;">(você)</span></div><div class="mono" style="font-size:11.5px;color:var(--text-muted);">ana.costa@empresa.com</div></div>
+            <span style="font-size:12px;font-weight:600;color:var(--primary);background:var(--primary-subtle);padding:5px 11px;border-radius:8px;">Proprietário</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 4px;">
+            <span style="width:36px;height:36px;border-radius:50%;background:#059669;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">RO</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;">Rafael Oliveira</div><div class="mono" style="font-size:11.5px;color:var(--text-muted);">rafael.oliveira@empresa.com</div></div>
+            <button style="display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Membro<span class="ms" style="font-size:15px;">expand_more</span></button>
+            <button style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--danger-bg);color:var(--danger);"><span class="ms" style="font-size:18px;">close</span></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 4px;">
+            <span style="width:36px;height:36px;border-radius:50%;background:#E11D48;color:#fff;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">MS</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;">Mariana Silva</div><div class="mono" style="font-size:11.5px;color:var(--text-muted);">mariana.silva@empresa.com</div></div>
+            <button style="display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Membro<span class="ms" style="font-size:15px;">expand_more</span></button>
+            <button style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--danger-bg);color:var(--danger);"><span class="ms" style="font-size:18px;">close</span></button>
+          </div>
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 4px;opacity:.8;">
+            <span style="width:36px;height:36px;border-radius:50%;background:var(--bg-sunken);color:var(--text-muted);font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;">CS</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;">Camila Santos</div><div class="mono" style="font-size:11.5px;color:var(--text-muted);">camila.santos@empresa.com</div></div>
+            <span style="font-size:11.5px;font-weight:600;color:var(--warning-fg);background:var(--warning-bg);padding:5px 10px;border-radius:8px;">Convite pendente</span>
+            <button style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:17px;">refresh</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ createList }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCreate }}" style="position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:120px 24px;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:min(400px,96vw);background:var(--bg-surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:20px;animation:modalin .18s cubic-bezier(.2,.8,.2,1);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><span style="font-size:16px;font-weight:700;">Adicionar lista</span><div style="flex:1;"></div><button onClick="{{ closeCreate }}" style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">close</span></button></div>
+        <input placeholder="Nome da lista…" style="width:100%;height:42px;padding:0 13px;border:1px solid var(--primary);border-radius:10px;background:var(--bg-surface);color:var(--text-primary);font-size:14px;font-family:'Inter';outline:none;box-shadow:0 0 0 3px var(--primary-subtle);margin-bottom:16px;">
+        <div style="display:flex;gap:8px;"><button style="flex:1;height:40px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--primary-hover);">Adicionar lista</button><button onClick="{{ closeCreate }}" style="height:40px;padding:0 16px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Cancelar</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ createCard }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCreate }}" style="position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:100px 24px;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:min(480px,96vw);background:var(--bg-surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:20px;animation:modalin .18s cubic-bezier(.2,.8,.2,1);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><span style="font-size:16px;font-weight:700;">Novo cartão</span><span style="font-size:12.5px;color:var(--text-muted);">em</span><span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);padding:3px 9px;border-radius:7px;">A Fazer<span class="ms" style="font-size:15px;">expand_more</span></span><div style="flex:1;"></div><button onClick="{{ closeCreate }}" style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">close</span></button></div>
+        <textarea placeholder="Digite um título para o cartão…" style="width:100%;height:80px;padding:11px 13px;border:1px solid var(--primary);border-radius:10px;background:var(--bg-surface);color:var(--text-primary);font-size:14px;font-family:'Inter';outline:none;box-shadow:0 0 0 3px var(--primary-subtle);resize:none;margin-bottom:14px;"></textarea>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:16px;">label</span>Etiquetas</button>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:16px;">person_add</span>Responsáveis</button>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg-surface);color:var(--text-secondary);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);"><span class="ms" style="font-size:16px;">schedule</span>Prazo</button>
+        </div>
+        <div style="display:flex;gap:8px;"><button style="flex:1;height:40px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--primary-hover);">Adicionar cartão</button><button onClick="{{ closeCreate }}" style="height:40px;padding:0 16px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Cancelar</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ createBoard }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeCreate }}" style="position:fixed;inset:0;z-index:120;background:rgba(15,23,42,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:80px 24px;overflow-y:auto;animation:fadein .15s ease;">
+      <div onClick="{{ stop }}" style="width:min(520px,96vw);background:var(--bg-surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:22px;animation:modalin .18s cubic-bezier(.2,.8,.2,1);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;"><span style="font-size:16.5px;font-weight:700;">Criar quadro</span><div style="flex:1;"></div><button onClick="{{ closeCreate }}" style="width:32px;height:32px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;" style-hover="background:var(--bg-hover);color:var(--text-primary);"><span class="ms" style="font-size:19px;">close</span></button></div>
+        <div style="height:110px;border-radius:12px;background:linear-gradient(135deg,#2563EB,#1D4ED8);display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;overflow:hidden;">
+          <div style="display:flex;gap:8px;">
+            <div style="width:44px;height:60px;background:rgba(255,255,255,.9);border-radius:6px;"></div>
+            <div style="width:44px;height:60px;background:rgba(255,255,255,.65);border-radius:6px;"></div>
+            <div style="width:44px;height:60px;background:rgba(255,255,255,.4);border-radius:6px;"></div>
+          </div>
+        </div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Nome do quadro</label>
+        <input placeholder="ex.: Sprint 43 · Produto" style="width:100%;height:42px;padding:0 13px;border:1px solid var(--border);border-radius:10px;background:var(--bg-subtle);color:var(--text-primary);font-size:14px;font-family:'Inter';outline:none;margin-bottom:16px;" style-focus="border-color:var(--primary);background:var(--bg-surface);">
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Plano de fundo</label>
+        <div style="display:flex;gap:9px;margin-bottom:18px;">
+          <span style="width:38px;height:32px;border-radius:8px;background:#2563EB;cursor:pointer;box-shadow:0 0 0 2px var(--bg-surface),0 0 0 4px var(--primary);"></span>
+          <span style="width:38px;height:32px;border-radius:8px;background:#7C3AED;cursor:pointer;"></span>
+          <span style="width:38px;height:32px;border-radius:8px;background:#059669;cursor:pointer;"></span>
+          <span style="width:38px;height:32px;border-radius:8px;background:#E11D48;cursor:pointer;"></span>
+          <span style="width:38px;height:32px;border-radius:8px;background:#D97706;cursor:pointer;"></span>
+          <span style="width:38px;height:32px;border-radius:8px;background:#0891B2;cursor:pointer;"></span>
+        </div>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Visibilidade</label>
+        <button style="width:100%;height:42px;padding:0 13px;border:1px solid var(--border);border-radius:10px;background:var(--bg-subtle);color:var(--text-primary);font-size:13.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:9px;margin-bottom:20px;"><span class="ms" style="font-size:18px;color:var(--text-muted);">lock</span>Privado<div style="flex:1;"></div><span class="ms" style="font-size:18px;color:var(--text-muted);">expand_more</span></button>
+        <div style="display:flex;gap:8px;"><button style="flex:1;height:42px;border:none;border-radius:9px;background:var(--primary);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--primary-hover);">Criar quadro</button><button onClick="{{ closeCreate }}" style="height:42px;padding:0 18px;border:1px solid var(--border);border-radius:9px;background:var(--bg-surface);color:var(--text-secondary);font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--bg-hover);">Cancelar</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+<dc-import name="ScreenNav" style="position:fixed;left:0;top:0;width:0;height:0;" hint-size="1px,1px"></dc-import></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;temaInicial&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;claro&quot;, &quot;escuro&quot;], &quot;default&quot;: &quot;claro&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Aparência&quot; },
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#2563EB&quot;, &quot;options&quot;: [&quot;#2563EB&quot;, &quot;#7C3AED&quot;, &quot;#0891B2&quot;, &quot;#059669&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Aparência&quot; }
+}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  state = {
+    theme: (this.props && this.props.temaInicial === 'escuro') ? 'dark' : 'light',
+    card: false, activity: false, share: false, create: null, tab: 'coment', view: 'kanban',
+    dragId: null, overCol: null, overBeforeId: null,
+    cols: [
+      { id:'todo', title:'A Fazer', tone:'muted', cards:[
+        { id:'c1', labels:[{t:'Segurança',k:'red'},{t:'Backend',k:'teal'}], title:'Implementar autenticação em 2 fatores (2FA)', due:{t:'12 jul',s:'normal'}, check:{t:'1/5'}, comments:3, assignees:[{i:'RO',c:'#059669'},{i:'MS',c:'#E11D48'}] },
+        { id:'c2', labels:[{t:'Design',k:'purple'}], title:'Redesenhar fluxo de onboarding com ilustrações', due:{t:'Hoje',s:'today'}, check:{t:'3/6'}, comments:5, assignees:[{i:'AC',c:'#7C3AED'}] },
+        { id:'c3', labels:[{t:'Bug',k:'red'},{t:'Urgente',k:'amber'}], title:'Cartões duplicam ao arrastar sem conexão', due:{t:'Atrasado · 5 jul',s:'late'}, comments:2, assignees:[{i:'LF',c:'#4F46E5'}] },
+        { id:'c4', labels:[{t:'Docs',k:'amber'}], title:'Documentar API pública de webhooks', code:'TB-118', assignees:[{i:'GR',c:'#2563EB'}] },
+      ]},
+      { id:'doing', title:'Em Progresso', tone:'warning', cards:[
+        { id:'c5', labels:[{t:'Backend',k:'teal'}], title:'Servidor de presença em tempo real (WebSocket)', check:{t:'2/4'}, assignees:[{i:'RO',c:'#059669'}] },
+        { id:'c6', labels:[{t:'Frontend',k:'blue'}], title:'Editor de descrição com suporte a markdown', check:{t:'4/7'}, comments:2, assignees:[{i:'AC',c:'#7C3AED'},{i:'MS',c:'#E11D48'}] },
+        { id:'c7', labels:[{t:'Performance',k:'amber'}], title:'Otimizar carregamento inicial do quadro (< 1s)', due:{t:'11 jul',s:'normal'}, assignees:[{i:'LF',c:'#4F46E5'}] },
+      ]},
+      { id:'review', title:'Em Revisão', tone:'muted', cards:[
+        { id:'c8', labels:[{t:'Frontend',k:'blue'},{t:'Design',k:'purple'}], title:'Página de configurações do quadro', check:{t:'5/5',done:true}, comments:4, assignees:[{i:'AC',c:'#7C3AED'}] },
+        { id:'c9', labels:[{t:'Frontend',k:'blue'}], title:'Filtros e visões: Kanban, Lista e Calendário', code:'TB-131', assignees:[{i:'GR',c:'#2563EB'},{i:'RO',c:'#059669'}] },
+      ]},
+      { id:'done', title:'Concluído', tone:'success', cards:[
+        { id:'c10', labels:[{t:'Backend',k:'teal'},{t:'DevOps',k:'green'}], title:'Migração para PostgreSQL 16', done:true, assignees:[{i:'LF',c:'#4F46E5'}] },
+        { id:'c11', labels:[{t:'Backend',k:'teal'}], title:'Sistema de convites por e-mail', done:true, assignees:[{i:'MS',c:'#E11D48'}] },
+        { id:'c12', labels:[{t:'Segurança',k:'red'}], title:'Login social (Google / GitHub)', done:true, assignees:[{i:'RO',c:'#059669'}] },
+      ]},
+    ],
+  };
+
+  componentDidMount() { this.applyAccent(); }
+  componentDidUpdate(prev) { if (prev.accentColor !== this.props.accentColor) this.applyAccent(); }
+  applyAccent() { var a = this.props && this.props.accentColor, el = this.rootRef.current; if (a && el) { el.style.setProperty('--primary', a); el.style.setProperty('--primary-hover', a); } }
+
+  setOver(colId, beforeId) {
+    this.setState(st => (st.overCol === colId && st.overBeforeId === beforeId) ? null : { overCol: colId, overBeforeId: beforeId });
+  }
+  onDragStartCard(e, id) {
+    try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); } catch (_) {}
+    const col = this.state.cols.find(c => c.cards.some(x => x.id === id));
+    this.setState({ dragId: id, overCol: col ? col.id : null, overBeforeId: id });
+  }
+  clearDrag = () => this.setState({ dragId: null, overCol: null, overBeforeId: null });
+  handleDrop = () => {
+    this.setState(st => {
+      const { dragId, overCol } = st; let beforeId = st.overBeforeId;
+      if (!dragId || !overCol) return { dragId: null, overCol: null, overBeforeId: null };
+      const cols = st.cols.map(c => ({ ...c, cards: [...c.cards] }));
+      let moved = null;
+      for (const c of cols) { const i = c.cards.findIndex(x => x.id === dragId); if (i >= 0) { moved = c.cards.splice(i, 1)[0]; break; } }
+      if (!moved) return { dragId: null, overCol: null, overBeforeId: null };
+      const tgt = cols.find(c => c.id === overCol);
+      if (beforeId === dragId) beforeId = null;
+      let idx = (beforeId == null) ? tgt.cards.length : tgt.cards.findIndex(x => x.id === beforeId);
+      if (idx < 0) idx = tgt.cards.length;
+      tgt.cards.splice(idx, 0, moved);
+      return { cols, dragId: null, overCol: null, overBeforeId: null };
+    });
+  };
+
+  countStyle(tone) {
+    const base = { fontSize:'12px', fontWeight:600, borderRadius:'20px', padding:'1px 9px' };
+    if (tone === 'warning') return { ...base, color:'var(--warning-fg)', background:'var(--warning-bg)' };
+    if (tone === 'success') return { ...base, color:'var(--success-fg)', background:'var(--success-bg)' };
+    return { ...base, color:'var(--text-muted)', background:'var(--bg-sunken)' };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const vseg = (on) => ({ bg: on ? 'var(--bg-surface)' : 'transparent', fg: on ? 'var(--primary)' : 'var(--text-muted)', sh: on ? 'var(--shadow-sm)' : 'none' });
+    const vk = vseg(s.view === 'kanban'), vt = vseg(s.view === 'tabela'), vc = vseg(s.view === 'calendario');
+    const listTone = { todo:'muted', doing:'primary', review:'warning', done:'success' };
+    const dotColor = (t) => t === 'primary' ? 'var(--primary)' : t === 'warning' ? '#F59E0B' : t === 'success' ? 'var(--success-fg)' : 'var(--text-muted)';
+    const tableRows = [];
+    s.cols.forEach(col => col.cards.forEach(cd => {
+      const due = cd.due || null;
+      const titleStyle = { fontSize:'13.5px', fontWeight:500, display:'flex', alignItems:'center', gap:'8px' };
+      if (cd.done) { titleStyle.textDecoration = 'line-through'; titleStyle.textDecorationColor = 'var(--text-muted)'; titleStyle.color = 'var(--text-muted)'; }
+      let dueStyle, dueTxt;
+      if (cd.done) { dueStyle = { fontSize:'12px', color:'var(--success-fg)', fontWeight:600 }; dueTxt = 'Concluído'; }
+      else if (due && due.s === 'late') { dueStyle = { fontSize:'11.5px', fontWeight:600, color:'var(--danger-fg)', background:'var(--danger-bg)', padding:'2px 8px', borderRadius:'6px', justifySelf:'start' }; dueTxt = due.t; }
+      else if (due && due.s === 'today') { dueStyle = { fontSize:'11.5px', fontWeight:600, color:'var(--warning-fg)', background:'var(--warning-bg)', padding:'2px 8px', borderRadius:'6px', justifySelf:'start' }; dueTxt = due.t; }
+      else if (due) { dueStyle = { fontSize:'12.5px', color:'var(--text-muted)' }; dueTxt = due.t; }
+      else { dueStyle = { fontSize:'12.5px', color:'var(--text-muted)' }; dueTxt = '—'; }
+      tableRows.push({
+        id: cd.id, title: cd.title, list: col.title, titleStyle,
+        dotStyle: { width:'8px', height:'8px', borderRadius:'50%', flex:'0 0 auto', background: dotColor(listTone[col.id] || 'muted') },
+        assignees: (cd.assignees || []).map((a, ix) => ({ ini: a.i, style: { width:'24px', height:'24px', borderRadius:'50%', background:a.c, color:'#fff', fontSize:'9.5px', fontWeight:600, display:'inline-flex', alignItems:'center', justifyContent:'center', border:'2px solid var(--bg-surface)', marginLeft: ix === 0 ? '0' : '-7px' } })),
+        labels: (cd.labels || []).map(l => ({ txt: l.t, style: { fontSize:'10.5px', fontWeight:600, padding:'2px 7px', borderRadius:'5px', background:'var(--lbl-' + l.k + '-bg)', color:'var(--lbl-' + l.k + '-fg)' } })),
+        dueStyle, dueTxt,
+      });
+    }));
+    const cardBase = { background:'var(--bg-surface)', border:'1px solid var(--border)', borderRadius:'11px', padding:'11px 12px', boxShadow:'var(--shadow-card)', cursor:'grab', display:'flex', flexDirection:'column', gap:'9px', transition:'transform .12s,box-shadow .12s,border-color .12s,opacity .12s' };
+
+    const columns = s.cols.map(col => {
+      const cards = col.cards.map(cd => {
+        const due = cd.due || null;
+        const style = { ...cardBase };
+        if (cd.done) style.opacity = 0.72;
+        if (cd.id === s.dragId) { style.opacity = 0.4; style.cursor = 'grabbing'; }
+        const titleStyle = { fontSize:'13.5px', fontWeight:500, lineHeight:1.4 };
+        if (cd.done) { titleStyle.textDecoration = 'line-through'; titleStyle.textDecorationColor = 'var(--text-muted)'; }
+        return {
+          id: cd.id, title: cd.title,
+          hasLabels: !!(cd.labels && cd.labels.length),
+          labels: (cd.labels || []).map(l => ({ txt: l.t, style: { fontSize:'11px', fontWeight:600, padding:'2px 8px', borderRadius:'6px', background:'var(--lbl-' + l.k + '-bg)', color:'var(--lbl-' + l.k + '-fg)' } })),
+          titleStyle, style,
+          isDone: !!cd.done,
+          dueLate: !cd.done && !!due && due.s === 'late',
+          dueToday: !cd.done && !!due && due.s === 'today',
+          dueNormal: !cd.done && !!due && due.s === 'normal',
+          dueTxt: due ? due.t : '',
+          checkDone: !cd.done && !!cd.check && cd.check.done === true,
+          checkNormal: !cd.done && !!cd.check && !cd.check.done,
+          checkTxt: cd.check ? cd.check.t : '',
+          hasComments: !cd.done && (cd.comments != null),
+          comments: cd.comments,
+          hasCode: !cd.done && (cd.code != null),
+          code: cd.code,
+          assignees: (cd.assignees || []).map((a, ix) => ({ ini: a.i, style: { width:'23px', height:'23px', borderRadius:'50%', background:a.c, color:'#fff', fontSize:'9.5px', fontWeight:600, display:'inline-flex', alignItems:'center', justifyContent:'center', border:'2px solid var(--bg-surface)', marginLeft: ix === 0 ? '0' : '-7px' } })),
+          phBefore: (col.id === s.overCol && s.overBeforeId === cd.id && cd.id !== s.dragId),
+          onDragStart: (e) => this.onDragStartCard(e, cd.id),
+          onCardOver: (e) => { e.preventDefault(); e.stopPropagation(); this.setOver(col.id, cd.id); },
+        };
+      });
+      const wrapStyle = { width:'296px', flex:'0 0 296px', maxHeight:'100%', display:'flex', flexDirection:'column', background:'var(--bg-subtle)', border:'1px solid var(--border)', borderRadius:'13px', transition:'outline-color .12s' };
+      if (s.overCol === col.id && s.dragId) { wrapStyle.outline = '2px solid var(--primary)'; wrapStyle.outlineOffset = '-2px'; }
+      return {
+        id: col.id, title: col.title, count: col.cards.length,
+        countStyle: this.countStyle(col.tone),
+        wrapStyle,
+        phEnd: (s.overCol === col.id && s.overBeforeId == null && !!s.dragId),
+        onListOver: (e) => { e.preventDefault(); this.setOver(col.id, null); },
+        onDrop: (e) => { e.preventDefault(); this.handleDrop(); },
+        cards,
+      };
+    });
+
+    return {
+      theme: s.theme,
+      themeIcon: s.theme === 'dark' ? 'light_mode' : 'dark_mode',
+      toggleTheme: () => this.setState(st => ({ theme: st.theme === 'dark' ? 'light' : 'dark' })),
+      rootRef: this.rootRef,
+      columns,
+      tableRows,
+      isKanban: s.view === 'kanban', isTabela: s.view === 'tabela', isCalendario: s.view === 'calendario',
+      viewKanban: () => this.setState({ view: 'kanban' }),
+      viewTabela: () => this.setState({ view: 'tabela' }),
+      viewCalendario: () => this.setState({ view: 'calendario' }),
+      kanBg: vk.bg, kanFg: vk.fg, kanSh: vk.sh,
+      tabBg: vt.bg, tabFg: vt.fg, tabSh: vt.sh,
+      calBg: vc.bg, calFg: vc.fg, calSh: vc.sh,
+      onDragEnd: this.clearDrag,
+
+      cardOpen: s.card,
+      openCard: () => this.setState({ card: true }),
+      closeCard: () => this.setState({ card: false }),
+
+      activityOpen: s.activity,
+      openActivity: () => this.setState({ activity: true, share: false }),
+      closeActivity: () => this.setState({ activity: false }),
+
+      shareOpen: s.share,
+      openShare: () => this.setState({ share: true, activity: false }),
+      closeShare: () => this.setState({ share: false }),
+
+      createList: s.create === 'list',
+      createCard: s.create === 'card',
+      createBoard: s.create === 'board',
+      newList: () => this.setState({ create: 'list' }),
+      newCard: () => this.setState({ create: 'card' }),
+      newBoard: () => this.setState({ create: 'board' }),
+      closeCreate: () => this.setState({ create: null }),
+
+      showComments: s.tab === 'coment',
+      showCardActivity: s.tab === 'atividade',
+      commentsColor: s.tab === 'coment' ? 'var(--primary)' : 'var(--text-muted)',
+      commentsBorder: s.tab === 'coment' ? 'var(--primary)' : 'transparent',
+      activityColor: s.tab === 'atividade' ? 'var(--primary)' : 'var(--text-muted)',
+      activityBorder: s.tab === 'atividade' ? 'var(--primary)' : 'transparent',
+      tabComments: () => this.setState({ tab: 'coment' }),
+      tabActivity: () => this.setState({ tab: 'atividade' }),
+
+      stop: (e) => { if (e) e.stopPropagation(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

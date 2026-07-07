@@ -22,6 +22,7 @@ function toBoardState(detail: BoardDetail, labels: LabelDto[]): BoardState {
     ownerId: detail.ownerId,
     lists: detail.lists.map(toListState),
     labels,
+    commentsCountByCardId: {},
   };
 }
 
@@ -37,6 +38,9 @@ function toListState(list: BoardDetailList): ListState {
       description: card.description,
       position: card.position,
       labels: card.labels,
+      dueDate: card.dueDate,
+      assignees: card.assignees,
+      checklist: card.checklist,
     })),
   };
 }

@@ -153,6 +153,36 @@ export function applyLabelDeleted(state: BoardState, payload: LabelDeletedPayloa
   };
 }
 
+export function applyCommentCreated(
+  state: BoardState,
+  payload: { comment: { cardId: string } },
+): BoardState {
+  const { cardId } = payload.comment;
+
+  return {
+    ...state,
+    commentsCountByCardId: {
+      ...state.commentsCountByCardId,
+      [cardId]: (state.commentsCountByCardId[cardId] ?? 0) + 1,
+    },
+  };
+}
+
+export function applyCommentDeleted(
+  state: BoardState,
+  payload: { commentId: string; cardId: string },
+): BoardState {
+  const current = state.commentsCountByCardId[payload.cardId] ?? 0;
+
+  return {
+    ...state,
+    commentsCountByCardId: {
+      ...state.commentsCountByCardId,
+      [payload.cardId]: Math.max(0, current - 1),
+    },
+  };
+}
+
 function toCardState(card: CardEventPayload['card']): CardState {
   return {
     id: card.id,
@@ -161,6 +191,9 @@ function toCardState(card: CardEventPayload['card']): CardState {
     description: card.description,
     position: card.position,
     labels: card.labels,
+    dueDate: card.dueDate,
+    assignees: card.assignees,
+    checklist: card.checklist,
   };
 }
 

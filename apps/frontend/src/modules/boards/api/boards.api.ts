@@ -14,6 +14,18 @@ export type LabelDto = {
   color: LabelColor;
 };
 
+export type AssigneeDto = {
+  id: string;
+  name: string;
+};
+
+export type ChecklistItemDto = {
+  id: string;
+  text: string;
+  done: boolean;
+  position: number;
+};
+
 export type BoardDetailCard = {
   id: string;
   listId: string;
@@ -21,6 +33,9 @@ export type BoardDetailCard = {
   description: string | null;
   position: number;
   labels: LabelDto[];
+  dueDate: string | null;
+  assignees: AssigneeDto[];
+  checklist: ChecklistItemDto[];
 };
 
 export type BoardDetailList = {
@@ -57,7 +72,7 @@ function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
   );
 }
 
-async function request<T>(token: string, path: string, init?: RequestInit): Promise<T> {
+export async function request<T>(token: string, path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
     ...init,
     headers: {
@@ -130,6 +145,9 @@ export type CardDto = {
   position: number;
   createdAt: string;
   labels: LabelDto[];
+  dueDate: string | null;
+  assignees: AssigneeDto[];
+  checklist: ChecklistItemDto[];
 };
 
 export type CardMoveResult = {

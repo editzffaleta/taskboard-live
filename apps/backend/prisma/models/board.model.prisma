@@ -56,6 +56,7 @@ model Card {
   description String?
   position    Int
   dueDate     DateTime?
+  cover       String?
   createdAt   DateTime  @default(now())
   archivedAt  DateTime?
 

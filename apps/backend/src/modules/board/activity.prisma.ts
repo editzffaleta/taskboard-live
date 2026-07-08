@@ -32,17 +32,22 @@ export class PrismaActivityRepository implements ActivityRepository {
   async findAllByBoardId(
     params: FindAllByBoardIdParams,
   ): Promise<PageResult<Activity>> {
-    const { boardId, page, perPage } = params;
+    const { boardId, page, perPage, cardId } = params;
     const skip = (page - 1) * perPage;
+
+    const where: Prisma.ActivityWhereInput = {
+      boardId,
+      ...(cardId ? { data: { path: ['cardId'], equals: cardId } } : {}),
+    };
 
     const [items, total] = await this.prisma.$transaction([
       this.prisma.activity.findMany({
-        where: { boardId },
+        where,
         orderBy: { createdAt: 'desc' },
         skip,
         take: perPage,
       }),
-      this.prisma.activity.count({ where: { boardId } }),
+      this.prisma.activity.count({ where }),
     ]);
 
     return {

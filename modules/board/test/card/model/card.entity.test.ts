@@ -1,3 +1,4 @@
+import { ValidationException } from "@taskboard/shared";
 import { Card } from "../../../src/card/model";
 
 const LIST_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
@@ -60,5 +61,33 @@ describe("Card", () => {
 
     const restored = archived.clone({ archivedAt: null });
     expect(restored.archivedAt).toBeNull();
+  });
+
+  it("cria um cartao sem cover (default null)", () => {
+    const card = new Card({ listId: LIST_ID, title: "Cartao", position: 0 });
+
+    expect(card.cover).toBeNull();
+  });
+
+  it("cria um cartao com cover valida", () => {
+    const card = new Card({
+      listId: LIST_ID,
+      title: "Cartao",
+      position: 0,
+      cover: "blue",
+    });
+
+    expect(card.cover).toBe("blue");
+  });
+
+  it("rejeita cover fora da paleta", () => {
+    expect(() =>
+      new Card({
+        listId: LIST_ID,
+        title: "Cartao",
+        position: 0,
+        cover: "purple-magenta" as never,
+      }).validate(),
+    ).toThrow(ValidationException);
   });
 });

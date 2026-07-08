@@ -36,6 +36,7 @@ export type CardResponse = {
   dueDate: string | null;
   assignees: CardAssigneeResponse[];
   checklist: CardChecklistItemResponse[];
+  cover: string | null;
 };
 
 export async function buildCardResponse(
@@ -80,5 +81,6 @@ export async function buildCardResponse(
         done: item.done,
         position: item.position,
       })),
+    cover: card.cover,
   };
 }

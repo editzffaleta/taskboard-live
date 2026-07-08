@@ -2,6 +2,7 @@ import {
   DateRule,
   Entity,
   EntityState,
+  InRule,
   IntegerRule,
   MaxLengthRule,
   MinLengthRule,
@@ -10,6 +11,7 @@ import {
   UuidRule,
   Validator,
 } from "@taskboard/shared";
+import { LABEL_COLORS, LabelColor } from "../../label/model";
 
 export interface CardState extends EntityState {
   listId: string;
@@ -18,6 +20,7 @@ export interface CardState extends EntityState {
   position: number;
   dueDate?: Date | null;
   archivedAt?: Date | null;
+  cover?: LabelColor | null;
 }
 
 export class Card extends Entity<CardState> {
@@ -49,6 +52,10 @@ export class Card extends Entity<CardState> {
     return this.props.archivedAt ?? null;
   }
 
+  get cover(): LabelColor | null {
+    return this.props.cover ?? null;
+  }
+
   public validate(): void {
     Validator.validate([
       {
@@ -75,6 +82,11 @@ export class Card extends Entity<CardState> {
         code: "card.dueDate",
         value: this.dueDate,
         rules: this.dueDate === null ? [] : [new DateRule()],
+      },
+      {
+        code: "card.cover",
+        value: this.cover,
+        rules: this.cover === null ? [] : [new InRule(LABEL_COLORS)],
       },
     ]);
   }

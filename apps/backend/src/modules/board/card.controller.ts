@@ -11,11 +11,14 @@ import {
   ArchiveCard,
   CreateCard,
   DeleteCard,
+  DuplicateCard,
   EditCard,
   MoveCard,
   RestoreCard,
+  SetCardCover,
   SetCardDueDate,
   type Card,
+  type LabelColor,
 } from '@taskboard/board';
 import { CurrentUser } from '../../shared/decorators';
 import { PrismaCardRepository } from './card.prisma';
@@ -136,6 +139,75 @@ export class CardController {
       cardId,
       requesterId,
       dueDate: body.dueDate === null ? null : new Date(body.dueDate),
+    });
+
+    const response = await this.toResponse(card);
+
+    this.realtimeEmitter.emitToBoard(boardId, 'card.updated', {
+      card: response,
+    });
+
+    return response;
+  }
+
+  @Post(':id/copy')
+  @HttpCode(201)
+  async copy(
+    @Param('boardId') boardId: string,
+    @Param('id') cardId: string,
+    @Body() body: { toListId?: string; copyAssignees?: boolean },
+    @CurrentUser('id') requesterId: string,
+  ): Promise<CardResponse> {
+    const useCase = new DuplicateCard(
+      this.cardRepository,
+      this.listRepository,
+      this.membershipRepository,
+      this.cardLabelRepository,
+      this.checklistItemRepository,
+      this.cardAssigneeRepository,
+    );
+
+    const { card } = await useCase.execute({
+      boardId,
+      cardId,
+      requesterId,
+      toListId: body.toListId,
+      copyAssignees: body.copyAssignees,
+    });
+
+    const response = await this.toResponse(card);
+
+    this.realtimeEmitter.emitToBoard(boardId, 'card.created', {
+      card: response,
+    });
+
+    await this.activityRecorder.record(boardId, requesterId, 'card.created', {
+      cardId: card.id,
+      listId: card.listId,
+      title: card.title,
+    });
+
+    return response;
+  }
+
+  @Patch(':id/cover')
+  async setCover(
+    @Param('boardId') boardId: string,
+    @Param('id') cardId: string,
+    @Body() body: { cover: LabelColor | null },
+    @CurrentUser('id') requesterId: string,
+  ): Promise<CardResponse> {
+    const useCase = new SetCardCover(
+      this.cardRepository,
+      this.listRepository,
+      this.membershipRepository,
+    );
+
+    const { card } = await useCase.execute({
+      boardId,
+      cardId,
+      requesterId,
+      cover: body.cover,
     });
 
     const response = await this.toResponse(card);

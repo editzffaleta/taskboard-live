@@ -11,6 +11,7 @@ import { CardController } from './card.controller';
 import { MembersController } from './members.controller';
 import { InvitationsController } from './invitations.controller';
 import { ActivityController } from './activity.controller';
+import { CardActivityController } from './card-activity.controller';
 import { LabelController } from './label.controller';
 import { CardLabelController } from './card-label.controller';
 import { ChecklistController } from './checklist.controller';
@@ -50,6 +51,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     MembersController,
     InvitationsController,
     ActivityController,
+    CardActivityController,
     LabelController,
     CardLabelController,
     ChecklistController,

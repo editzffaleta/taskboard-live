@@ -9,6 +9,7 @@ type PersistedCard = {
   description: string | null;
   position: number;
   dueDate: Date | null;
+  cover: string | null;
   createdAt: Date;
   archivedAt: Date | null;
 };
@@ -48,6 +49,7 @@ export class PrismaCardRepository implements CardRepository {
         description: card.description,
         position: card.position,
         dueDate: card.dueDate,
+        cover: card.cover,
       },
     });
 
@@ -128,6 +130,7 @@ export class PrismaCardRepository implements CardRepository {
       description: card.description,
       position: card.position,
       dueDate: card.dueDate,
+      cover: card.cover,
     };
   }
 
@@ -141,6 +144,7 @@ export class PrismaCardRepository implements CardRepository {
       position: raw.position,
       dueDate: raw.dueDate,
       archivedAt: raw.archivedAt,
+      cover: raw.cover as Card['cover'],
     });
   }
 }

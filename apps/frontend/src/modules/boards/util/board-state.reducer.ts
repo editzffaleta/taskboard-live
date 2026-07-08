@@ -203,6 +203,7 @@ function toCardState(card: CardEventPayload['card']): CardState {
     dueDate: card.dueDate,
     assignees: card.assignees,
     checklist: card.checklist,
+    cover: card.cover,
   };
 }
 

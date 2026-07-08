@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, type DropResult } from '@hello-pangea/dnd';
 import { GripVertical, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
@@ -18,21 +18,28 @@ type CardDetailChecklistProps = {
   onReorderItems: (itemIds: string[]) => void;
 };
 
+/** Handle exposto via `ref` para o atalho "Checklist" da seção "Adicionar ao cartão" (`033`). */
+export type CardDetailChecklistHandle = {
+  focusNewItemInput: () => void;
+};
+
 /**
  * Seção de checklist do modal de detalhe: barra de progresso (`done/total`, só renderiza se
  * `total > 0`), lista de itens com toggle/editar/excluir e reordenação via `@hello-pangea/dnd`.
  */
-export function CardDetailChecklist({
-  checklist,
-  onAddItem,
-  onToggleItem,
-  onEditItem,
-  onDeleteItem,
-  onReorderItems,
-}: CardDetailChecklistProps) {
+export const CardDetailChecklist = forwardRef<CardDetailChecklistHandle, CardDetailChecklistProps>(
+  function CardDetailChecklist(
+    { checklist, onAddItem, onToggleItem, onEditItem, onDeleteItem, onReorderItems },
+    ref,
+  ) {
   const [newItemText, setNewItemText] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
+  const newItemInputRef = useRef<HTMLInputElement | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    focusNewItemInput: () => newItemInputRef.current?.focus(),
+  }));
 
   const sorted = [...checklist].sort((a, b) => a.position - b.position);
   const done = sorted.filter((item) => item.done).length;
@@ -167,6 +174,7 @@ export function CardDetailChecklist({
 
       <form onSubmit={handleAdd} className="flex items-center gap-2">
         <Input
+          ref={newItemInputRef}
           value={newItemText}
           onChange={(event) => setNewItemText(event.target.value)}
           placeholder={getMessage('cardDetail.checklist.addPlaceholder')}
@@ -180,4 +188,5 @@ export function CardDetailChecklist({
       </form>
     </div>
   );
-}
+  },
+);

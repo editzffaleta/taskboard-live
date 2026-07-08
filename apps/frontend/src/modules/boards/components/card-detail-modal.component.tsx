@@ -1,19 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/shared/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { Input } from '@/shared/components/ui/input';
-import { Button } from '@/shared/components/ui/button';
-import { Archive } from 'lucide-react';
 import { LabelChip } from '@/modules/boards/components/label-chip.component';
 import { LabelPopover } from '@/modules/boards/components/label-popover.component';
 import { CardDetailDueDate } from '@/modules/boards/components/card-detail-due-date.component';
 import { CardDetailAssignees } from '@/modules/boards/components/card-detail-assignees.component';
-import { CardDetailChecklist } from '@/modules/boards/components/card-detail-checklist.component';
+import {
+  CardDetailChecklist,
+  type CardDetailChecklistHandle,
+} from '@/modules/boards/components/card-detail-checklist.component';
 import { CardDetailComments } from '@/modules/boards/components/card-detail-comments.component';
-import { CardDetailAttachments } from '@/modules/boards/components/card-detail-attachments.component';
+import {
+  CardDetailAttachments,
+  type CardDetailAttachmentsHandle,
+} from '@/modules/boards/components/card-detail-attachments.component';
+import { CardDetailCoverBanner } from '@/modules/boards/components/card-detail-cover-banner.component';
+import { CardDetailAddToCard } from '@/modules/boards/components/card-detail-add-to-card.component';
+import { CardDetailActions } from '@/modules/boards/components/card-detail-actions.component';
+import { CardDetailActivity } from '@/modules/boards/components/card-detail-activity.component';
 import type { CommentDto } from '@/modules/boards/api/card-detail.api';
 import type { CardState, LabelColor, LabelState } from '@/modules/boards/types/board-state.type';
 import type { BoardMember } from '@/modules/boards/api/members.api';
@@ -29,6 +37,7 @@ type CardDetailModalProps = {
   boardId: string;
   token: string;
   boardLabels: LabelState[];
+  boardLists: { id: string; title: string }[];
   members: BoardMember[];
   currentUserId: string | null;
   currentUserName: string;
@@ -51,19 +60,24 @@ type CardDetailModalProps = {
   onReorderChecklistItems: (cardId: string, itemIds: string[]) => void;
   onCommentsCountHydrated: (cardId: string, total: number) => void;
   onArchiveCard: (cardId: string) => void;
+  onSetCardCover: (cardId: string, cover: LabelColor | null) => void;
+  onCopyCard: (cardId: string) => void;
+  onMoveCard: (cardId: string, toListId: string) => void;
 };
 
 /**
- * Shell do modal de detalhe do cartão, reproduzindo fielmente o layout do mockup: título
- * editável, descrição, etiquetas, prazo, responsáveis, checklist e abas
- * "Detalhes"/"Comentários". Fecha em overlay click ou `Esc` (comportamento nativo do
- * `Dialog` do Radix, via `shared/components/ui/dialog`).
+ * Shell do modal de detalhe do cartão, reproduzindo fielmente o layout de duas colunas do
+ * mockup: coluna principal (capa, título editável, descrição, etiquetas, checklist, anexos,
+ * abas "Comentários"/"Atividade") e barra lateral direita (Responsáveis, Data de entrega,
+ * "Adicionar ao cartão", "Ações") — `033`. Fecha em overlay click ou `Esc` (comportamento
+ * nativo do `Dialog` do Radix, via `shared/components/ui/dialog`).
  */
 export function CardDetailModal({
   card,
   boardId,
   token,
   boardLabels,
+  boardLists,
   members,
   currentUserId,
   currentUserName,
@@ -85,10 +99,15 @@ export function CardDetailModal({
   onReorderChecklistItems,
   onCommentsCountHydrated,
   onArchiveCard,
+  onSetCardCover,
+  onCopyCard,
+  onMoveCard,
 }: CardDetailModalProps) {
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description ?? '');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const checklistRef = useRef<CardDetailChecklistHandle | null>(null);
+  const attachmentsRef = useRef<CardDetailAttachmentsHandle | null>(null);
 
   function commitTitle() {
     setIsEditingTitle(false);
@@ -120,6 +139,8 @@ export function CardDetailModal({
 
         <div className="flex min-h-0 flex-1 flex-col gap-0 overflow-hidden md:flex-row">
           <div className="flex-1 overflow-y-auto px-6 py-5">
+            <CardDetailCoverBanner cover={card.cover} />
+
             <DialogTitle asChild>
               {isEditingTitle ? (
                 <Input
@@ -182,6 +203,7 @@ export function CardDetailModal({
 
             <div className="mt-6">
               <CardDetailChecklist
+                ref={checklistRef}
                 checklist={card.checklist}
                 onAddItem={(text) => onAddChecklistItem(card.id, text)}
                 onToggleItem={(itemId, done) => onToggleChecklistItem(card.id, itemId, done)}
@@ -193,6 +215,7 @@ export function CardDetailModal({
 
             <div className="mt-6">
               <CardDetailAttachments
+                ref={attachmentsRef}
                 token={token}
                 boardId={boardId}
                 cardId={card.id}
@@ -207,6 +230,9 @@ export function CardDetailModal({
                 <TabsTrigger value="comments" data-testid="card-detail-tab-comments">
                   {getMessage('cardDetail.tabs.comments')}
                 </TabsTrigger>
+                <TabsTrigger value="activity" data-testid="card-detail-tab-activity">
+                  {getMessage('cardDetail.tabs.activity')}
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="comments">
@@ -218,6 +244,15 @@ export function CardDetailModal({
                   currentUserName={currentUserName}
                   commentEvent={commentEvent}
                   onCommentsCountHydrated={onCommentsCountHydrated}
+                />
+              </TabsContent>
+
+              <TabsContent value="activity">
+                <CardDetailActivity
+                  token={token}
+                  boardId={boardId}
+                  cardId={card.id}
+                  members={members}
                 />
               </TabsContent>
             </Tabs>
@@ -233,17 +268,20 @@ export function CardDetailModal({
 
             <CardDetailDueDate dueDate={card.dueDate} onChange={(dueDate) => onSetDueDate(card.id, dueDate)} />
 
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-auto justify-start gap-2 text-muted-foreground"
-              onClick={() => onArchiveCard(card.id)}
-              data-testid="card-detail-archive-button"
-            >
-              <Archive className="size-4" />
-              {getMessage('cardDetail.archive.button')}
-            </Button>
+            <CardDetailAddToCard
+              onFocusChecklist={() => checklistRef.current?.focusNewItemInput()}
+              onRequestAttach={() => attachmentsRef.current?.requestAttach()}
+              onSetCardCover={(color) => onSetCardCover(card.id, color)}
+            />
+
+            <CardDetailActions
+              cardId={card.id}
+              currentListId={card.listId}
+              boardLists={boardLists}
+              onMoveCard={onMoveCard}
+              onCopyCard={onCopyCard}
+              onArchiveCard={onArchiveCard}
+            />
           </div>
         </div>
       </DialogContent>

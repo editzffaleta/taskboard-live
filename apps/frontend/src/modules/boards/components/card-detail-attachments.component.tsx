@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR, enUS } from 'date-fns/locale';
 import { toast } from 'sonner';
@@ -24,6 +24,11 @@ type CardDetailAttachmentsProps = {
   isOwner: boolean;
   /** Incrementado a cada `card.updated` recebido para este cartão — recarrega a lista (`032`). */
   refreshSignal: number;
+};
+
+/** Handle exposto via `ref` para o atalho "Anexo" da seção "Adicionar ao cartão" (`033`). */
+export type CardDetailAttachmentsHandle = {
+  requestAttach: () => void;
 };
 
 function reportError(error: unknown) {
@@ -77,19 +82,20 @@ function AttachmentTypeIcon({ mimeType }: { mimeType: string }) {
  * durante o upload, erros por toast (`attachment.too.large`/`attachment.type.not.allowed`),
  * download via `fetch` autenticado + blob, remoção com confirmação simples (autor ou owner).
  */
-export function CardDetailAttachments({
-  token,
-  boardId,
-  cardId,
-  currentUserId,
-  isOwner,
-  refreshSignal,
-}: CardDetailAttachmentsProps) {
+export const CardDetailAttachments = forwardRef<CardDetailAttachmentsHandle, CardDetailAttachmentsProps>(
+  function CardDetailAttachments(
+    { token, boardId, cardId, currentUserId, isOwner, refreshSignal },
+    ref,
+  ) {
   const [attachments, setAttachments] = useState<AttachmentDto[]>([]);
   const [uploading, setUploading] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const locale = getCurrentLocale() === 'en' ? enUS : ptBR;
+
+  useImperativeHandle(ref, () => ({
+    requestAttach: () => fileInputRef.current?.click(),
+  }));
 
   useEffect(() => {
     let cancelled = false;
@@ -255,4 +261,5 @@ export function CardDetailAttachments({
       </Button>
     </div>
   );
-}
+  },
+);

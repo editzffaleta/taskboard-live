@@ -24,9 +24,11 @@ import {
 import {
   addChecklistItem,
   assignUser,
+  copyCard,
   deleteChecklistItem,
   editChecklistItem,
   reorderChecklistItems,
+  setCardCover,
   setCardDueDate,
   toggleChecklistItem,
   unassignUser,
@@ -399,6 +401,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                   dueDate: null,
                   assignees: [],
                   checklist: [],
+                  cover: null,
                 },
               ],
             }
@@ -443,6 +446,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
                           dueDate: created.dueDate,
                           assignees: created.assignees,
                           checklist: created.checklist,
+                          cover: created.cover,
                         }
                       : card,
                   ),
@@ -679,6 +683,54 @@ export function BoardView({ initialBoard }: BoardViewProps) {
     }));
   }
 
+  async function handleSetCardCover(cardId: string, cover: LabelColor | null) {
+    if (!token) return;
+
+    takeSnapshot();
+    setBoard((current) => ({
+      ...current,
+      lists: current.lists.map((list) => ({
+        ...list,
+        cards: list.cards.map((card) => (card.id === cardId ? { ...card, cover } : card)),
+      })),
+    }));
+
+    try {
+      await setCardCover(token, board.id, cardId, cover);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
+  async function handleCopyCard(cardId: string) {
+    if (!token) return;
+
+    try {
+      await copyCard(token, board.id, cardId);
+      setSelectedCardId(null);
+    } catch (error) {
+      reportError(error);
+    }
+  }
+
+  async function handleMoveCardFromModal(cardId: string, toListId: string) {
+    if (!token) return;
+
+    const destinationList = board.lists.find((list) => list.id === toListId);
+    const position = destinationList ? destinationList.cards.length : 0;
+
+    takeSnapshot();
+    setBoard((current) => applyCardMoved(current, { cardId, fromListId: '', toListId, position }));
+
+    try {
+      await moveCard(token, board.id, cardId, toListId, position);
+    } catch (error) {
+      revertToSnapshot(getMessage('DEFAULT_API_ERROR'));
+      reportError(error);
+    }
+  }
+
   return (
     <div className="-m-4 flex h-[calc(100vh-3.5rem)] flex-col gap-4 bg-muted/30 p-4 md:-m-6 md:p-6">
       {reconnecting ? <BoardReconnectBanner attempt={reconnectAttempt} /> : null}
@@ -748,6 +800,7 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           boardId={board.id}
           token={token ?? ''}
           boardLabels={board.labels}
+          boardLists={sortedLists.map((list) => ({ id: list.id, title: list.title }))}
           members={members}
           currentUserId={user?.id ?? null}
           currentUserName={user?.name ?? ''}
@@ -769,6 +822,9 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           onArchiveCard={handleArchiveCard}
           onReorderChecklistItems={handleReorderChecklistItems}
           onCommentsCountHydrated={handleCommentsCountHydrated}
+          onSetCardCover={handleSetCardCover}
+          onCopyCard={handleCopyCard}
+          onMoveCard={handleMoveCardFromModal}
         />
       ) : null}
     </div>

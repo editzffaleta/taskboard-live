@@ -1,5 +1,7 @@
 import { BoardsApiError, request } from '@/modules/boards/api/boards.api';
-import type { AssigneeDto, ChecklistItemDto } from '@/modules/boards/api/boards.api';
+import type { AssigneeDto, CardDto, ChecklistItemDto } from '@/modules/boards/api/boards.api';
+import type { LabelColor } from '@/modules/boards/types/board-state.type';
+import type { ActivityPage } from '@/modules/boards/api/activity.api';
 import { handleUnauthorized } from '@/shared/lib/session';
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 
@@ -94,6 +96,53 @@ export function reorderChecklistItems(
     method: 'PUT',
     body: JSON.stringify({ itemIds }),
   });
+}
+
+/**
+ * Copiar (`031`): duplica o cartão, opcionalmente para outra lista (`toListId`) e com os
+ * responsáveis do original (`copyAssignees`); o novo cartão chega ao vivo via `card.created`,
+ * já tratado pelo reducer existente — não é preciso ler o retorno para atualizar o estado.
+ */
+export function copyCard(
+  token: string,
+  boardId: string,
+  cardId: string,
+  toListId?: string,
+  copyAssignees?: boolean,
+): Promise<CardDto> {
+  return request<CardDto>(token, `/boards/${boardId}/cards/${cardId}/copy`, {
+    method: 'POST',
+    body: JSON.stringify({ toListId, copyAssignees }),
+  });
+}
+
+/** Define ou limpa a cor de capa do cartão (`031`), só cor — sem imagem/upload. */
+export function setCardCover(
+  token: string,
+  boardId: string,
+  cardId: string,
+  cover: LabelColor | null,
+): Promise<CardDto> {
+  return request<CardDto>(token, `/boards/${boardId}/cards/${cardId}/cover`, {
+    method: 'PATCH',
+    body: JSON.stringify({ cover }),
+  });
+}
+
+/** Atividade filtrada por cartão (`031`), mesmo shape `ActivityPage` de `activity.api.ts`. */
+export function listCardActivity(
+  token: string,
+  boardId: string,
+  cardId: string,
+  page = 1,
+  perPage = 20,
+): Promise<ActivityPage> {
+  const query = new URLSearchParams({ page: String(page), limit: String(perPage) });
+  return request<ActivityPage>(
+    token,
+    `/boards/${boardId}/cards/${cardId}/activity?${query.toString()}`,
+    { method: 'GET' },
+  );
 }
 
 export function assignUser(

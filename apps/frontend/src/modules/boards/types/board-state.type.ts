@@ -51,6 +51,8 @@ export type CardState = {
   dueDate: string | null;
   assignees: AssigneeState[];
   checklist: ChecklistItemState[];
+  /** Cor da capa do cartão (`031`), `null` quando não definida — só cor, sem imagem/upload. */
+  cover: LabelColor | null;
 };
 
 export type ListState = {

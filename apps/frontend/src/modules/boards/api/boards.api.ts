@@ -39,6 +39,8 @@ export type BoardDetailCard = {
   dueDate: string | null;
   assignees: AssigneeDto[];
   checklist: ChecklistItemDto[];
+  /** Cor da capa do cartão (`031`), `null` quando não definida. */
+  cover: LabelColor | null;
 };
 
 export type BoardDetailList = {
@@ -172,6 +174,8 @@ export type CardDto = {
   dueDate: string | null;
   assignees: AssigneeDto[];
   checklist: ChecklistItemDto[];
+  /** Cor da capa do cartão (`031`), `null` quando não definida. */
+  cover: LabelColor | null;
 };
 
 export type CardMoveResult = {

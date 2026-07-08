@@ -9,6 +9,7 @@ import { LabelPopover } from '@/modules/boards/components/label-popover.componen
 import { CardDueBadge } from '@/modules/boards/components/card-due-badge.component';
 import { CardAssigneeAvatar } from '@/modules/boards/components/card-assignee-avatar.component';
 import type { CardState, LabelColor, LabelState } from '@/modules/boards/types/board-state.type';
+import { labelColorSwatchClass } from '@/modules/boards/util/label-color.util';
 
 type KanbanCardProps = {
   card: CardState;
@@ -85,6 +86,14 @@ export function KanbanCard({
           data-card-title={card.title}
           data-filtered-out={isFilteredOut ? 'true' : 'false'}
         >
+          {card.cover !== null ? (
+            <div
+              className={`-mx-3 -mt-2.5 h-2 rounded-t-xl ${labelColorSwatchClass(card.cover)}`}
+              data-testid="kanban-card-cover"
+              data-cover-color={card.cover}
+            />
+          ) : null}
+
           {card.labels.length > 0 ? (
             <div className="flex flex-wrap gap-1.5" data-testid="kanban-card-labels">
               {card.labels.map((label) => (

@@ -42,6 +42,7 @@ function toListState(list: BoardDetailList): ListState {
       dueDate: card.dueDate,
       assignees: card.assignees,
       checklist: card.checklist,
+      cover: card.cover,
     })),
   };
 }

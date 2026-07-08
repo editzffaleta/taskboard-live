@@ -7,12 +7,15 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { Prisma } from '@prisma/client';
 import {
   DomainError,
   ValidationError,
   ValidationException,
 } from '@taskboard/shared';
 import { ApiErrorResponse } from './error-response.type';
+
+const FOREIGN_KEY_VIOLATION_CODE = 'P2003';
 
 type ErrorShape = Pick<ApiErrorResponse, 'statusCode' | 'errors'> &
   Partial<Pick<ApiErrorResponse, 'message' | 'details'>>;
@@ -62,6 +65,17 @@ export class ApiExceptionFilter implements ExceptionFilter {
       return {
         statusCode: exception.statusCode,
         errors: [exception.message],
+      };
+    }
+
+    if (
+      exception instanceof Prisma.PrismaClientKnownRequestError &&
+      exception.code === FOREIGN_KEY_VIOLATION_CODE
+    ) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        errors: ['REFERENCIA_INVALIDA'],
+        message: 'Referência inválida: recurso relacionado não existe.',
       };
     }
 

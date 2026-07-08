@@ -1,6 +1,6 @@
-## MODIFIED Requirements
+## ADDED Requirements
 
-### Requirement: Detalhe do cartão exibe comentários sem falhar
+### Requirement: Leitura da lista de comentários do cartão
 
 O cliente SHALL consumir a lista de comentários no formato retornado pelo backend
 (`{ comments, total, page, pageSize }`), exibindo o detalhe do cartão sem erro.

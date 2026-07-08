@@ -60,11 +60,12 @@ model Card {
   createdAt   DateTime  @default(now())
   archivedAt  DateTime?
 
-  list      List            @relation(fields: [listId], references: [id], onDelete: Cascade)
-  labels    CardLabel[]
-  checklist ChecklistItem[]
-  assignees CardAssignee[]
-  comments  Comment[]
+  list        List            @relation(fields: [listId], references: [id], onDelete: Cascade)
+  labels      CardLabel[]
+  checklist   ChecklistItem[]
+  assignees   CardAssignee[]
+  comments    Comment[]
+  attachments Attachment[]
 
   @@index([listId])
   @@map("cards")
@@ -182,4 +183,21 @@ model Invitation {
 
   @@index([boardId, email])
   @@map("invitations")
+}
+
+model Attachment {
+  id           String   @id @default(uuid())
+  cardId       String
+  filename     String
+  mimeType     String
+  size         Int
+  storageKey   String
+  uploadedById String
+  createdAt    DateTime @default(now())
+
+  card       Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  @@index([cardId, createdAt])
+  @@map("attachments")
 }

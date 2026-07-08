@@ -1,5 +1,7 @@
-import { request } from '@/modules/boards/api/boards.api';
+import { BoardsApiError, request } from '@/modules/boards/api/boards.api';
 import type { AssigneeDto, ChecklistItemDto } from '@/modules/boards/api/boards.api';
+import { handleUnauthorized } from '@/shared/lib/session';
+import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 
 /**
  * Chamadas HTTP dos endpoints de prazo/checklist/responsáveis/comentários entregues pela
@@ -149,6 +151,144 @@ export function deleteComment(
   commentId: string,
 ): Promise<void> {
   return request<void>(token, `/boards/${boardId}/cards/${cardId}/comments/${commentId}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Anexos (`032`): upload multipart, listagem de metadados, download autenticado via blob e
+ * remoção — mesmo padrão de erro (`BoardsApiError`) das demais funções deste arquivo.
+ */
+
+export type AttachmentUploaderDto = {
+  id: string;
+  name: string;
+};
+
+export type AttachmentDto = {
+  id: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  createdAt: string;
+  uploadedBy: AttachmentUploaderDto;
+};
+
+function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Array.isArray((value as Record<string, unknown>).errors)
+  );
+}
+
+export function listAttachments(
+  token: string,
+  boardId: string,
+  cardId: string,
+): Promise<AttachmentDto[]> {
+  return request<AttachmentDto[]>(token, `/boards/${boardId}/cards/${cardId}/attachments`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * Upload multipart: monta um `FormData` com o arquivo no campo `file` e chama `fetch`
+ * diretamente (não reaproveita `request` porque este define `Content-Type: application/json`
+ * sempre que há `body` — para multipart o `boundary` precisa ser definido pelo próprio
+ * navegador, então nenhum `Content-Type` pode ser passado manualmente).
+ */
+export async function uploadAttachment(
+  token: string,
+  boardId: string,
+  cardId: string,
+  file: File,
+): Promise<AttachmentDto> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/boards/${boardId}/cards/${cardId}/attachments`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    },
+  );
+
+  if (response.status === 401) {
+    handleUnauthorized();
+  }
+
+  if (!response.ok) {
+    let body: unknown = null;
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    if (isApiErrorResponse(body) && body.errors.length > 0) {
+      throw new BoardsApiError(body.errors);
+    }
+    throw new BoardsApiError(['INTERNAL_SERVER_ERROR']);
+  }
+
+  return (await response.json()) as AttachmentDto;
+}
+
+/**
+ * Download autenticado: o endpoint exige `Authorization`, então não é possível usar um
+ * `<a href>` puro (o navegador não envia headers customizados em navegação simples). Baixa a
+ * resposta como `blob()`, cria uma URL de objeto e dispara um `<a download>` temporário,
+ * revogando a URL depois para não vazar memória.
+ */
+export async function downloadAttachment(
+  token: string,
+  boardId: string,
+  cardId: string,
+  attachmentId: string,
+  filename: string,
+): Promise<void> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/boards/${boardId}/cards/${cardId}/attachments/${attachmentId}/download`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (response.status === 401) {
+    handleUnauthorized();
+  }
+
+  if (!response.ok) {
+    throw new BoardsApiError(['INTERNAL_SERVER_ERROR']);
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(objectUrl);
+}
+
+export function deleteAttachment(
+  token: string,
+  boardId: string,
+  cardId: string,
+  attachmentId: string,
+): Promise<void> {
+  return request<void>(token, `/boards/${boardId}/cards/${cardId}/attachments/${attachmentId}`, {
     method: 'DELETE',
   });
 }

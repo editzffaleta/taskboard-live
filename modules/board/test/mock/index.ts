@@ -12,3 +12,5 @@ export * from "./fake-card-assignee.repository";
 export * from "./fake-comment.repository";
 export * from "./fake-notification.repository";
 export * from "./fake-invitation.repository";
+export * from "./fake-attachment.repository";
+export * from "./fake-storage.provider";

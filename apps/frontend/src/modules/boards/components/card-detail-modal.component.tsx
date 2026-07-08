@@ -13,6 +13,7 @@ import { CardDetailDueDate } from '@/modules/boards/components/card-detail-due-d
 import { CardDetailAssignees } from '@/modules/boards/components/card-detail-assignees.component';
 import { CardDetailChecklist } from '@/modules/boards/components/card-detail-checklist.component';
 import { CardDetailComments } from '@/modules/boards/components/card-detail-comments.component';
+import { CardDetailAttachments } from '@/modules/boards/components/card-detail-attachments.component';
 import type { CommentDto } from '@/modules/boards/api/card-detail.api';
 import type { CardState, LabelColor, LabelState } from '@/modules/boards/types/board-state.type';
 import type { BoardMember } from '@/modules/boards/api/members.api';
@@ -31,7 +32,10 @@ type CardDetailModalProps = {
   members: BoardMember[];
   currentUserId: string | null;
   currentUserName: string;
+  isOwner: boolean;
   commentEvent: CommentEvent;
+  /** Incrementado a cada `card.updated` deste cartão — recarrega a lista de anexos (`032`). */
+  attachmentsRefreshSignal: number;
   onClose: () => void;
   onRenameTitle: (cardId: string, title: string) => void;
   onEditDescription: (cardId: string, description: string) => void;
@@ -63,7 +67,9 @@ export function CardDetailModal({
   members,
   currentUserId,
   currentUserName,
+  isOwner,
   commentEvent,
+  attachmentsRefreshSignal,
   onClose,
   onRenameTitle,
   onEditDescription,
@@ -182,6 +188,17 @@ export function CardDetailModal({
                 onEditItem={(itemId, text) => onEditChecklistItem(card.id, itemId, text)}
                 onDeleteItem={(itemId) => onDeleteChecklistItem(card.id, itemId)}
                 onReorderItems={(itemIds) => onReorderChecklistItems(card.id, itemIds)}
+              />
+            </div>
+
+            <div className="mt-6">
+              <CardDetailAttachments
+                token={token}
+                boardId={boardId}
+                cardId={card.id}
+                currentUserId={currentUserId}
+                isOwner={isOwner}
+                refreshSignal={attachmentsRefreshSignal}
               />
             </div>
 

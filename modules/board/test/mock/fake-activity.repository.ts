@@ -18,6 +18,11 @@ export class FakeActivityRepository implements ActivityRepository {
   ): Promise<PageResult<Activity>> {
     const all = this.activities
       .filter((activity) => activity.boardId === params.boardId)
+      .filter(
+        (activity) =>
+          params.cardId === undefined ||
+          (activity.data as Record<string, unknown>).cardId === params.cardId,
+      )
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const start = (params.page - 1) * params.perPage;

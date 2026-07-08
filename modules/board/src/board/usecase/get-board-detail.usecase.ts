@@ -58,6 +58,7 @@ export interface BoardDetailCard {
   dueDate: string | null;
   assignees: BoardDetailCardAssignee[];
   checklist: BoardDetailChecklistItem[];
+  cover: string | null;
 }
 
 export interface BoardDetail {
@@ -229,6 +230,7 @@ export class GetBoardDetail
           done: item.done,
           position: item.position,
         })),
+      cover: card.cover,
     };
   }
 }

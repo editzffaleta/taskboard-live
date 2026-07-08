@@ -1,5 +1,6 @@
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 import { BoardsApiError } from '@/modules/boards/api/boards.api';
+import { handleUnauthorized } from '@/shared/lib/session';
 
 export type InvitationStatus = 'pending' | 'accepted' | 'revoked';
 
@@ -37,6 +38,10 @@ async function parseResponse<T>(response: Response): Promise<T> {
     body = await response.json();
   } catch {
     body = null;
+  }
+
+  if (response.status === 401) {
+    handleUnauthorized();
   }
 
   if (!response.ok) {

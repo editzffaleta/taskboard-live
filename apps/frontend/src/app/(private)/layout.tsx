@@ -4,10 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ShellProvider } from '@/shared/context/shell.context';
 import { AdminShell } from '@/shared/template/admin-shell.component';
 import { AppSidebarNavigation } from '@/shared/navigation/app-sidebar-navigation.component';
-import {
-  APP_NAVIGATION_SECTIONS,
-  DEFAULT_NAVIGATION_MODULE_ID,
-} from '@/shared/navigation/app-navigation.config';
+import { ACCOUNT_ROUTE } from '@/shared/navigation/app-navigation.config';
 import { AuthGuard } from '@/modules/auth/guard/auth.guard';
 import { useAuth } from '@/modules/auth/context/auth.context';
 import { CommandPalette } from '@/shared/components/ui/command-palette.component';
@@ -26,14 +23,10 @@ function PrivateShell({ children }: { children: React.ReactNode }) {
   return (
     <ShellProvider defaultOpen>
       <AdminShell
-        sidebar={
-          <AppSidebarNavigation
-            modules={APP_NAVIGATION_SECTIONS}
-            defaultModuleId={DEFAULT_NAVIGATION_MODULE_ID}
-          />
-        }
+        sidebar={<AppSidebarNavigation />}
         userName={user?.name}
         userEmail={user?.email}
+        profileHref={ACCOUNT_ROUTE}
         onLogout={handleLogout}
         notificationsSlot={<NotificationBell />}
       >

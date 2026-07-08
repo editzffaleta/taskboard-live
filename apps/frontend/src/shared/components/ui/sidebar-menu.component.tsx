@@ -1,11 +1,9 @@
 'use client';
 import { Circle } from 'lucide-react';
-import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover';
-import { AppLogo } from '@/shared/components/branding/app-logo.component';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { usePathname } from 'next/navigation';
 import { useShell } from '@/shared/hooks/shell.hook';
-import { useState, type ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import Link from 'next/link';
 type SidebarIcon = ComponentType<{ className?: string }>;
 
@@ -25,20 +23,10 @@ export type SidebarMenuSection = {
   items: SidebarMenuItem[];
 };
 
-export type ModuleNavigationEntry = {
-  item: SidebarMenuItem;
-  mainItem?: SidebarMenuItem;
-  sections: SidebarMenuSection[];
-};
-
 export type SidebarMenuProps = {
   mainItem?: SidebarMenuItem;
   sections: SidebarMenuSection[];
   collapsed?: boolean;
-  moduleNavigation?: {
-    activeModuleId: string;
-    items: ModuleNavigationEntry[];
-  };
 };
 
 const ITEM_BASE_CLASS =
@@ -46,15 +34,12 @@ const ITEM_BASE_CLASS =
 const COLLAPSED_CLASS = 'justify-center px-2';
 const ACTIVE_CLASS =
   'border border-border bg-accent text-accent-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]';
-const MODULE_RAIL_ITEM_CLASS =
-  'group relative flex h-11 items-center justify-center rounded-xl px-0 text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground xl:h-auto xl:min-h-16 xl:flex-col xl:gap-1.5 xl:rounded-2xl xl:px-2 xl:py-2 xl:text-center xl:text-[11px] xl:leading-3.5';
-const MENU_HEADER_HEIGHT_CLASS = 'h-16';
 
 function joinClassNames(values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
 }
 
-function isItemActive(pathname: string, item: SidebarMenuItem) {
+export function isSidebarItemActive(pathname: string, item: SidebarMenuItem) {
   if (item.excludeHrefs?.some((excludedHref) => pathname === excludedHref || pathname.startsWith(`${excludedHref}/`))) {
     return false;
   }
@@ -66,7 +51,7 @@ function isItemActive(pathname: string, item: SidebarMenuItem) {
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
 }
 
-function SidebarItemLink({
+export function SidebarItemLink({
   item,
   active,
   collapsed,
@@ -104,29 +89,6 @@ function SidebarItemLink({
   );
 }
 
-function ModuleRailItem({ item, active }: { item: SidebarMenuItem; active: boolean }) {
-  const Icon = item.icon ?? Circle;
-  const link = (
-    <Link
-      href={item.href}
-      aria-label={item.label}
-      className={joinClassNames([MODULE_RAIL_ITEM_CLASS, active && ACTIVE_CLASS])}
-    >
-      <Icon className="size-4 shrink-0" />
-      <span className="hidden wrap-break-word xl:block">{item.shortLabel ?? item.label}</span>
-    </Link>
-  );
-
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{link}</TooltipTrigger>
-      <TooltipContent side="right" sideOffset={8}>
-        {item.label}
-      </TooltipContent>
-    </Tooltip>
-  );
-}
-
 function MenuSections({
   sections,
   pathname,
@@ -153,7 +115,7 @@ function MenuSections({
               <SidebarItemLink
                 key={item.id}
                 item={item}
-                active={isItemActive(pathname, item)}
+                active={isSidebarItemActive(pathname, item)}
                 collapsed={isCollapsed}
                 onNavigate={onNavigate}
               />
@@ -165,193 +127,25 @@ function MenuSections({
   );
 }
 
-function ModuleFlyoutContent({
-  entry,
-  pathname,
-  onNavigate,
-}: {
-  entry: ModuleNavigationEntry;
-  pathname: string;
-  onNavigate: () => void;
-}) {
-  return (
-    <div className="w-full py-2">
-      {entry.mainItem ? (
-        <>
-          <div className="space-y-1">
-            <SidebarItemLink
-              item={entry.mainItem}
-              active={isItemActive(pathname, entry.mainItem)}
-              collapsed={false}
-              onNavigate={onNavigate}
-            />
-          </div>
-          <div className="my-4 h-px bg-border" />
-        </>
-      ) : null}
-
-      <MenuSections sections={entry.sections} pathname={pathname} isCollapsed={false} onNavigate={onNavigate} />
-    </div>
-  );
-}
-
-function CollapsedModuleItem({
-  entry,
-  pathname,
-  active,
-  open,
-  onOpenChange,
-}: {
-  entry: ModuleNavigationEntry;
-  pathname: string;
-  active: boolean;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const Icon = entry.item.icon ?? Circle;
-
-  return (
-    <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={entry.item.label}
-          className={joinClassNames([
-            'group relative flex h-11 w-full items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-accent hover:text-accent-foreground',
-            active && ACTIVE_CLASS,
-          ])}
-        >
-          <Icon className="size-4 shrink-0" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="right"
-        align="start"
-        sideOffset={12}
-        className="rounded-2xl border-border bg-popover p-2 text-popover-foreground shadow-2xl backdrop-blur-xl"
-        onMouseLeave={() => onOpenChange(false)}
-      >
-        <PopoverArrow className="fill-popover stroke-border stroke-[1px]" width={10} height={10} />
-        <ModuleFlyoutContent entry={entry} pathname={pathname} onNavigate={() => onOpenChange(false)} />
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-export function SidebarMenu({ mainItem, sections, collapsed, moduleNavigation }: SidebarMenuProps) {
+/**
+ * Navegação da sidebar única (`027`) — lista simples de itens (com seções opcionais),
+ * suportando o modo colapsado (ícone só) já existente hoje no shell
+ * (`isSidebarOpen`/`collapsed`). O antigo padrão de dois níveis ("módulo" com rail/flyout)
+ * foi removido: nenhum outro consumidor no projeto usava
+ * `moduleNavigation`/`ModuleNavigationEntry` (confirmado por
+ * `grep -rn "moduleNavigation\|ModuleNavigationEntry" apps/frontend/src`).
+ */
+export function SidebarMenu({ mainItem, sections, collapsed }: SidebarMenuProps) {
   const pathname = usePathname();
   const { isMobile, isSidebarOpen } = useShell();
   const isCollapsed = collapsed ?? (!isMobile && !isSidebarOpen);
-  const [openModuleId, setOpenModuleId] = useState<string | null>(null);
-  const showTwoLevelNavigation = Boolean(moduleNavigation) && !isCollapsed;
-  const defaultModuleHref = moduleNavigation?.items[0]?.item.href ?? '/';
-  const moduleSections = moduleNavigation
-    ? [
-        {
-          id: 'app-modules',
-          label: 'Módulos',
-          items: moduleNavigation.items.map((entry) => entry.item),
-        },
-      ]
-    : [];
-
-  if (showTwoLevelNavigation && moduleNavigation) {
-    return (
-      <nav className="flex min-h-full gap-2 px-2 pb-4 xl:gap-3 xl:pb-4">
-        <div className="flex w-[3.15rem] shrink-0 flex-col xl:w-16">
-          <Link
-            href={defaultModuleHref}
-            aria-label="Ir para dashboard"
-            className={joinClassNames([
-              MENU_HEADER_HEIGHT_CLASS,
-              'flex items-center justify-center border-b border-border',
-            ])}
-          >
-            <AppLogo size="md" showText={false} priority />
-          </Link>
-
-          <div className="h-3 shrink-0" />
-
-          <div className="min-h-0 flex-1 space-y-1">
-            {moduleNavigation.items.map((entry) => (
-              <ModuleRailItem
-                key={entry.item.id}
-                item={entry.item}
-                active={entry.item.id === moduleNavigation.activeModuleId}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="min-w-0 flex-1 border-l border-border pl-2 xl:max-w-[16rem] xl:pl-3">
-          <Link
-            href={defaultModuleHref}
-            aria-label="Ir para dashboard"
-            className={joinClassNames([MENU_HEADER_HEIGHT_CLASS, 'flex items-center border-b border-border px-2'])}
-          >
-            <AppLogo size="md" showMark={false} priority />
-          </Link>
-
-          <div className="h-3 shrink-0" />
-
-          {mainItem ? (
-            <>
-              <div className="space-y-1">
-                <SidebarItemLink item={mainItem} active={isItemActive(pathname, mainItem)} collapsed={false} />
-              </div>
-              <div className="my-4 h-px bg-border" />
-            </>
-          ) : null}
-
-          <MenuSections sections={sections} pathname={pathname} isCollapsed={false} />
-        </div>
-      </nav>
-    );
-  }
-
-  if (moduleNavigation && isCollapsed) {
-    return (
-      <nav className="px-2 pb-4">
-        <div
-          className={joinClassNames([
-            MENU_HEADER_HEIGHT_CLASS,
-            'mb-3 flex items-center justify-center border-b border-border',
-          ])}
-        >
-          <Link href={defaultModuleHref} aria-label="Ir para dashboard" className="flex items-center justify-center">
-            <AppLogo size="md" showText={false} priority />
-          </Link>
-        </div>
-
-        <div className="space-y-1">
-          {moduleNavigation.items.map((entry) => (
-            <CollapsedModuleItem
-              key={entry.item.id}
-              entry={entry}
-              pathname={pathname}
-              active={entry.item.id === moduleNavigation.activeModuleId}
-              open={openModuleId === entry.item.id}
-              onOpenChange={(open) => setOpenModuleId(open ? entry.item.id : null)}
-            />
-          ))}
-        </div>
-      </nav>
-    );
-  }
 
   return (
     <nav className="px-2 py-4">
-      {moduleNavigation ? (
-        <>
-          <MenuSections sections={moduleSections} pathname={pathname} isCollapsed={isCollapsed} />
-          {mainItem || sections.length > 0 ? <div className="my-4 h-px bg-border" /> : null}
-        </>
-      ) : null}
-
       {mainItem ? (
         <>
           <div className="space-y-1">
-            <SidebarItemLink item={mainItem} active={isItemActive(pathname, mainItem)} collapsed={isCollapsed} />
+            <SidebarItemLink item={mainItem} active={isSidebarItemActive(pathname, mainItem)} collapsed={isCollapsed} />
           </div>
           <div className="my-4 h-px bg-border" />
         </>

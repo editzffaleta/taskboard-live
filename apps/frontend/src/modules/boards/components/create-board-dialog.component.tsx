@@ -13,9 +13,19 @@ import { BoardsApiError, createBoard, type Board } from '@/modules/boards/api/bo
 
 type CreateBoardDialogProps = {
   onCreated: (board: Board) => void;
+  /** `data-testid` do botão que abre o diálogo. Permite mais de uma instância na mesma
+   * página (ex.: dashboard `/boards` + sidebar única, `027`) sem colidir em testes e2e. */
+  triggerTestId?: string;
+  /** Classe extra do botão de abertura, para adequar o layout ao local de uso (ex.: botão
+   * de largura total na sidebar). */
+  triggerClassName?: string;
 };
 
-export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
+export function CreateBoardDialog({
+  onCreated,
+  triggerTestId = 'create-board-trigger',
+  triggerClassName,
+}: CreateBoardDialogProps) {
   const { token } = useAuth();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
@@ -47,7 +57,9 @@ export function CreateBoardDialog({ onCreated }: CreateBoardDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button data-testid="create-board-trigger">Criar quadro</Button>
+        <Button data-testid={triggerTestId} className={triggerClassName}>
+          Criar quadro
+        </Button>
       </DialogTrigger>
 
       <StandardDialogContent

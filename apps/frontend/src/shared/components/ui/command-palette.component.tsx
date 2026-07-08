@@ -36,6 +36,17 @@ export function CommandPalette() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    // Acionamento por clique no campo "Buscar…" da sidebar única (`027`), sem duplicar
+    // estado/contexto de busca: mesmo `setOpen` do atalho `⌘K`.
+    function handleOpenEvent() {
+      setOpen(true);
+    }
+
+    window.addEventListener('taskboard:command-palette:open', handleOpenEvent);
+    return () => window.removeEventListener('taskboard:command-palette:open', handleOpenEvent);
+  }, []);
+
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
     if (!nextOpen) {

@@ -17,7 +17,7 @@ export type CommentDto = {
 };
 
 export type ListCommentsResult = {
-  items: CommentDto[];
+  comments: CommentDto[];
   total: number;
 };
 

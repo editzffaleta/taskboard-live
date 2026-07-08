@@ -73,7 +73,7 @@ export function CardDetailComments({
     listComments(token, boardId, cardId, 1, PAGE_SIZE)
       .then((result) => {
         if (cancelled) return;
-        setComments(result.items);
+        setComments(result.comments ?? []);
         setTotal(result.total);
         setPage(1);
         onCommentsCountHydrated(cardId, result.total);
@@ -125,7 +125,10 @@ export function CardDetailComments({
       const result = await listComments(token, boardId, cardId, nextPage, PAGE_SIZE);
       setComments((current) => {
         const existingIds = new Set(current.map((comment) => comment.id));
-        return [...current, ...result.items.filter((comment) => !existingIds.has(comment.id))];
+        return [
+          ...current,
+          ...(result.comments ?? []).filter((comment) => !existingIds.has(comment.id)),
+        ];
       });
       setTotal(result.total);
       setPage(nextPage);

@@ -1,4 +1,5 @@
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
+import { handleUnauthorized } from '@/shared/lib/session';
 
 export type NotificationType = 'member.added.you' | 'card.assigned.you' | 'comment.added';
 
@@ -54,6 +55,10 @@ async function request<T>(token: string, path: string, init?: RequestInit): Prom
     body = await response.json();
   } catch {
     body = null;
+  }
+
+  if (response.status === 401) {
+    handleUnauthorized();
   }
 
   if (!response.ok) {

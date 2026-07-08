@@ -1,5 +1,6 @@
 import type { ApiErrorResponse } from '@/shared/types/api-error.type';
 import type { BoardColor, LabelColor } from '@/modules/boards/types/board-state.type';
+import { handleUnauthorized } from '@/shared/lib/session';
 
 export type Board = {
   id: string;
@@ -94,6 +95,10 @@ export async function request<T>(token: string, path: string, init?: RequestInit
     body = await response.json();
   } catch {
     body = null;
+  }
+
+  if (response.status === 401) {
+    handleUnauthorized();
   }
 
   if (!response.ok) {

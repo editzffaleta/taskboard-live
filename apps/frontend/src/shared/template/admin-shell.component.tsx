@@ -120,7 +120,7 @@ export function AdminShell({
                   <Separator className="my-1" />
                   <DropdownMenuItem onSelect={() => router.push(profileHref)}>
                     <UserRound className="mr-2 size-4" />
-                    Perfil
+                    Conta
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onSelect={onLogout}

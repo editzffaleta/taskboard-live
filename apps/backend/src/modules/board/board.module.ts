@@ -18,6 +18,7 @@ import { ChecklistController } from './checklist.controller';
 import { CardAssigneeController } from './card-assignee.controller';
 import { CommentController } from './comment.controller';
 import { NotificationController } from './notification.controller';
+import { AttachmentController } from './attachment.controller';
 import { BoardGateway } from './realtime/board.gateway';
 import { PresenceTracker } from './realtime/presence.tracker';
 import { RealtimeEmitterImpl } from './realtime/realtime-emitter.provider';
@@ -38,6 +39,8 @@ import { PrismaCardAssigneeRepository } from './card-assignee.prisma';
 import { PrismaCommentRepository } from './comment.prisma';
 import { PrismaNotificationRepository } from './notification.prisma';
 import { NotificationRecorderImpl } from './notification-recorder.provider';
+import { PrismaAttachmentRepository } from './attachment.prisma';
+import { LocalDiskStorage } from './local-disk-storage.provider';
 
 @Module({
   imports: [DbModule, ConfigModule, forwardRef(() => AuthModule)],
@@ -58,6 +61,7 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     CardAssigneeController,
     CommentController,
     NotificationController,
+    AttachmentController,
   ],
   providers: [
     PrismaBoardRepository,
@@ -72,6 +76,8 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     PrismaCardAssigneeRepository,
     PrismaCommentRepository,
     PrismaNotificationRepository,
+    PrismaAttachmentRepository,
+    LocalDiskStorage,
     MemberDirectoryAdapter,
     BoardGateway,
     PresenceTracker,
@@ -92,6 +98,8 @@ import { NotificationRecorderImpl } from './notification-recorder.provider';
     PrismaCardAssigneeRepository,
     PrismaCommentRepository,
     PrismaNotificationRepository,
+    PrismaAttachmentRepository,
+    LocalDiskStorage,
     RealtimeEmitterImpl,
     ActivityRecorderImpl,
     NotificationRecorderImpl,

@@ -107,6 +107,10 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [commentEvent, setCommentEvent] = useState<CommentEvent>(null);
+  // Incrementado a cada `card.updated` recebido — a seção de anexos (`032`) do cartão aberto no
+  // momento recarrega sob demanda quando este contador muda (upload/remoção feito por outro
+  // cliente conectado ao mesmo quadro).
+  const [attachmentsRefreshSignal, setAttachmentsRefreshSignal] = useState(0);
   const snapshotRef = useRef<BoardState | null>(null);
   const isOwner = user?.id === board.ownerId;
 
@@ -180,7 +184,12 @@ export function BoardView({ initialBoard }: BoardViewProps) {
   const { connected, reconnecting, reconnectAttempt } = useBoardSocket(board.id, token, {
     onBoardUpdated: (payload) => setBoard((current) => applyBoardUpdated(current, payload)),
     onCardCreated: (payload) => setBoard((current) => applyCardCreated(current, payload)),
-    onCardUpdated: (payload) => setBoard((current) => applyCardUpdated(current, payload)),
+    onCardUpdated: (payload) => {
+      setBoard((current) => applyCardUpdated(current, payload));
+      if (payload.card.id === selectedCardId) {
+        setAttachmentsRefreshSignal((current) => current + 1);
+      }
+    },
     onCardMoved: (payload) => setBoard((current) => applyCardMoved(current, payload)),
     onCardDeleted: (payload) => setBoard((current) => applyCardDeleted(current, payload)),
     onListCreated: (payload) => setBoard((current) => applyListCreated(current, payload)),
@@ -742,7 +751,9 @@ export function BoardView({ initialBoard }: BoardViewProps) {
           members={members}
           currentUserId={user?.id ?? null}
           currentUserName={user?.name ?? ''}
+          isOwner={isOwner}
           commentEvent={commentEvent}
+          attachmentsRefreshSignal={attachmentsRefreshSignal}
           onClose={() => setSelectedCardId(null)}
           onRenameTitle={handleRenameCard}
           onEditDescription={handleEditDescription}

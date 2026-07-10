@@ -1,4 +1,0 @@
-interface:
-  display_name: 'Spec Analyze'
-  short_description: 'Portão pré-build: coerência dos artefatos da change + Constituição (PASS/FAIL)'
-  default_prompt: 'Analise, somente-leitura, a change do OpenSpec antes de implementar: cobertura requirement↔task, design vs proposal, deltas vs a fonte da verdade em openspec/specs/ e conformidade com a Constituição (openspec/memory/constitution.md), emitindo um relatório PASS/FAIL com bloqueadores, seguindo a skill spec-analyze.'

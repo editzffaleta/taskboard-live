@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/capa.svg" alt="TaskBoard Live — quadro kanban colaborativo em tempo real (Turborepo · NestJS · Next.js · Prisma · Socket.IO)" width="100%"/>
+  <img src="docs/assets/logo.svg" alt="TaskBoard Live — quadro kanban colaborativo em tempo real (Turborepo · NestJS · Next.js · Prisma · Socket.IO)" width="100%"/>
 </p>
 
 <h1 align="center">TaskBoard Live</h1>
@@ -168,20 +168,16 @@ npm run test:e2e     # Playwright, inclui o teste de colaboração ao vivo (2 na
 - **CI bloqueante** em cada PR: ESLint (type-aware), `tsc`, build, **gitleaks**, **Semgrep** (com
   Actions fixadas em SHA), `npm audit` e `openspec validate --strict`.
 
-## 📐 Construído spec-driven (OpenSpec)
+## 📐 Desenvolvimento spec-driven
 
-O sistema foi construído **uma mudança por vez**, cada uma especificada em **OpenSpec** (`proposal` +
-`design` + `tasks` + `specs`) antes de qualquer código, seguindo **Clean Architecture + DDD** com um
-**time de agentes** (orquestrador + especialistas por disciplina). Foram **33 changes** em ordem
-topológica — fundação (base, design system, auth) → domínio kanban em tempo real → cartão rico,
-filtros/visões, configurações → plataforma (arquivados, busca, notificações, modelos, convites) →
-anexos e o detalhe do cartão fiel ao mockup — cada uma com dois portões de qualidade e
-**1 change = 1 branch = 1 PR** com CI verde. Telas de alta fidelidade (Claude Design) viram mockups
-dentro de cada change, com a regra de **reproduzir o layout e substituir todo dado fake por dado real**.
+Cada funcionalidade foi especificada em **[OpenSpec](https://github.com/Fission-AI/OpenSpec)**
+(requisitos + design + tarefas) **antes do código**, em **Clean Architecture + DDD**, e entregue em
+incrementos pequenos e independentes — **1 funcionalidade = 1 branch = 1 PR** com CI verde. A entrega
+foi topológica: fundação (base, design system, auth) → domínio kanban em tempo real → cartão rico,
+filtros/visões e configurações → plataforma (arquivados, busca, notificações, modelos, convites) →
+anexos e o detalhe completo do cartão.
 
-- Histórico das changes: [`openspec/specs/`](./openspec/specs) (specs consolidados) ·
-  ledger em [`openspec/EXECUTION-LOG.md`](./openspec/EXECUTION-LOG.md).
-- Processo e time de agentes: [`AGENTS.md`](./AGENTS.md) · [`WORKFLOW.md`](./WORKFLOW.md).
+Os requisitos consolidados vivem em [`openspec/specs/`](./openspec/specs).
 
 ## 📄 Licença
 

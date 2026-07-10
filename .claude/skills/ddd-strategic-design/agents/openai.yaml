@@ -1,4 +1,0 @@
-interface:
-  display_name: "DDD Strategic Design"
-  short_description: "Subdominios, bounded contexts, linguagem ubiqua e context mapping antes da geracao tatica"
-  default_prompt: "Use $ddd-strategic-design para conduzir o design estrategico de DDD antes de gerar codigo: classificar subdominios (core/supporting/generic), definir bounded contexts e a linguagem ubiqua, mapear os relacionamentos entre contextos e recomendar as fronteiras de modulo no monorepo, gravando um mapa de contexto e um glossario em openspec."

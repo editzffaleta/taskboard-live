@@ -2,9 +2,7 @@
 
 **TaskBoard Live** — um quadro kanban colaborativo em tempo real (estilo Trello simplificado):
 duas pessoas abrem o mesmo quadro e veem os cartões se moverem ao vivo. O diferencial do projeto
-é o **tempo real** (Socket.IO), não o CRUD. Construído spec-driven, uma change OpenSpec por vez.
-
-**Origem:** template fabrica-fullstack v1.2.0.
+é o **tempo real** (Socket.IO), não o CRUD. Desenvolvido spec-driven, uma funcionalidade por vez.
 
 ### Tech Stack
 - **Linguagem:** TypeScript
@@ -51,9 +49,7 @@ duas pessoas abrem o mesmo quadro e veem os cartões se moverem ao vivo. O difer
 - **Branch:** uma por change, `change/<change-id>`.
 - **Fluxo:** trabalho em branch → gate verde → PR → CI verde → merge → `openspec archive`. Nunca
   commitar/forçar no `main`. Nunca commitar segredos.
-- **Specs:** `openspec/specs/` é a fonte da verdade; `openspec/changes/` são propostas até arquivadas.
-- **Constituição:** os princípios inegociáveis vivem em `openspec/memory/constitution.md` (P1–P9).
-  A `/analisar` (pré-build) e o `/portao` (pós-build) checam contra eles.
+- **Specs:** `openspec/specs/` é a fonte da verdade dos requisitos.
 
 ### Padrões de código
 - Tipagem estrita; evitar `any`.

@@ -5,7 +5,7 @@
 <h1 align="center">TaskBoard Live</h1>
 
 <p align="center">
-  Quadro kanban colaborativo <strong>em tempo real</strong> — estilo Trello simplificado.<br/>
+  Quadro kanban colaborativo <strong>em tempo real</strong> — estilo Trello, com o rigor de um produto de verdade.<br/>
   Duas pessoas abrem o mesmo quadro e <strong>veem os cartões se moverem ao vivo</strong>.
 </p>
 
@@ -20,33 +20,46 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/board.png" alt="Quadro kanban do TaskBoard Live com colunas A Fazer / Em Progresso / Concluído, badge 'ao vivo' e presença" width="100%"/>
+  <img src="docs/assets/board.png" alt="Quadro kanban do TaskBoard Live: sidebar, colunas com cartões (etiquetas, prazo, checklist, responsáveis), badge 'ao vivo' e seletor de visão" width="100%"/>
 </p>
 
 ---
 
 **Tempo real é o que separa um projeto júnior de CRUD de um que mostra domínio de arquitetura.**
-O TaskBoard Live é um kanban colaborativo onde cada movimento de cartão é transmitido por WebSockets
-para todos que estão com o quadro aberto — com **update otimista + reconciliação**, **presença** e
-**feed de atividade ao vivo**. Construído em **Clean Architecture + DDD**, testado de ponta a ponta
-(incluindo um teste Playwright que abre **dois navegadores** e prova a sincronização ao vivo) e com
-**CI verde** em cada PR.
+O TaskBoard Live é um kanban colaborativo completo: cada mudança é transmitida por WebSockets para
+todos que estão com o quadro aberto — com **update otimista + reconciliação**, **presença** e
+**notificações ao vivo**. Cartões ricos (etiquetas, prazo, checklist, responsáveis, comentários,
+anexos), **filtros e visões** (Kanban/Lista/Calendário), busca global, modelos e convites por link.
+Tudo em **Clean Architecture + DDD**, testado de ponta a ponta e com **CI verde** em cada PR.
 
 ## ✨ Funcionalidades
 
 - **Quadros, listas e cartões** com **drag-and-drop** (mover entre colunas e reordenar).
-- **Colaboração ao vivo** — mudanças de outros usuários aparecem **sem recarregar**, via Socket.IO.
-- **Presença** — avatares de quem está vendo o quadro naquele momento.
-- **Compartilhamento** — convide membros por e-mail; autorização **por quadro** (`owner`/`member`).
-- **Feed de atividade** — "Fulano moveu o cartão X", em tempo real.
-- **Autenticação** — registro + login com JWT (senha via bcrypt), rotas privadas protegidas.
-- **Tema claro/escuro** persistente, i18n (pt/en).
+- **Cartão rico** — descrição, **etiquetas** coloridas, **prazo** (badge atrasado/hoje), **checklist**
+  com progresso, **responsáveis**, **comentários**, **anexos** (upload), **capa** por cor, e uma aba
+  de **atividade** do cartão. Ações: **mover**, **copiar**, **arquivar**.
+- **Colaboração ao vivo** — mudanças de outros usuários aparecem **sem recarregar**, via Socket.IO,
+  com **presença** (quem está no quadro) e um feed de **atividade** do quadro.
+- **Filtros e visões** — filtre por etiqueta/responsável/prazo e alterne entre **Kanban**, **Lista** e
+  **Calendário**.
+- **Compartilhamento** — convide membros por e-mail ou **link de convite**; autorização **por quadro**
+  (`owner`/`member`).
+- **Notificações** — sino em tempo real (adicionado a um quadro, atribuído a um cartão, comentários).
+- **Busca global** (⌘K), **modelos** de quadro pré-populados, **arquivados** (arquivar/restaurar),
+  **configurações** de quadro (cor, etiquetas) e de conta (perfil, senha, tema, idioma).
+- **Autenticação** — registro + login com JWT (bcrypt), rotas privadas protegidas; tema claro/escuro; i18n (pt/en).
 
 ## 📸 Telas
 
-| Meus quadros | Feed de atividade | Tema escuro |
-|---|---|---|
-| ![Dashboard](docs/assets/dashboard.png) | ![Atividade](docs/assets/activity-or-share.png) | ![Tema escuro](docs/assets/board-dark.png) |
+O **detalhe do cartão** — o coração do produto, com tudo o que um cartão de kanban precisa:
+
+<p align="center">
+  <img src="docs/assets/card-detail.png" alt="Modal de detalhe do cartão: descrição, etiquetas, checklist com progresso, anexos, abas Comentários/Atividade e barra lateral com Responsáveis, Data de entrega, Adicionar ao cartão e Ações" width="100%"/>
+</p>
+
+| Meus quadros | Visão Lista | Modelos | Tema escuro |
+|---|---|---|---|
+| ![Dashboard](docs/assets/dashboard.png) | ![Visões](docs/assets/views.png) | ![Modelos](docs/assets/templates.png) | ![Tema escuro](docs/assets/board-dark.png) |
 
 ## 🏗️ Arquitetura
 
@@ -80,24 +93,27 @@ flowchart LR
   UI -->|REST: criar/mover cartão| HTTP
   HTTP --> UC --> DB
   UC -->|após sucesso| RE --> GW
-  GW -->|"sala board:{id}: card.moved, presence.update…"| SC --> UI
+  GW -->|"salas board:{id} e user:{id}: card.moved, notification.created…"| SC --> UI
 ```
 
 **Como o tempo real funciona:** o cliente conecta passando o JWT em `socket.handshake.auth.token` e
-entra na sala emitindo `board:join {boardId}`; o gateway só admite quem é **membro** (`BoardMember`).
+entra na sala `board:{boardId}` (só se for **membro**) e na sala `user:{userId}` (para notificações).
 Toda mutação REST, **após** o caso de uso ter sucesso, transmite o evento pela porta `RealtimeEmitter`
-(`card.moved`, `card.created`, `list.moved`, `member.added`, `activity.created`, `presence.update`…).
-O autor da ação vê update otimista; os demais recebem o evento e reconciliam o estado local.
+(`card.moved`, `card.updated`, `list.moved`, `member.added`, `activity.created`, `notification.created`,
+`presence.update`…). O autor da ação vê update otimista; os demais recebem o evento e reconciliam.
 
-### Modelo de domínio
+### Modelo de domínio (principais entidades)
 
 ```
 User        { id, name, email, password }
-Board       { id, name, ownerId → User, createdAt }
-BoardMember { id, boardId → Board, userId → User, role: owner|member, unique(boardId,userId) }
-List        { id, boardId → Board, title, position, createdAt }        // coluna do kanban
-Card        { id, listId → List, title, description?, position, createdAt }
-Activity    { id, boardId → Board, actorId → User, type, data (json), createdAt }
+Board       { id, name, ownerId → User, color, archivedAt, createdAt }
+BoardMember { id, boardId, userId, role: owner|member, unique(boardId,userId) }
+List        { id, boardId, title, position, archivedAt }
+Card        { id, listId, title, description?, position, dueDate?, cover?, archivedAt }
+  ↳ Label · CardLabel · ChecklistItem · CardAssignee · Comment · Attachment
+Activity     { id, boardId, actorId, type, data (json), createdAt }
+Notification { id, userId, type, data (json), readAt, createdAt }
+Invitation   { id, boardId, email, token, role, status, createdAt }
 ```
 
 ## 🧰 Stack
@@ -106,10 +122,10 @@ Activity    { id, boardId → Board, actorId → User, type, data (json), create
 |---|---|
 | Monorepo | Turborepo + npm workspaces |
 | Frontend | Next.js 16 (App Router, TS), `@hello-pangea/dnd`, `socket.io-client` |
-| Backend | NestJS 11 (:4000), **Socket.IO gateway** (`@nestjs/websockets`) |
+| Backend | NestJS 11 (:4000), **Socket.IO gateway** (`@nestjs/websockets`), multer (uploads) |
 | Dados | Prisma + PostgreSQL |
 | Testes | Jest (unitário/integração, 100% nos casos de uso) + Playwright (e2e) |
-| Segurança | helmet, CORS explícito, rate limit (`@nestjs/throttler`), JWT + bcrypt |
+| Segurança | helmet, CORS explícito, rate limit (`@nestjs/throttler`), JWT + bcrypt, validação de upload (magic bytes) |
 | CI | GitHub Actions: lint · typecheck · build · gitleaks · Semgrep · Trivy · `openspec validate` |
 
 ## 🚀 Rodando localmente
@@ -133,8 +149,8 @@ npm --workspace apps/backend run prisma:migrate:deploy
 npm run dev
 ```
 
-Abra <http://localhost:3000>, registre-se, crie um quadro — e abra o mesmo quadro em **duas abas
-(ou dois navegadores)** com usuários diferentes para ver a colaboração ao vivo.
+Abra <http://localhost:3000>, registre-se, crie um quadro (ou use um **modelo**) — e abra o mesmo
+quadro em **duas abas (ou dois navegadores)** com usuários diferentes para ver a colaboração ao vivo.
 
 **Testes:**
 
@@ -142,14 +158,13 @@ Abra <http://localhost:3000>, registre-se, crie um quadro — e abra o mesmo qua
 npm run test:e2e     # Playwright, inclui o teste de colaboração ao vivo (2 navegadores)
 ```
 
-> O e2e sobe backend + frontend reais; veja a pré-condição em `playwright.config.ts`
-> (banco de pé e `THROTTLE_AUTH_LIMIT` alto por causa do rate limit).
+> O e2e sobe backend + frontend reais; veja a pré-condição em `playwright.config.ts`.
 
 ## 🧪 Qualidade
 
-- **~270 testes** unitários e de integração; **100% de cobertura** nos casos de uso do domínio.
+- **~300 testes** unitários e de integração; **100% de cobertura** nos casos de uso do domínio.
 - **e2e de verdade:** um spec Playwright abre **dois contextos de navegador** (owner + membro),
-  move um cartão em um e verifica que o outro vê a mudança **ao vivo, sem reload** — passa sem flake.
+  move um cartão em um e verifica que o outro vê a mudança **ao vivo, sem reload** — sem flake.
 - **CI bloqueante** em cada PR: ESLint (type-aware), `tsc`, build, **gitleaks**, **Semgrep** (com
   Actions fixadas em SHA), `npm audit` e `openspec validate --strict`.
 
@@ -157,15 +172,16 @@ npm run test:e2e     # Playwright, inclui o teste de colaboração ao vivo (2 na
 
 O sistema foi construído **uma mudança por vez**, cada uma especificada em **OpenSpec** (`proposal` +
 `design` + `tasks` + `specs`) antes de qualquer código, seguindo **Clean Architecture + DDD** com um
-**time de agentes** (orquestrador + especialistas por disciplina). Foram **13 changes** em ordem
-topológica — fundação (base, design system, auth) → domínio kanban (quadros, gateway de tempo real,
-listas, cartões, UI ao vivo, membros, atividade) → extensões (hardening, e2e) — cada uma com dois
-portões de qualidade (pré-build e pós-build) e **1 change = 1 branch = 1 PR** com CI verde.
+**time de agentes** (orquestrador + especialistas por disciplina). Foram **33 changes** em ordem
+topológica — fundação (base, design system, auth) → domínio kanban em tempo real → cartão rico,
+filtros/visões, configurações → plataforma (arquivados, busca, notificações, modelos, convites) →
+anexos e o detalhe do cartão fiel ao mockup — cada uma com dois portões de qualidade e
+**1 change = 1 branch = 1 PR** com CI verde. Telas de alta fidelidade (Claude Design) viram mockups
+dentro de cada change, com a regra de **reproduzir o layout e substituir todo dado fake por dado real**.
 
 - Histórico das changes: [`openspec/specs/`](./openspec/specs) (specs consolidados) ·
   ledger em [`openspec/EXECUTION-LOG.md`](./openspec/EXECUTION-LOG.md).
-- Detalhes do processo e do time de agentes: [`AGENTS.md`](./AGENTS.md) ·
-  [`WORKFLOW.md`](./WORKFLOW.md) · [`changes-templates/README.md`](./changes-templates/README.md).
+- Processo e time de agentes: [`AGENTS.md`](./AGENTS.md) · [`WORKFLOW.md`](./WORKFLOW.md).
 
 ## 📄 Licença
 

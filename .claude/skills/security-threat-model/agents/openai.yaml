@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Threat Model (STRIDE)"
-  short_description: "Modelagem de ameacas STRIDE de uma feature, com mitigacoes mapeadas para as skills (sem exploit)"
-  default_prompt: "Use $security-threat-model para modelar as ameacas (STRIDE) de uma feature a partir do proposal/specs da change: decompoe ativos, atores, fluxos e fronteiras de confianca, enumera ameacas por categoria com severidade, e define mitigacoes apontando as skills do catalogo (backend-authorization, shared-validation-rule, security-review). Analise defensiva de design; nao escreve exploit nem faz pentest."

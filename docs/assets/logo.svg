@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="TaskBoard Live — quadro kanban colaborativo em tempo real">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#131F36"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="1" y="1" width="1198" height="298" rx="24" fill="url(#bg)" stroke="#233149" stroke-width="1.5"/>
+
+  <!-- marca: quadrado com 3 barras kanban -->
+  <g transform="translate(80,98)">
+    <rect x="0" y="0" width="104" height="104" rx="24" fill="#0E1A30" stroke="#2A3A57" stroke-width="1.5"/>
+    <rect x="26" y="30" width="14" height="48" rx="4" fill="url(#bar)"/>
+    <rect x="45" y="22" width="14" height="60" rx="4" fill="url(#bar)"/>
+    <rect x="64" y="42" width="14" height="30" rx="4" fill="#93C5FD"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="224" y="140" font-family="'Inter','Segoe UI',system-ui,sans-serif" font-size="60" font-weight="800" letter-spacing="-1">
+    <tspan fill="#ECF1F8">TaskBoard</tspan><tspan fill="#3B82F6"> Live</tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="226" y="182" font-family="'Inter','Segoe UI',system-ui,sans-serif" font-size="24" font-weight="500" fill="#A3B2C7">Quadro kanban colaborativo em tempo real</text>
+
+  <!-- selo ao vivo -->
+  <g transform="translate(226,214)">
+    <rect x="0" y="0" width="132" height="34" rx="17" fill="rgba(16,185,129,.14)" stroke="rgba(16,185,129,.4)"/>
+    <circle cx="22" cy="17" r="5" fill="#34D399"/>
+    <text x="38" y="23" font-family="'Inter',system-ui,sans-serif" font-size="15" font-weight="700" fill="#34D399">ao vivo</text>
+  </g>
+
+  <!-- motivo: mini colunas kanban à direita -->
+  <g transform="translate(760,70)" opacity="0.9">
+    <rect x="0"   y="0"  width="120" height="160" rx="14" fill="#101B31" stroke="#2A3A57"/>
+    <rect x="140" y="0"  width="120" height="160" rx="14" fill="#101B31" stroke="#2A3A57"/>
+    <rect x="280" y="0"  width="120" height="160" rx="14" fill="#101B31" stroke="#2A3A57"/>
+    <rect x="16"  y="18" width="88"  height="26" rx="7" fill="#1C2942"/>
+    <rect x="16"  y="52" width="88"  height="26" rx="7" fill="#1C2942"/>
+    <rect x="156" y="18" width="88"  height="26" rx="7" fill="url(#bar)"/>
+    <rect x="156" y="52" width="88"  height="26" rx="7" fill="#1C2942"/>
+    <rect x="296" y="18" width="88"  height="26" rx="7" fill="#1C2942"/>
+  </g>
+</svg>

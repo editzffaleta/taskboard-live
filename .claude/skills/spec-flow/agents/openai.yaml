@@ -1,4 +1,0 @@
-interface:
-  display_name: 'Spec Flow'
-  short_description: 'Fluxo git/GitHub padrão: branch por change, Conventional Commits, PR com CI verde'
-  default_prompt: 'Conduza o fluxo de trabalho do projeto: crie o repositório no GitHub se necessário, abra uma branch por change do OpenSpec, faça commits Conventional Commits em português ligados à change, valide com o gate (lint/typecheck/test/build/segredos) e suba para o main somente via Pull Request com CI verde, seguindo a skill spec-flow.'

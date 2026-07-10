@@ -1,4 +1,0 @@
-interface:
-  display_name: "Spec Frontend Auth"
-  short_description: "Base de autenticacao do frontend Next.js: cliente JWT, contexto, login e guarda de rota"
-  default_prompt: "Use $spec-frontend-auth para montar a base de autenticacao do frontend Next.js, simetrica ao spec-backend-auth-basic: cliente HTTP tipado que anexa o JWT e trata ApiErrorResponse/401, contexto de auth com useAuth, pagina de login ligada ao backend e guarda de rota nos layouts (private), reaproveitando a estrutura do frontend-next-config."

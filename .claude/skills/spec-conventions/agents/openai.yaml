@@ -1,4 +1,0 @@
-interface:
-  display_name: "Spec Conventions"
-  short_description: "Semeia/atualiza shared/, templates/ e EXECUTION-LOG.md do OpenSpec (idempotente)"
-  default_prompt: "Use $spec-conventions logo apos o openspec init (ou para refrescar os templates canonicos) para semear e atualizar os extras do OpenSpec: a pasta shared/ (como-executar e regras-de-nomenclatura), a pasta templates/ (modelo-base e modelo-crud) e o EXECUTION-LOG.md, de forma idempotente — estaveis sao sobrescritos a partir dos assets e o EXECUTION-LOG so e semeado se nao existir."

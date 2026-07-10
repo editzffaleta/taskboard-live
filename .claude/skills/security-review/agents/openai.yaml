@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Review"
-  short_description: "Revisao defensiva de codigo contra OWASP Web+API, com relatorio de achados (sem exploit)"
-  default_prompt: "Use $security-review para revisar a seguranca de um modulo, feature ou PR contra o OWASP Top 10 (Web) e o OWASP API Security Top 10, aplicada aos padroes do projeto (NestJS, Prisma, Next, validacao compartilhada, ApiErrorResponse), gerando um relatorio de achados com severidade, evidencia e remediacao. Nao escreve exploit nem faz pentest."

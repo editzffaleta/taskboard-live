@@ -11,10 +11,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
-    "prettier": "^3.7.4",
+    "prettier": "^3.9.5",
     "ts-node": "^10.9.2",
-    "turbo": "^2.10.3",
-    "typescript": "5.9.2"
+    "turbo": "^2.10.4",
+    "typescript": "7.0.2"
   },
   "engines": {
     "node": ">=18"
